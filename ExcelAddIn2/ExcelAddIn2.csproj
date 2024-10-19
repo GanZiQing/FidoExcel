@@ -267,6 +267,12 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="DirectoryUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DirectoryUserControl.Designer.cs">
+      <DependentUpon>DirectoryUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Excel Pane Folder\Backup Pane\ReportPaneBackup.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -388,6 +394,9 @@
     <Compile Include="Shared Classes\ScreenshotApp\SettingsForm.designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DirectoryUserControl.resx">
+      <DependentUpon>DirectoryUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\ETABSTaskPane.resx">
       <DependentUpon>ETABSTaskPane.cs</DependentUpon>
     </EmbeddedResource>

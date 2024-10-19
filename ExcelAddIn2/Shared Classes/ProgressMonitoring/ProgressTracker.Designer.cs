@@ -36,23 +36,27 @@
             // 
             // ProgressBar1
             // 
+            this.ProgressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressBar1.Location = new System.Drawing.Point(12, 29);
             this.ProgressBar1.Name = "ProgressBar1";
-            this.ProgressBar1.Size = new System.Drawing.Size(260, 23);
+            this.ProgressBar1.Size = new System.Drawing.Size(360, 23);
             this.ProgressBar1.TabIndex = 0;
             // 
             // ProgressLabel
             // 
-            this.ProgressLabel.AutoSize = true;
+            this.ProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ProgressLabel.Location = new System.Drawing.Point(12, 13);
             this.ProgressLabel.Name = "ProgressLabel";
-            this.ProgressLabel.Size = new System.Drawing.Size(21, 13);
+            this.ProgressLabel.Size = new System.Drawing.Size(360, 13);
             this.ProgressLabel.TabIndex = 1;
             this.ProgressLabel.Text = "0%";
             // 
             // CancelButt
             // 
-            this.CancelButt.Location = new System.Drawing.Point(100, 88);
+            this.CancelButt.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.CancelButt.Location = new System.Drawing.Point(150, 128);
             this.CancelButt.Name = "CancelButt";
             this.CancelButt.Size = new System.Drawing.Size(100, 23);
             this.CancelButt.TabIndex = 2;
@@ -62,9 +66,12 @@
             // 
             // ThreadLabel
             // 
+            this.ThreadLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ThreadLabel.Location = new System.Drawing.Point(12, 55);
             this.ThreadLabel.Name = "ThreadLabel";
-            this.ThreadLabel.Size = new System.Drawing.Size(240, 30);
+            this.ThreadLabel.Size = new System.Drawing.Size(360, 70);
             this.ThreadLabel.TabIndex = 3;
             this.ThreadLabel.Text = "Executing...";
             // 
@@ -72,7 +79,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 121);
+            this.ClientSize = new System.Drawing.Size(384, 161);
             this.Controls.Add(this.ThreadLabel);
             this.Controls.Add(this.CancelButt);
             this.Controls.Add(this.ProgressLabel);
@@ -80,7 +87,6 @@
             this.Name = "ProgressTracker";
             this.Text = "ProgressBar";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
