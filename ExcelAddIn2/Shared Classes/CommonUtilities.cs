@@ -349,6 +349,21 @@ namespace ExcelAddIn2
 
             return Path.Combine(dir, finalFileName);
         }
+        public static string SanitiseFileName(string inputFileName)
+        {
+            HashSet<char> invalidChars = new HashSet<char>(Path.GetInvalidFileNameChars());
+
+            StringBuilder sanitizedFileName = new StringBuilder();
+            foreach (char c in inputFileName)
+            {
+                if (!invalidChars.Contains(c))
+                {
+                    sanitizedFileName.Append(c);
+                }
+            }
+
+            return sanitizedFileName.ToString();
+        }
         #endregion
 
         #region Check Excel Data
@@ -597,9 +612,6 @@ namespace ExcelAddIn2
             }
         }
 
-        #endregion
-
-        #region Parse strings
         #endregion
 
         #region Manipulate Excel Ranges

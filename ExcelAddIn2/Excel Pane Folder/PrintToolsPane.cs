@@ -22,6 +22,7 @@ using static ExcelAddIn2.CommonUtilities;
 using TextBox = System.Windows.Forms.TextBox;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using System.Runtime.CompilerServices;
+using System.Linq.Expressions;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -29,7 +30,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
     {
         #region Initialisers
         Workbook ThisWorkBook;
-        Microsoft.Office.Interop.Excel.Application ThisApplication;
+        Application ThisApplication;
         DocumentProperties AllCustProps;
         Dictionary<string, AttributeTextBox> AttributeTextBoxDic = new Dictionary<string, AttributeTextBox>();
         Dictionary<string, CustomAttribute> CustomAttributeDic = new Dictionary<string, CustomAttribute>();
@@ -87,6 +88,9 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             AttributeTextBox MergeName = new AttributeTextBox("MergeName", dispMergeName, true);
             MergeName.type = "filename";
             AttributeTextBoxDic.Add("MergeName", MergeName);
+
+            thisCustomAtt = new CheckBoxAttribute("createBookmarks", createBookmarksCheck, true);
+            CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
 
             FileTextBox RefTitlePageFile = new FileTextBox("RefTitlePageFile", dispRefTitlePage, setRefTitlePage);
             AttributeTextBoxDic.Add("RefTitlePageFile", RefTitlePageFile);
@@ -660,115 +664,146 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         {
             ProgressHelper.RunWithProgress((worker, progressTracker) =>
             {
-            #region Check Input Size
-            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            try { CheckRangeSize(selectedRange, 0, 2); }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
-            string[] sheetNames = GetContentsAsStringArray(selectedRange.Columns[1].Cells, false);
-            string[] filePaths = GetContentsAsStringArray(selectedRange.Columns[2].Cells, false);
-            #endregion
+                #region Check Input Size
+                Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                try { CheckRangeSize(selectedRange, 0, 3); }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+                //string[] fileNames = GetContentsAsStringArray(selectedRange.Columns[1].Cells, false);
+                string[] fileNames = GetAndCheckExcelFileNames(selectedRange.Columns[1].Cells, ".pdf");
+                string[] sheetNames = GetContentsAsStringArray(selectedRange.Columns[2].Cells, false);
+                string[] filePaths = GetContentsAsStringArray(selectedRange.Columns[3].Cells, false);
+                #endregion
 
-            #region Check validity of inputs
-            foreach (string filePath in filePaths)
-            {
-                if (filePath == "")
+                #region Check validity of inputs
+                foreach (string filePath in filePaths)
                 {
-                    continue;
-                }
+                    if (filePath == "")
+                    {
+                        continue;
+                    }
 
-                if (!File.Exists(filePath))
-                {
-                    MessageBox.Show($"FilePath provided below does not exist.\n{filePath}", "Error");
-                    return;
-                }
-            }
-            #endregion
-
-            #region Print
-            try
-            {
-                ThisApplication.ScreenUpdating = false;
-                ThisApplication.DisplayAlerts = false;
-                int numPrinted = 0;
-                #region Get Folder Path If Required
-                string folderPath = "";
-                if (!overwritePrintPath.Checked) 
-                { 
-                    folderPath = ((DirectoryTextBox)AttributeTextBoxDic["destFolder_printPDF"]).CheckAndGetPath(); 
+                    if (!File.Exists(filePath))
+                    {
+                        MessageBox.Show($"FilePath provided below does not exist.\n{filePath}", "Error");
+                        return;
+                    }
                 }
                 #endregion
-                Workbook workbookToPrint = null;
-                for (int rowNum = 0; rowNum < filePaths.Length; rowNum++)
+
+                #region Print
+                try
                 {
-                    string filePath = filePaths[rowNum];
-                    if (filePath == "") { continue; }
-                    #region Get Folder Path
-                    if (overwritePrintPath.Checked)
-                    {
-                        folderPath = Path.GetDirectoryName(filePath);
-                    }
+                    ThisApplication.ScreenUpdating = false;
+                    ThisApplication.DisplayAlerts = false;
+                    int numPrinted = 0;
 
+                    #region Get Folder Path If Required
+                    string folderPath = "";
+                    if (!overwritePrintPath.Checked) 
+                    { 
+                        folderPath = ((DirectoryTextBox)AttributeTextBoxDic["destFolder_printPDF"]).CheckAndGetPath(); 
+                    }
                     #endregion
-                    progressTracker.UpdateStatus($"Printing {filePath}");
 
-                    string sheetName = sheetNames[rowNum];    
-                    try
+                    Workbook workbookToPrint = null;
+                    for (int rowNum = 0; rowNum < filePaths.Length; rowNum++)
                     {
-                        #region Get Workbook
-                        if (workbookToPrint == null)
+                        string filePath = filePaths[rowNum];
+                        if (filePath == "") { continue; }
+
+                        #region Get Folder Path
+                        if (overwritePrintPath.Checked)
                         {
-                            workbookToPrint = ThisApplication.Workbooks.Open(filePath);
+                            folderPath = Path.GetDirectoryName(filePath);
                         }
-                        else if (workbookToPrint.Path != filePath)
-                        {
-                            workbookToPrint.Close();
-                            workbookToPrint = ThisApplication.Workbooks.Open(filePath);
-                        }
-                        string pdfFileName = Path.GetFileNameWithoutExtension(filePath);
 
                         #endregion
 
-                        #region Print Sheets
-                        if (sheetName == "") // Print all visible workbook
-                        {
-                            pdfFileName += ".pdf";
-                            PrintEntireWorkbook(workbookToPrint, sheetName, pdfFileName, folderPath);
-                        }
-                        else // Print single sheet
-                        {
-                            pdfFileName += $"_{sheetName}.pdf";
-                            GetAndPrintSingleSheet(workbookToPrint, sheetName, pdfFileName, folderPath);
-                        }
-                        #endregion
+                        progressTracker.UpdateStatus($"Printing {filePath}");
 
-                        numPrinted++;
-                        worker.ReportProgress(ConvertToProgress(rowNum+1, filePaths.Length));
-                    }                        
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Unable to print the following file.\n{filePath}\n\n"+ex.Message, "Error");
-                    }
+                        string sheetName = sheetNames[rowNum];    
+                        try
+                        {
+                            #region Get Workbook
+                            if (workbookToPrint == null)
+                            {
+                                workbookToPrint = ThisApplication.Workbooks.Open(filePath);
+                            }
+                            else if (workbookToPrint.Path != filePath)
+                            {
+                                workbookToPrint.Close();
+                                workbookToPrint = ThisApplication.Workbooks.Open(filePath);
+                            }
+                            string workbookFileName = Path.GetFileNameWithoutExtension(filePath);
+
+                            #endregion
+
+                            #region Print Sheets
+                            string pdfFileName = GetPdfName(); ;
+                            if (sheetName == "") // Print all visible workbook
+                            {
+                                //workbookFileName += ".pdf";
+                                //pdfFileName = GetPdfName();
+                                PrintEntireWorkbook(workbookToPrint, sheetName, workbookFileName, folderPath);
+                            }
+                            else // Print single sheet
+                            {
+                                //workbookFileName += $"_{sheetName}.pdf";
+                                GetAndPrintSingleSheet(workbookToPrint, sheetName, workbookFileName, folderPath);
+                            }
+                            #endregion
+
+                            numPrinted++;
+                            worker.ReportProgress(ConvertToProgress(rowNum+1, filePaths.Length));
+
+                            #region GetPDFName
+                            string GetPdfName()
+                            {
+                                string returnPdfName;
+                                if (fileNames[rowNum] != "")
+                                {
+                                    returnPdfName = fileNames[rowNum];
+                                    if (!Path.HasExtension(returnPdfName)) // Extension type is checked earlier
+                                    {
+                                        returnPdfName += ".pdf";                                        
+                                    }
+                                }
+                                else if (sheetName == "")
+                                {
+                                    returnPdfName = workbookFileName + ".pdf";
+                                }
+                                else
+                                {
+                                    returnPdfName = workbookFileName + $"_{sheetName}.pdf";
+                                }
+                                return returnPdfName;
+                            }
+                            #endregion
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Unable to print the following file.\n{filePath}\n\n"+ex.Message, "Error");
+                        }
                         
-                    if (worker.CancellationPending)
-                    {
-                        break;
+                        if (worker.CancellationPending)
+                        {
+                            break;
+                        }
                     }
-                }
 
-                if (workbookToPrint != null) { workbookToPrint.Close(); }
-                GC.Collect();
-                progressTracker.UpdateStatus("Completed, pending check box");
-                MessageBox.Show("Completed", "Completed");
-            }
-            finally
-            {
-                ThisApplication.ScreenUpdating = true;
-                ThisApplication.DisplayAlerts = true;
-            }
+                    if (workbookToPrint != null) { workbookToPrint.Close(); }
+                    GC.Collect();
+                    progressTracker.UpdateStatus("Completed, pending check box");
+                    MessageBox.Show("Completed", "Completed");
+                }
+                finally
+                {
+                    ThisApplication.ScreenUpdating = true;
+                    ThisApplication.DisplayAlerts = true;
+                }
                 #endregion
             });
-        }
-        
+        }    
         private void PrintEntireWorkbook(Workbook workbookToPrint, string sheetName, string pdfFileName, string folderPath)
         {
             try
@@ -799,9 +834,55 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             }
         }
 
+        private string[] GetAndCheckExcelFileNames(Range fileNameRange, string extension)
+        {
+            string[] originalFileNames = GetContentsAsStringArray(fileNameRange, false);
+            string[] finalFileNames = new string[originalFileNames.Length];
+            List<int> illegalFileIndex = new List<int>();
+            for (int i = 0; i < originalFileNames.Length; i++)
+            {
+                finalFileNames[i] = SanitiseFileName(originalFileNames[i]);
+
+                if (Path.HasExtension(finalFileNames[i]) && Path.GetExtension(finalFileNames[i]) != extension)
+                {
+                    finalFileNames[i] = Path.ChangeExtension(finalFileNames[i], extension);
+                }
+
+                if (originalFileNames[i] != finalFileNames[i])
+                {
+                    illegalFileIndex.Add(i);
+                }
+            }
+
+            if (illegalFileIndex.Count > 0)
+            {
+                #region Get Confirmation
+                string msg = "The following file names are invalid and illegal characters will be replaced. Continue with replaced fileName?\n" +
+                "Excel text will be updated as well. Formulas will be replaced with text\n";
+
+                foreach (int i in illegalFileIndex)
+                {
+                    msg += $"\"{originalFileNames[i]}\" updated to \"{finalFileNames}\"\n";
+                }
+
+                Confirmation(msg);
+                #endregion
+
+                #region Update Excel
+                foreach (int i in illegalFileIndex)
+                {
+                    Range cell = fileNameRange.Cells[i];
+                    cell.Value2 = finalFileNames[i];
+                }
+                #endregion
+
+            }
+
+            return finalFileNames;
+        }
         private void insertPrintWorkbookHeader_Click(object sender, EventArgs e)
         {
-            List<string> headers = new List<string> { "Sheet Name - leave blank to print all", "File Path" };
+            List<string> headers = new List<string> { "Output File Name - leave blank for default", "Sheet Name - leave blank to print all", "File Path" };
             InsertHeadersAtSelection(headers, "cols");
         }
         #endregion
@@ -1245,6 +1326,35 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         //}
         #endregion
 
+        #region Open Files
+        private void openFilesInOrder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Delay
+                int sleepDelay = Convert.ToInt32(AttributeTextBoxDic["PdfOpenDelay"].GetDoubleFromTextBox() * 1000);
+                #endregion
+
+                #region Get files
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Multiselect = true;
+                openFileDialog.Filter = "PDF (*.pdf)|*.pdf|All files (*.*)|*.*";
+                DialogResult res = openFileDialog.ShowDialog();
+                if (res != DialogResult.OK) { return; }
+                string[] filePaths = openFileDialog.FileNames;
+                #endregion
+
+                foreach (string filePath in filePaths)
+                {
+                    System.Diagnostics.Process.Start(filePath);
+                    Thread.Sleep(sleepDelay);
+                }
+                MessageBox.Show("Completed", "Completed");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
+
         #region Testing Grounds
         private void ProgressBarTest_Click(object sender, EventArgs e)
         {
@@ -1343,8 +1453,15 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 PdfDocument inputDocument = PdfReader.Open(filepath, PdfDocumentOpenMode.Import);
                 for (int index = 0; index < inputDocument.PageCount; index++)
                 {
-                    PdfPage page = inputDocument.Pages[index];
-                    outputDocument.AddPage(page);
+                    PdfPage inputPage = inputDocument.Pages[index];
+                    PdfPage outputPage = outputDocument.AddPage(inputPage);
+                    #region Add Bookmarks
+                    if (createBookmarksCheck.Checked)
+                    {
+                        string bookmarkName = Path.GetFileNameWithoutExtension(filepath);
+                        PdfOutline outline = outputDocument.Outlines.Add(bookmarkName, outputPage);
+                    }
+                    #endregion
                 }
 
                 numFilesCompleted++;
@@ -1929,33 +2046,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
         #endregion
 
-
-        private void openPdfInOrder_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                #region Get Delay
-                int sleepDelay = Convert.ToInt32(AttributeTextBoxDic["PdfOpenDelay"].GetDoubleFromTextBox() * 1000);
-                #endregion
-
-                #region Get files
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Multiselect = true;
-                openFileDialog.Filter = "PDF (*.pdf)|*.pdf";
-                DialogResult res = openFileDialog.ShowDialog();
-                if (res != DialogResult.OK) { return; }
-                string[] filePaths = openFileDialog.FileNames;
-                #endregion
-
-                foreach (string filePath in filePaths)
-                { 
-                    System.Diagnostics.Process.Start(filePath);
-                    Thread.Sleep(sleepDelay);
-                }
-                MessageBox.Show("Completed", "Completed");
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
-        }
+       
     }
 }
 
