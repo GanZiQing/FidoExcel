@@ -23,6 +23,7 @@ using TextBox = System.Windows.Forms.TextBox;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using System.Runtime.CompilerServices;
 using System.Linq.Expressions;
+using System.Xml.Linq;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -1451,18 +1452,21 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             {
                 progressTrackerLocal.UpdateStatus($"Importing {Path.GetFileName(filepath)}");
                 PdfDocument inputDocument = PdfReader.Open(filepath, PdfDocumentOpenMode.Import);
+                Dictionary<PdfPage, PdfPage> inputPageTracker = new Dictionary<PdfPage, PdfPage>();// InputPage,OutputPage
                 for (int index = 0; index < inputDocument.PageCount; index++)
                 {
                     PdfPage inputPage = inputDocument.Pages[index];
                     PdfPage outputPage = outputDocument.AddPage(inputPage);
-                    #region Add Bookmarks
-                    if (createBookmarksCheck.Checked)
-                    {
-                        string bookmarkName = Path.GetFileNameWithoutExtension(filepath);
-                        PdfOutline outline = outputDocument.Outlines.Add(bookmarkName, outputPage);
-                    }
-                    #endregion
+                    inputPageTracker[inputPage] = outputPage;
                 }
+
+                #region Add Bookmarks
+                if (createBookmarksCheck.Checked)
+                {
+                    string bookmarkName = Path.GetFileNameWithoutExtension(filepath);
+                    AddBookmarks(inputDocument, outputDocument, bookmarkName, inputPageTracker);
+                }
+                #endregion
 
                 numFilesCompleted++;
                 worker.ReportProgress(ConvertToProgress(numFilesCompleted, filePaths.Count));
@@ -1484,6 +1488,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             MessageBox.Show("Operation completed", "Success");
         }
+
+        
         #endregion
 
         #region Advance Merge PDF
@@ -1696,7 +1702,76 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             InsertHeadersAtSelection(headers);
         }
         #endregion
+        
+        #region Add Bookmars
+        void AddBookmarks(PdfDocument inputDocument, PdfDocument outputDocument, string parentBookmarkName, Dictionary<PdfPage, PdfPage> inputPageTracker, PdfOutline grandParentOutline = null)
+        {
+            #region Add Base Bookmark
+            PdfPage firstInsertPage = outputDocument.Pages[outputDocument.PageCount - inputDocument.PageCount];
+            PdfOutline parentOutline;
+            if (grandParentOutline == null)
+            {
+                parentOutline = outputDocument.Outlines.Add(parentBookmarkName, firstInsertPage);
+            }
+            else
+            {
+                parentOutline = grandParentOutline.Outlines.Add(parentBookmarkName, firstInsertPage);
+            }
 
+            #endregion
+            try
+            {
+                //inputDocument.Outlines is giving me issues when it is empty, I don't know why and i can't seem detect when it is empty (simply accessing inputDocument.Outlines is an error).
+                PdfOutlineCollection thisCollection = inputDocument.Outlines;
+            }
+            catch { return; }
+
+            AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, parentOutline, inputDocument.Outlines);
+
+        }
+        void AddNestedBookmarks(PdfDocument inputDocument, PdfDocument outputDocument, Dictionary<PdfPage, PdfPage> inputPageTracker, PdfOutline parentOutline, PdfOutlineCollection inputOutlineCollection)
+        {
+            //try
+            //{
+            //    if (inputOutlineCollection.Count == 0) { return; }
+            //    foreach (PdfOutline inputOutline in inputOutlineCollection)
+            //    {
+            //        // Create a new bookmark in the output document
+            //        PdfPage inputPage = inputOutline.DestinationPage;
+            //        PdfPage outputPage = inputPageTracker[inputPage];
+            //        PdfOutline newOutline = parentOutline.Outlines.Add(inputOutline.Title, outputPage);
+
+            //        try
+            //        {
+            //            //inputDocument.Outlines is giving me issues when it is empty, I don't know why and i can't seem detect when it is empty (simply accessing inputDocument.Outlines is an error).
+            //            PdfOutlineCollection thisCollection = inputDocument.Outlines;
+            //        }
+            //        catch { continue; }
+            //        AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, newOutline, inputOutline.Outlines);
+            //    }
+            //}
+
+            //catch (Exception ex) { }
+
+            if (inputOutlineCollection.Count == 0) { return; }
+            foreach (PdfOutline inputOutline in inputOutlineCollection)
+            {
+                // Create a new bookmark in the output document
+                PdfPage inputPage = inputOutline.DestinationPage;
+                PdfPage outputPage = inputPageTracker[inputPage];
+                PdfOutline newOutline = parentOutline.Outlines.Add(inputOutline.Title, outputPage);
+
+                try
+                {
+                    //inputDocument.Outlines is giving me issues when it is empty, I don't know why and i can't seem detect when it is empty (simply accessing inputDocument.Outlines is an error).
+                    PdfOutlineCollection thisCollection = inputDocument.Outlines;
+                }
+                catch { continue; }
+                AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, newOutline, inputOutline.Outlines);
+            }
+        }
+        #endregion 
+        
         #region Generate Section Title PDF
         private void generateSections_Click(object sender, EventArgs e)
         {
