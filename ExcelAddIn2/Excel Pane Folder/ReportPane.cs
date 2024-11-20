@@ -1172,6 +1172,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             captureBitmap.Save(filePath, ImageFormat.Png);
         }
         #endregion
+
     }
 }
 

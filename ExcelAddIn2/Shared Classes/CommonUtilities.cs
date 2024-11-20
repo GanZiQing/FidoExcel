@@ -710,17 +710,17 @@ namespace ExcelAddIn2
         #endregion
 
         #region Write to Excel
-        public static void InsertHeadersAtSelection(List<string> headers, string type = "cols")
+        public static void InsertHeadersAtSelection(List<string> headers, string type = "cols", bool format = true)
         {
             Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             (int startRow, int endRow, int startCol, int endCol) = GetRangeDetails(selectedRange);
             Worksheet activeSheet = selectedRange.Worksheet;
-
+            int currentRow = startRow;
+            int currentCol = startCol;
             foreach (string header in headers)
             {
                 Range cell = activeSheet.Cells[startRow, startCol];
                 cell.Value2 = header;
-                cell.Font.Bold = true;
 
                 if (type == "cols")
                 {
@@ -730,6 +730,13 @@ namespace ExcelAddIn2
                 {
                     startRow++;
                 }
+            }
+            if (format)
+            {
+                Range writeRange = activeSheet.Range[activeSheet.Cells[startRow, startCol], activeSheet.Cells[currentRow, currentCol]];
+                writeRange.Font.Bold = true;
+                writeRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+                writeRange.VerticalAlignment = XlVAlign.xlVAlignCenter;
             }
         }
 
@@ -946,3 +953,4 @@ namespace ExcelAddIn2
         }
     }
 }
+

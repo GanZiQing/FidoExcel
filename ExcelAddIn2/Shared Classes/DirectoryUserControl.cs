@@ -314,38 +314,56 @@ namespace ExcelAddIn2
 
         private string renameOneFile(string sourcePath, string newPath)
         {
-            #region Check if Path Exist
-            if (!File.Exists(sourcePath))
-            {
-                //MessageBox.Show($"The following file does not exist\n{sourcePath}", "Error");
-                //throw new Exception($"The following file does not exist\n{sourcePath}", "Error");
-                return "Error: File does not exist";
-            }
-            #endregion
+            
+            FileAttributes attribute = File.GetAttributes(sourcePath);
 
-            #region Check Extension
-            if (!Path.HasExtension(newPath))
+            if (attribute == FileAttributes.Directory)
             {
-                newPath += Path.GetExtension(sourcePath);
+                try
+                {
+                    Directory.Move(sourcePath, newPath);
+                    return "Completed: File renamed";
+                }
+                catch (Exception ex)
+                {
+                    return "Error: " + ex.Message;
+                }
             }
-            else if (Path.GetExtension(sourcePath) != Path.GetExtension(newPath))
+            else
             {
-                //MessageBox.Show("Inconsistent extension type.\n" +
-                //    $"Original extension is {Path.GetExtension(sourcePath)} but new extension is {Path.GetExtension(newPath)}.\n" +
-                //    "Source Path:\n" +
-                //    $"{sourcePath}");
-                return "Warning: Inconsistent extension type";
-            }
-            #endregion
+                #region Check if Path Exist
+                if (!File.Exists(sourcePath))
+                {
+                    //MessageBox.Show($"The following file does not exist\n{sourcePath}", "Error");
+                    //throw new Exception($"The following file does not exist\n{sourcePath}", "Error");
+                    return "Error: File does not exist";
+                }
+                #endregion
 
-            try
-            {
-                File.Move(sourcePath, newPath);
-                return "Completed: File renamed";
-            }
-            catch (Exception ex)
-            {
-                return "Error: " + ex.Message;
+                #region Check Extension
+                if (!Path.HasExtension(newPath))
+                {
+                    newPath += Path.GetExtension(sourcePath);
+                }
+                else if (Path.GetExtension(sourcePath) != Path.GetExtension(newPath))
+                {
+                    //MessageBox.Show("Inconsistent extension type.\n" +
+                    //    $"Original extension is {Path.GetExtension(sourcePath)} but new extension is {Path.GetExtension(newPath)}.\n" +
+                    //    "Source Path:\n" +
+                    //    $"{sourcePath}");
+                    return "Warning: Inconsistent extension type";
+                }
+                #endregion
+
+                try
+                {
+                    File.Move(sourcePath, newPath);
+                    return "Completed: File renamed";
+                }
+                catch (Exception ex)
+                {
+                    return "Error: " + ex.Message;
+                }
             }
         }
 

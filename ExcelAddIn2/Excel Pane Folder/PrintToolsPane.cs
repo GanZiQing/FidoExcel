@@ -1495,179 +1495,211 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         #region Advance Merge PDF
         private void advancedMerge_Click(object sender, EventArgs e)
         {
-            #region Create table objects           
-            ExcelTableCol titleObj = new ExcelTableCol("title", 1);
-            ExcelTableCol startPgNumObj = new ExcelTableCol("startPgNum", 2);
-            ExcelTableCol endPgNumObj = new ExcelTableCol("endPgNum", 3);
-            ExcelTableCol totalPgNumObj = new ExcelTableCol("totalPgnum", 4);
-            ExcelTableCol insertNewPageObj = new ExcelTableCol("insertNewPage", 5);
-            ExcelTableCol filePathObj = new ExcelTableCol("filePath", 6);
-
-            Dictionary<int, ExcelTableCol> excelTable = new Dictionary<int, ExcelTableCol>();
-            excelTable.Add(titleObj.relativeColNum, titleObj);
-            excelTable.Add(startPgNumObj.relativeColNum, startPgNumObj);
-            excelTable.Add(endPgNumObj.relativeColNum, endPgNumObj);
-            excelTable.Add(totalPgNumObj.relativeColNum, totalPgNumObj);
-            excelTable.Add(insertNewPageObj.relativeColNum, insertNewPageObj);
-            excelTable.Add(filePathObj.relativeColNum, filePathObj);
-            #endregion
-
-            #region Check inputs
-            Range selectedRange = ThisApplication.ActiveWindow.RangeSelection;
-            (int startRow, int endRow, int startCol, int endCol) = GetRangeDetails(selectedRange);
-
-            // Check Number of Columns
-            int targetColNum = excelTable.Keys.Count;
-            if ((endCol - startCol + 1) < targetColNum)
-            {
-                MessageBox.Show($"Number of columns selected should be {targetColNum}, {endCol - startCol + 1} columns found", "Error");
-                return;
-            }
-
-            // Check filePath are valid
-            bool passCheck = CheckRangeFileExist(selectedRange.Columns[filePathObj.relativeColNum], true, true);
-            if (!passCheck)
-            {
-                return;
-            }
-            #endregion
-
-            #region Read excel table
-            int colNum = 1;
-            foreach (Range colRange in selectedRange.Columns)
-            {
-                ExcelTableCol thisColumn = excelTable[colNum];
-                thisColumn.range = colRange;
-                colNum++;
-            }
-            #endregion
-
-            #region Set array objects 
-            string[] headers = titleObj.ConvertRangeToStringArray();
-            string[] filePaths = filePathObj.ConvertRangeToStringArray();
-            bool[] insertNewPage = insertNewPageObj.ConvertRangeToBoolArray();
-            int?[] startPgNum = startPgNumObj.CreateNewIntArray();
-            int?[] endPgNum = endPgNumObj.CreateNewIntArray();
-            int?[] totalPgNum = totalPgNumObj.CreateNewIntArray();
-            #endregion
-
-            #region Get Output Directory
-            string outputPath;
             try
             {
-                ((DirectoryTextBox)AttributeTextBoxDic["PdfFolderPath"]).CheckAndGetPath();
-                outputPath = MergeFileNameAndDir(dispPdfOutFolder.Text, dispMergeName.Text, ".pdf");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message,"Error");
-                return;
-            }
+                #region Create table objects           
+                ExcelTableCol titleObj = new ExcelTableCol("title", 1);
+                ExcelTableCol startPgNumObj = new ExcelTableCol("startPgNum", 2);
+                ExcelTableCol endPgNumObj = new ExcelTableCol("endPgNum", 3);
+                ExcelTableCol totalPgNumObj = new ExcelTableCol("totalPgnum", 4);
+                ExcelTableCol insertNewPageObj = new ExcelTableCol("insertNewPage", 5);
+                ExcelTableCol filePathObj = new ExcelTableCol("filePath", 6);
 
-            if (!CheckAndDeleteFile(outputPath))
-            {
-                MessageBox.Show("Process terminated by user", "Terminated");
-                return;
-            }
-            #endregion
+                Dictionary<int, ExcelTableCol> excelTable = new Dictionary<int, ExcelTableCol>();
+                excelTable.Add(titleObj.relativeColNum, titleObj);
+                excelTable.Add(startPgNumObj.relativeColNum, startPgNumObj);
+                excelTable.Add(endPgNumObj.relativeColNum, endPgNumObj);
+                excelTable.Add(totalPgNumObj.relativeColNum, totalPgNumObj);
+                excelTable.Add(insertNewPageObj.relativeColNum, insertNewPageObj);
+                excelTable.Add(filePathObj.relativeColNum, filePathObj);
+                #endregion
 
-            #region Get Reference Title File
-            string refTitleFilePath = "";
-            if (((FileTextBox)AttributeTextBoxDic["RefTitlePageFile"]).textBox.Text != "")
-            {
-                try
-                {
-                    refTitleFilePath = ((FileTextBox)AttributeTextBoxDic["RefTitlePageFile"]).CheckAndGetValue(true);
-                }
-                catch
+                #region Check inputs
+                Range selectedRange = ThisApplication.ActiveWindow.RangeSelection;
+                (int startRow, int endRow, int startCol, int endCol) = GetRangeDetails(selectedRange);
+
+                // Check Number of Columns
+                CheckRangeSize(selectedRange, 0, 6, "");
+
+                // Check filePath are valid
+                bool passCheck = CheckRangeFileExist(selectedRange.Columns[filePathObj.relativeColNum], true, true);
+                if (!passCheck)
                 {
                     return;
                 }
-            }
+                #endregion
 
-            PdfDocument refTitleFile;
-            if (refTitleFilePath != "")
-            {
-                refTitleFile = PdfReader.Open(refTitleFilePath, PdfDocumentOpenMode.Import);
-            }
-            #endregion
-
-            #region Merge PDF
-            PdfDocument outputDocument = new PdfDocument();
-            int? sectionStartRow = null;
-            for (int relRowNum = 0; relRowNum < filePaths.Length; relRowNum++) // Loop through excel rows
-            {
-                #region Section Title and Page Nums
-                if (headers[relRowNum] != "")
+                #region Read excel table
+                int colNum = 1;
+                foreach (Range colRange in selectedRange.Columns)
                 {
-                    // Set end page number 
-                    if (sectionStartRow != null) // skip first occurrence 
+                    ExcelTableCol thisColumn = excelTable[colNum];
+                    thisColumn.range = colRange;
+                    colNum++;
+                }
+                #endregion
+
+                #region Set array objects 
+                string[] headers = titleObj.ConvertRangeToStringArray();
+                string[] filePaths = filePathObj.ConvertRangeToStringArray();
+                bool[] insertNewPage = insertNewPageObj.ConvertRangeToBoolArray();
+                int?[] startPgNum = startPgNumObj.CreateNewIntArray();
+                int?[] endPgNum = endPgNumObj.CreateNewIntArray();
+                int?[] totalPgNum = totalPgNumObj.CreateNewIntArray();
+                #endregion
+
+                #region Get Output Directory
+                string outputPath;
+                try
+                {
+                    ((DirectoryTextBox)AttributeTextBoxDic["PdfFolderPath"]).CheckAndGetPath();
+                    outputPath = MergeFileNameAndDir(dispPdfOutFolder.Text, dispMergeName.Text, ".pdf");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error");
+                    return;
+                }
+
+                if (!CheckAndDeleteFile(outputPath))
+                {
+                    MessageBox.Show("Process terminated by user", "Terminated");
+                    return;
+                }
+                #endregion
+
+                #region Get Reference Title File
+                string refTitleFilePath = "";
+                if (((FileTextBox)AttributeTextBoxDic["RefTitlePageFile"]).textBox.Text != "")
+                {
+                    try
                     {
-                        endPgNum[(int)sectionStartRow] = outputDocument.PageCount;
-                        totalPgNum[(int)sectionStartRow] = endPgNum[(int)sectionStartRow] - startPgNum[(int)sectionStartRow] + 1;
+                        refTitleFilePath = ((FileTextBox)AttributeTextBoxDic["RefTitlePageFile"]).CheckAndGetValue(true);
                     }
-                    // Set start page number
-                    sectionStartRow = relRowNum;
-                    startPgNum[relRowNum] = outputDocument.PageCount + 1;
-                    
-                    // Insert New Page if required
-                    if (insertNewPage[relRowNum])
+                    catch
                     {
-                        PdfPage page;
-                        if (refTitleFilePath != "")
+                        return;
+                    }
+                }
+
+                PdfDocument refTitleFile;
+                if (refTitleFilePath != "")
+                {
+                    refTitleFile = PdfReader.Open(refTitleFilePath, PdfDocumentOpenMode.Import);
+                }
+                #endregion
+
+                #region Merge PDF
+                PdfDocument outputDocument = new PdfDocument();
+                int? sectionStartRow = null;
+                Dictionary<string, PdfOutline> outlineTracker = new Dictionary<string, PdfOutline>();
+                for (int relRowNum = 0; relRowNum < filePaths.Length; relRowNum++) // Loop through excel rows
+                {
+                    #region Section Title and Page Nums
+                    if (headers[relRowNum] != "")
+                    {
+                        // Set end page number 
+                        if (sectionStartRow != null) // skip first occurrence 
                         {
-                            refTitleFile = PdfReader.Open(refTitleFilePath, PdfDocumentOpenMode.Import);
-                            page = outputDocument.AddPage(refTitleFile.Pages[0]);
+                            endPgNum[(int)sectionStartRow] = outputDocument.PageCount;
+                            totalPgNum[(int)sectionStartRow] = endPgNum[(int)sectionStartRow] - startPgNum[(int)sectionStartRow] + 1;
+                        }
+                        // Set start page number
+                        sectionStartRow = relRowNum;
+                        startPgNum[relRowNum] = outputDocument.PageCount + 1;
+
+                        // Insert New Page if required
+                        if (insertNewPage[relRowNum])
+                        {
+                            PdfPage page;
+                            if (refTitleFilePath != "")
+                            {
+                                refTitleFile = PdfReader.Open(refTitleFilePath, PdfDocumentOpenMode.Import);
+                                page = outputDocument.AddPage(refTitleFile.Pages[0]);
+                            }
+                            else
+                            {
+                                page = outputDocument.AddPage();
+                            }
+                            //PdfPage page = outputDocument.AddPage();
+                            InsertHeader(page, headers[relRowNum]);
+                            sectionStartRow = relRowNum;
+                        }
+                    }
+                    #endregion
+
+                    #region Append Input File
+                    if (filePaths[relRowNum] == "")
+                    {
+                        // Skip empty filepaths
+                        continue;
+                    }
+
+                    PdfDocument inputDocument = PdfReader.Open(filePaths[relRowNum], PdfDocumentOpenMode.Import);
+                    for (int inputPageNum = 0; inputPageNum < inputDocument.PageCount; inputPageNum++)
+                    {
+                        PdfPage page = inputDocument.Pages[inputPageNum];
+                        outputDocument.AddPage(page);
+                    }
+                    #endregion
+
+                    #region Add Bookmark
+                    if (headers[relRowNum] != "")
+                    {
+                        string header = headers[relRowNum];
+                        string[] parts = header.Split('\n');
+                        PdfPage bookmarkPage = outputDocument.Pages[(int)startPgNum[relRowNum] - 1];
+
+                        if (parts.Count() == 2)
+                        {
+                            string parentBookmarkName = parts[0];
+                            string childBookmarkName = parts[1];
+                            PdfOutline parentBookmark = null;
+                            if (outlineTracker.ContainsKey(parentBookmarkName))
+                            { 
+                                parentBookmark = outlineTracker[parentBookmarkName];
+                            }
+                            else
+                            {
+                                parentBookmark = outputDocument.Outlines.Add(parentBookmarkName, bookmarkPage);
+                                outlineTracker.Add(parentBookmarkName, parentBookmark);
+                            }
+                            if (childBookmarkName.Length > 0) { parentBookmark.Outlines.Add(childBookmarkName, bookmarkPage); }
                         }
                         else
                         {
-                            page = outputDocument.AddPage();
+                            PdfOutline bookmark = outputDocument.Outlines.Add(header, bookmarkPage);
+                            outlineTracker.Add(header, bookmark);
                         }
-                        //PdfPage page = outputDocument.AddPage();
-                        InsertHeader(page, headers[relRowNum]);
-                        sectionStartRow = relRowNum;
                     }
+                    #endregion
                 }
-                #endregion
-                
-                #region Append Input File
-                if (filePaths[relRowNum] == "")
+                #region Write Page Numbers
+                // Calculate final occurrence of header
+                if (sectionStartRow != null) // skip if no headers
                 {
-                    // Skip empty filepaths
-                    continue;
+                    endPgNum[(int)sectionStartRow] = outputDocument.PageCount;
+                    totalPgNum[(int)sectionStartRow] = endPgNum[(int)sectionStartRow] - startPgNum[(int)sectionStartRow] + 1;
                 }
-
-                PdfDocument inputDocument = PdfReader.Open(filePaths[relRowNum], PdfDocumentOpenMode.Import);
-                for (int inputPageNum = 0; inputPageNum < inputDocument.PageCount; inputPageNum++)
-                {
-                    PdfPage page = inputDocument.Pages[inputPageNum];
-                    outputDocument.AddPage(page);
-                }
+                startPgNumObj.WriteIntToExcel();
+                endPgNumObj.WriteIntToExcel();
+                totalPgNumObj.WriteIntToExcel();
                 #endregion
-            }
-            #region Write Page Numbers
-            // Calculate final occurrence of header
-            if (sectionStartRow != null) // skip if no headers
-            {
-                endPgNum[(int)sectionStartRow] = outputDocument.PageCount;
-                totalPgNum[(int)sectionStartRow] = endPgNum[(int)sectionStartRow] - startPgNum[(int)sectionStartRow] + 1;
-            }
-            startPgNumObj.WriteIntToExcel();
-            endPgNumObj.WriteIntToExcel();
-            totalPgNumObj.WriteIntToExcel();
-            #endregion
-            #endregion
+                #endregion
 
-            #region Save PDF
-            if (outputDocument.PageCount == 0)
-            {
-                MessageBox.Show("Final PDF file is empty, no file generated","Error");
-                return;
-            }
-            outputDocument.Save(outputPath);
-            #endregion
+                #region Save PDF
+                if (outputDocument.PageCount == 0)
+                {
+                    MessageBox.Show("Final PDF file is empty, no file generated", "Error");
+                    return;
+                }
+                outputDocument.Save(outputPath);
+                #endregion
 
-            MessageBox.Show("Operation completed", "Success");
+                MessageBox.Show("Operation completed", "Success");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+            
         }
 
         private void InsertHeader(PdfPage page, string headerText)
@@ -2042,15 +2074,17 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             #region Add Page Number
             progressTrackerLocal.UpdateStatus($"Adding page number to {Path.GetFileName(inputPath)}");
-            PdfDocument inputDocument = PdfReader.Open(inputPath, PdfDocumentOpenMode.Import);
-            PdfDocument outputDocument = new PdfDocument();
-            foreach (PdfPage page in inputDocument.Pages)
-            {
-                outputDocument.AddPage(page);
-            }
+            PdfDocument inputDocument = PdfReader.Open(inputPath, PdfDocumentOpenMode.Modify);
+            
+            //PdfDocument outputDocument = new PdfDocument();
+            //foreach (PdfPage page in inputDocument.Pages)
+            //{
+            //    outputDocument.AddPage(page);
+            //}
 
             int currentPageNum = firstPageNum;
-            for (int pageNum = skipPages; pageNum < outputDocument.PageCount; pageNum++)
+            //for (int pageNum = skipPages; pageNum < outputDocument.PageCount; pageNum++)
+            for (int pageNum = skipPages; pageNum < inputDocument.PageCount; pageNum++)
             {
                 #region User Params
                 int fontSize = Convert.ToInt32(dispFontSize.Text);
@@ -2058,7 +2092,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 double yOffset = double.Parse(dispOffsetY.Text);
                 #endregion
 
-                PdfPage page = outputDocument.Pages[pageNum];
+                //PdfPage page = outputDocument.Pages[pageNum];
+                PdfPage page = inputDocument.Pages[pageNum];
                 XGraphics gfx = XGraphics.FromPdfPage(page);
                 string fontName = "Arial";
 
@@ -2094,7 +2129,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
 
                 #region Report Progress
-                worker.ReportProgress(ConvertToProgress(pageNum, outputDocument.PageCount));
+                worker.ReportProgress(ConvertToProgress(pageNum, inputDocument.PageCount));
                 if (worker.CancellationPending)
                 {
                     return;
@@ -2104,7 +2139,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 currentPageNum++;
             }
             #endregion
-            outputDocument.Save(outputPath);
+            inputDocument.Save(outputPath);
         }
         #endregion
 

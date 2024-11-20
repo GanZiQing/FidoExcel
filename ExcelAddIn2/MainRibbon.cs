@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Office.Tools.Ribbon;
 // Things I added myself
-using Microsoft.Office.Tools.Excel;
-using Excel = Microsoft.Office.Interop.Excel;
+//using Microsoft.Office.Tools.Excel;
+using Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -25,9 +25,9 @@ namespace ExcelAddIn2
 
         private void btnStart_Click(object sender, RibbonControlEventArgs e)
         {
-            Excel.Worksheet activeWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
+            Worksheet activeWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
 
-            Excel.Range actCell = Globals.ThisAddIn.Application.ActiveCell;
+            Range actCell = Globals.ThisAddIn.Application.ActiveCell;
             if (actCell.Value2 != null)
             {
                 string sValue = actCell.Value2.ToString();
@@ -83,12 +83,12 @@ namespace ExcelAddIn2
 
             // Main code starts from this line:
 
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
-            Excel.Range oldNameRange = objSheet.Range[objSheet.Cells[rng.Row, rng.Column], objSheet.Cells[rng.Row + rng.Rows.Count - 1, rng.Column]];
-            Excel.Range newNameRange = objSheet.Range[objSheet.Cells[rng.Row, rng.Column + 1], objSheet.Cells[rng.Row + rng.Rows.Count - 1, rng.Column + 1]];
+            Range oldNameRange = objSheet.Range[objSheet.Cells[rng.Row, rng.Column], objSheet.Cells[rng.Row + rng.Rows.Count - 1, rng.Column]];
+            Range newNameRange = objSheet.Range[objSheet.Cells[rng.Row, rng.Column + 1], objSheet.Cells[rng.Row + rng.Rows.Count - 1, rng.Column + 1]];
 
             object[,] oldNames = oldNameRange.Value2;
             object[,] newNames = newNameRange.Value2;
@@ -132,9 +132,9 @@ namespace ExcelAddIn2
             }
 
             // Main code starts from this line:
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
             string[] pointNames = new string[6869];
             int pointCount = 0;
@@ -145,9 +145,9 @@ namespace ExcelAddIn2
             ret = mySapModel.PointObj.GetNameList(ref pointCount, ref pointNames);
 
             // Execute the code without Task.Run
-            Excel.Range Title = objSheet.Cells[rng.Row, rng.Column];
+            Range Title = objSheet.Cells[rng.Row, rng.Column];
             Title.Value = "UniqueName";
-            Excel.Range startCell = objSheet.Cells[rng.Row + 1, rng.Column];
+            Range startCell = objSheet.Cells[rng.Row + 1, rng.Column];
 
             objBook.Application.ScreenUpdating = false;
 
@@ -165,8 +165,8 @@ namespace ExcelAddIn2
             }
 
             // Write the entire array to the worksheet in one go using Value2
-            Excel.Range endCell = startCell.Offset[pointCount - 1, 0];
-            Excel.Range writeRange = objSheet.Range[startCell, endCell];
+            Range endCell = startCell.Offset[pointCount - 1, 0];
+            Range writeRange = objSheet.Range[startCell, endCell];
             writeRange.Value2 = dataArray;
 
             objBook.Application.ScreenUpdating = true;
@@ -195,13 +195,13 @@ namespace ExcelAddIn2
             ret = mySapModel.GroupDef.GetNameList(ref NumberNames, ref MyName);
 
             // Print to excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
-            Excel.Range Title = objSheet.Cells[rng.Row, rng.Column];
+            Range Title = objSheet.Cells[rng.Row, rng.Column];
             Title.Value = "Group Names";
-            Excel.Range startCell = objSheet.Cells[rng.Row + 1, rng.Column];
+            Range startCell = objSheet.Cells[rng.Row + 1, rng.Column];
 
             objBook.Application.ScreenUpdating = false;
 
@@ -215,8 +215,8 @@ namespace ExcelAddIn2
             }
 
             // Write the entire array to the worksheet in one go using Value2
-            Excel.Range endCell = startCell.Offset[NumberNames - 1, 0];
-            Excel.Range writeRange = objSheet.Range[startCell, endCell];
+            Range endCell = startCell.Offset[NumberNames - 1, 0];
+            Range writeRange = objSheet.Range[startCell, endCell];
             writeRange.Value2 = dataArray;
             //objSheet.Cells[rng.Row, rng.Column + 1].Value = "To Replicate"; This is how you write to one cell only 
 
@@ -243,9 +243,9 @@ namespace ExcelAddIn2
             //// Main code starts here
 
             //// Add section to read input data from Excel
-            //Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            //Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            //Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            //Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            //Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            //Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
             //// Get points from ETABS
             //int ret = 0;
@@ -302,9 +302,9 @@ namespace ExcelAddIn2
             //}
 
             //// Write the entire array to the worksheet in one go using Value2
-            //Excel.Range startCell = objSheet.Cells[rng.Row, rng.Column];
-            //Excel.Range endCell = startCell.Offset[numRow-1, numCol-1];
-            //Excel.Range writeRange = objSheet.Range[startCell, endCell];
+            //Range startCell = objSheet.Cells[rng.Row, rng.Column];
+            //Range endCell = startCell.Offset[numRow-1, numCol-1];
+            //Range writeRange = objSheet.Range[startCell, endCell];
             //writeRange.Value2 = dataArray;
 
             //objBook.Application.ScreenUpdating = true;
@@ -329,9 +329,9 @@ namespace ExcelAddIn2
 
             // Main code starts here
             // Add section to read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
             // Get points from ETABS
             int ret = 0;
@@ -386,8 +386,8 @@ namespace ExcelAddIn2
             // Main code starts here
             mySapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
 
             // User inputs
             bool ReadAsFixed = false; // set to false to read from selection 
@@ -398,10 +398,10 @@ namespace ExcelAddIn2
             int lastCol = 0;
             int firstRow = 0;
             int firstCol = 0;
-            Excel.Range dataRange = objSheet.Range[objSheet.Cells[1, 1], objSheet.Cells[1, 1]];
+            Range dataRange = objSheet.Range[objSheet.Cells[1, 1], objSheet.Cells[1, 1]];
             if (ReadAsFixed)
             {
-                lastRow = objSheet.Cells[objSheet.Rows.Count, 1].End[Excel.XlDirection.xlUp].Row;
+                lastRow = objSheet.Cells[objSheet.Rows.Count, 1].End[XlDirection.xlUp].Row;
                 lastCol = 10;
                 firstRow = 3;
                 firstCol = 1;
@@ -583,6 +583,23 @@ namespace ExcelAddIn2
             MessageBox.Show("Coding completed successfully", "PWG_Meinhardt Automation Tools", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private string[] GetStoryNames(ETABSv1.cSapModel mySapModel)
+        {
+            double BaseElevation = 0;
+            int NumberStories = 0;
+            string[] StoryNames = new string[0];
+            double[] StoryElevations = new double[0];
+            double[] StoryHeights = new double[0];
+            bool[] IsMasterStory = new bool[0];
+            string[] SimilarToStory = new string[0];
+            bool[] SpliceAbove = new bool[0];
+            double[] SpliceHeight = new double[0];
+            int[] color = new int[0];
+
+            int ret = -1;
+            ret = mySapModel.Story.GetStories_2(ref BaseElevation, ref NumberStories, ref StoryNames, ref StoryElevations, ref StoryHeights, ref IsMasterStory, ref SimilarToStory, ref SpliceAbove, ref SpliceHeight, ref color);
+            return StoryNames;
+        }
         private void GetJointLoad_Click(object sender, RibbonControlEventArgs e)
         {
             // Common code to initiate the Etabs
@@ -645,9 +662,9 @@ namespace ExcelAddIn2
             ret = SapModel.Story.GetStories_2(ref BaseElevation, ref NumberStories, ref StoryNames, ref StoryElevations, ref StoryHeights, ref IsMasterStory, ref SimilarToStory, ref SpliceAbove, ref SpliceHeight, ref color);
 
             // Print to excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             objBook.Application.ScreenUpdating = false;
 
             // User Inputs
@@ -673,9 +690,9 @@ namespace ExcelAddIn2
             }
 
             // Write the entire array to the worksheet in one go using Value2
-            Excel.Range startCell = objSheet.Cells[rng.Row + startRowOffset, rng.Column];
-            Excel.Range endCell = startCell.Offset[NumberStories - 1, excelNoCol - 1]; // -1 because it's an offset
-            Excel.Range writeRange = objSheet.Range[startCell, endCell];
+            Range startCell = objSheet.Cells[rng.Row + startRowOffset, rng.Column];
+            Range endCell = startCell.Offset[NumberStories - 1, excelNoCol - 1]; // -1 because it's an offset
+            Range writeRange = objSheet.Range[startCell, endCell];
             writeRange.Value2 = dataArray;
 
             objBook.Application.ScreenUpdating = true;
@@ -709,12 +726,12 @@ namespace ExcelAddIn2
             }
 
             // Add section to read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
             // Read Excel data as object
-            Excel.Range dataRange = objSheet.Range[objSheet.Cells[rng.Row, rng.Column], objSheet.Cells[rng.Row + rng.Rows.Count, rng.Column + rng.Columns.Count]];
+            Range dataRange = objSheet.Range[objSheet.Cells[rng.Row, rng.Column], objSheet.Cells[rng.Row + rng.Rows.Count, rng.Column + rng.Columns.Count]];
             object[,] data = dataRange.Value2;
 
             // Convert data to individual arrays
@@ -879,9 +896,9 @@ namespace ExcelAddIn2
             int ret = 0;
 
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
             bool checkRange = !((selectedRange.Rows.Count == 1) & (selectedRange.Columns.Count == 1));
             if (checkRange)
@@ -1005,11 +1022,11 @@ namespace ExcelAddIn2
             mySapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
 
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
 
             // Reading data from excel
-            Excel.Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             int lastRow = dataRange.Rows.Count;
             int lastCol = dataRange.Columns.Count;
             int firstRow = 1;
@@ -1266,9 +1283,9 @@ namespace ExcelAddIn2
             mySapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
 
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             int lastRow = dataRange.Rows.Count;
             int lastCol = dataRange.Columns.Count;
             int firstRow = 1;
@@ -1454,9 +1471,9 @@ namespace ExcelAddIn2
             mySapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
 
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             int lastRow = dataRange.Rows.Count;
             int lastCol = dataRange.Columns.Count;
             int firstRow = 0;
@@ -1519,9 +1536,9 @@ namespace ExcelAddIn2
             objBook.Application.ScreenUpdating = false;
 
             // Write the entire array to the worksheet in one go using Value2
-            Excel.Range startCell = objSheet.Cells[dataRange.Row, dataRange.Column+1];
-            Excel.Range endCell = startCell.Offset[numRow - 1, numCol - 1];
-            Excel.Range writeRange = objSheet.Range[startCell, endCell];
+            Range startCell = objSheet.Cells[dataRange.Row, dataRange.Column+1];
+            Range endCell = startCell.Offset[numRow - 1, numCol - 1];
+            Range writeRange = objSheet.Range[startCell, endCell];
             writeRange.Value2 = dataArray;
 
             objBook.Application.ScreenUpdating = true;
@@ -1543,9 +1560,9 @@ namespace ExcelAddIn2
             mySapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
 
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range dataRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             int lastRow = dataRange.Rows.Count;
             int lastCol = dataRange.Columns.Count;
             int firstRow = 0;
@@ -1608,9 +1625,9 @@ namespace ExcelAddIn2
             mySapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
 
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = objBook.ActiveSheet;
-            Excel.Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = objBook.ActiveSheet;
+            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             int firstRow = selectedRange.Row;
             int firstCol = selectedRange.Column;
             int numRow = selectedRange.Rows.Count;
@@ -1619,7 +1636,7 @@ namespace ExcelAddIn2
             int lastCol = firstCol + numCol - 1;
 
             int numOffset = 1;
-            Excel.Range dataRange = objSheet.Range[objSheet.Cells[firstRow,firstCol], objSheet.Cells[lastRow, lastCol + numOffset]];
+            Range dataRange = objSheet.Range[objSheet.Cells[firstRow,firstCol], objSheet.Cells[lastRow, lastCol + numOffset]];
 
             // Read Excel data as object
             object[,] data = dataRange.Value2;
@@ -1928,10 +1945,10 @@ namespace ExcelAddIn2
         private void GetFiles_Click(object sender, RibbonControlEventArgs e)
         {
             // Read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = objBook.ActiveSheet;
-            Excel.Worksheet sourceSheet = objBook.Sheets["Macro Input"];
-            Excel.Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = objBook.ActiveSheet;
+            Worksheet sourceSheet = objBook.Sheets["Macro Input"];
+            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
 
             // Specify the directory path you want to loop through
             //string directoryPath = @"D:\Documents\TPY - 248002-01\05_ST Reports\ST1\ST01 Screenshot\Overall";
@@ -1940,7 +1957,7 @@ namespace ExcelAddIn2
 
             // Code to read from property
             string RangeofGet = "Property that you read";
-            Excel.Range activeRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range[RangeofGet];
+            Range activeRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range[RangeofGet];
             // Function to get all file paths
             void ListFilesAndFolders(string directory, List<string> in_directories, List<string> in_files)
             {
@@ -2018,17 +2035,17 @@ namespace ExcelAddIn2
             }
 
             // Add section to read input data from Excel
-            Excel.Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Excel.Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
-            Excel.Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet objSheet = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet;
+            Range rng = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             
             // Write to Excel
             objBook.Application.ScreenUpdating = false;
 
             // Write the entire array to the worksheet in one go using Value2
-            Excel.Range startCell = objSheet.Cells[rng.Row + rowOff, rng.Column + colOff];
-            Excel.Range endCell = startCell.Offset[numRow - 1, numCol - 1];
-            Excel.Range writeRange = objSheet.Range[startCell, endCell];
+            Range startCell = objSheet.Cells[rng.Row + rowOff, rng.Column + colOff];
+            Range endCell = startCell.Offset[numRow - 1, numCol - 1];
+            Range writeRange = objSheet.Range[startCell, endCell];
             writeRange.Value2 = dataArray;
 
             objBook.Application.ScreenUpdating = true;
@@ -2539,23 +2556,6 @@ namespace ExcelAddIn2
             
         }
 
-        private string[] GetStoryNames(ETABSv1.cSapModel mySapModel)
-        {
-            double BaseElevation = 0;
-            int NumberStories = 0;
-            string[] StoryNames = new string[0];
-            double[] StoryElevations = new double[0];
-            double[] StoryHeights = new double[0];
-            bool[] IsMasterStory = new bool[0];
-            string[] SimilarToStory = new string[0];
-            bool[] SpliceAbove = new bool[0];
-            double[] SpliceHeight = new double[0];
-            int[] color = new int[0];
-
-            int ret = -1;
-            ret = mySapModel.Story.GetStories_2(ref BaseElevation, ref NumberStories, ref StoryNames, ref StoryElevations, ref StoryHeights, ref IsMasterStory, ref SimilarToStory, ref SpliceAbove, ref SpliceHeight, ref color);
-            return StoryNames;
-        }
 
         private void EnableAllLC(ETABSv1.cSapModel mySapModel)
         {
@@ -2592,11 +2592,11 @@ namespace ExcelAddIn2
         private void Test_Click(object sender, RibbonControlEventArgs e)
         {
             
-            Excel.Range selectedRange;
+            Range selectedRange;
             if (string.IsNullOrEmpty(lastSelectedRange))
             {
                 selectedRange = Globals.ThisAddIn.Application.InputBox("Select range for SetRangeofGetJointReactionZ", "Select reference title range", Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, 8);
-                lastSelectedRange = selectedRange.get_Address(Type.Missing, Type.Missing, Excel.XlReferenceStyle.xlA1, Type.Missing, Type.Missing);
+                lastSelectedRange = selectedRange.get_Address(Type.Missing, Type.Missing, XlReferenceStyle.xlA1, Type.Missing, Type.Missing);
                 //lastSelectedRange = rangeString;
             }
             else
@@ -2604,7 +2604,7 @@ namespace ExcelAddIn2
                 selectedRange = Globals.ThisAddIn.Application.Range[lastSelectedRange];
             }
 
-            Excel.Workbook ThisWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Workbook ThisWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
             Microsoft.Office.Core.DocumentProperties properties = ThisWorkBook.CustomDocumentProperties;
             
             // Check if custom property exist, replace value if exist
@@ -2638,7 +2638,7 @@ namespace ExcelAddIn2
 
         private void GetPierTest_Click(object sender, RibbonControlEventArgs e)
         {
-            Excel.Workbook ThisWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Workbook ThisWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
             Office.DocumentProperties properties = ThisWorkBook.CustomDocumentProperties;
 
             Boolean propertyExist = false;
@@ -2660,7 +2660,7 @@ namespace ExcelAddIn2
 
         private void GetJointTest_Click(object sender, RibbonControlEventArgs e)
         {
-            Excel.Workbook ThisWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Workbook ThisWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
             Office.DocumentProperties properties = ThisWorkBook.CustomDocumentProperties;
 
             Boolean propertyExist = false;
