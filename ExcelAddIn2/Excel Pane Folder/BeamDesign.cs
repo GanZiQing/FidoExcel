@@ -118,7 +118,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                             #region Write Result
                             string[] writeArray = CommonUtilities.ConcatArrays(new List<Array> { TRebar, B2rebar, SRebar });
-                            CommonUtilities.WriteToExcelRows(sheet.Cells[rowNum, writeStartCol], 0, 0, false, writeArray);
+                            CommonUtilities.WriteToExcelRange(sheet.Cells[rowNum, writeStartCol], 0, 0, false, writeArray);
                             #endregion
                         }
                         catch (Exception ex)

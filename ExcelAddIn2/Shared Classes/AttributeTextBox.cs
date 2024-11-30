@@ -1073,7 +1073,7 @@ namespace ExcelAddIn2
 
             if (!Path.IsPathRooted(textBox.Text) || !Directory.Exists(textBox.Text))
             {
-                MessageBox.Show("Please provide a valid path", "Error");
+                MessageBox.Show("Invalid path entered.", "Error");
                 RefreshTextBox();
                 return;
             }
@@ -1087,7 +1087,7 @@ namespace ExcelAddIn2
         {
             if (textBox.Text == "")
             {
-                string msg = $"Please provide folderpath for {attName}";
+                string msg = $"No folderpath for {attName} provided";
                 if (showMsg)
                 {
                     MessageBox.Show(msg, "Error");
@@ -1096,7 +1096,7 @@ namespace ExcelAddIn2
             }
             else if (!Directory.Exists(textBox.Text))
             {
-                string msg = $"Invalid folder path  for {attName}:\n\n{textBox.Text}";
+                string msg = $"Invalid folder path for {attName}:\n{textBox.Text}";
                 if (showMsg)
                 {
                     MessageBox.Show(msg, "Error");
@@ -1173,7 +1173,7 @@ namespace ExcelAddIn2
 
             if (!Path.IsPathRooted(textBox.Text) || !File.Exists(textBox.Text))
             {
-                MessageBox.Show("Please provide a valid path", "Error");
+                MessageBox.Show("Invalid path provided", "Error");
                 RefreshTextBox();
                 return;
             }
@@ -1201,7 +1201,7 @@ namespace ExcelAddIn2
         {
             if (textBox.Text == "")
             {
-                string msg = $"Please provide filepath for {attName}";
+                string msg = $"Invalid filepath for {attName}";
                 if (showMsg)
                 {
                     MessageBox.Show(msg, "Error");
@@ -1210,7 +1210,7 @@ namespace ExcelAddIn2
             }
             else if (!Path.IsPathRooted(textBox.Text) || !File.Exists(textBox.Text))
             {
-                string msg = $"Invalid file path  for {attName}:\n\n{textBox.Text}";
+                string msg = $"Invalid file path for {attName}:\n\n{textBox.Text}";
                 if (showMsg)
                 {
                     MessageBox.Show(msg, "Error");

@@ -325,7 +325,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 outputCell.Select();
                 for (int i = 0; i < finalYs.Count; i++)
                 {
-                    WriteToExcel(0, i * 4, false, seriesNames[i], finalX, finalYs[i]);
+                    WriteToExcelSelection(0, i * 4, false, seriesNames[i], finalX, finalYs[i]);
                 }
                 #endregion
 
@@ -335,7 +335,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 for (int i = 0; i < finalYs.Count; i++)
                 {
-                    WriteToExcel(rowOffset, colOffset, false, seriesNames[i], finalX, finalYs[i]);
+                    WriteToExcelSelection(rowOffset, colOffset, false, seriesNames[i], finalX, finalYs[i]);
                     rowOffset += finalYs[i].Length;
                 }
                 #endregion

@@ -16,25 +16,38 @@ namespace ExcelAddIn2
 {
     public partial class DirectoryUserControl : UserControl
     {
+        #region Init
         public DirectoryUserControl()
         {
             InitializeComponent();
-            //CreateAttributes();
-            SubscribeToEvents();
             AddToolTips();
+            AddContextStrips();
         }
 
-        private void SubscribeToEvents()
+        private void AddContextStrips()
         {
-            this.renameFiles.MouseDown += new MouseEventHandler(renameFiles_RightClick);
+            List<string> headers = new List<string> { "File Path", "Folder Name", "File Name"};
+            AddHeaderMenuToButton(importFilePath, headers);
+
+            headers = new List<string> { "File Path", "Folder Name"};
+            AddHeaderMenuToButton(importFolderPath, headers);
+
+            headers = new List<string> { "File Name" };
+            AddHeaderMenuToButton(importFileName, headers);
+
+            headers = new List<string> { "Folder Name" };
+            AddHeaderMenuToButton(importFolderName, headers);
+
+            headers = new List<string> { "File Path", "Folder", "File Name", "New File Name", "Status" };
+            AddHeaderMenuToButton(renameFiles, headers);
         }
-        
+
         bool attributeCreated = false;
-        public void CreateAttributes(ref 
+        public void CreateAttributes(ref
             Dictionary<string, AttributeTextBox> AttributeTextBoxDic, ref
             Dictionary<string, CustomAttribute> CustomAttributeDic)
         {
-            if (attributeCreated) { return; } 
+            if (attributeCreated) { return; }
             #region Directory
             DirectoryTextBox FolderPath = new DirectoryTextBox("FolderPath", dispDirectory, setDirectory);
             FolderPath.AddOpenButton(dirOpenPath);
@@ -58,147 +71,106 @@ namespace ExcelAddIn2
                 "File Path | Folder | File Name | File Name\n" +
                 "Data in Folder and Origional File name columns are not used.");
 
-            toolTip1.SetToolTip(insertRenameHeader,
+            toolTip1.SetToolTip(mergeFolders,
                 "Inserts reference headers used for \"Import Paths\" and \"Rename Files\"\n" +
                 "File Path | Folder | File Name | New File Name | Status");
             #endregion
         }
 
+
+        #region Resize
+        public void ShowFileDetailsOnly()
+        {
+            
+            importFolderPath.Enabled = false;
+            importFolderName.Enabled = false; 
+            dispExtension.Enabled = false;
+            importSpecificFile.Enabled = false;
+            importSpecificFileNames.Enabled = false;
+            renameFiles.Enabled = false;
+            mergeFolders.Enabled = false;
+            this.Height = 224;
+        }
+        public void ShowUpToSpecifyExtension()
+        {
+            renameFiles.Enabled = false;
+            mergeFolders.Enabled = false;
+            this.Height = 428;
+        }
+        #endregion
+        #endregion
+
         #region Directory Management
+
+        #region Buttons
         private void importFilePath_Click(object sender, EventArgs e)
         {
-            #region Check Directory
-            if (dispDirectory.Text == "")
-            {
-                MessageBox.Show("Please provide folderpath", "Error");
-                return;
-            }
-            else if (!Directory.Exists(dispDirectory.Text))
-            {
-                MessageBox.Show($"Invalid folder path:\n\n{dispDirectory.Text}", "Error");
-                return;
-            }
-            #endregion
-
-            #region Get Parameters
-            string directoryPath = dispDirectory.Text;
-            Workbook activeBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Worksheet activeSheet = activeBook.ActiveSheet;
-            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            #endregion
-
-            #region Call method to get files and folders
-            //List<string> directories = new List<string>();
-            List<string> files = new List<string>();
-            getFilesAndDirectories(directoryPath, ref files, checkNestedFolders.Checked);
-            #endregion
-
-            #region Print results
-            // Print files array
-            string[] folder_name = new string[files.Count()];
-            string[] file_name = new string[files.Count()];
-            string[] full_path = new string[files.Count()];
-            int i = 0;
-            foreach (string file in files)
-            {
-                full_path[i] = file;
-                if (addExtensionCheck.Checked) { file_name[i] = Path.GetFileName(file); }
-                else { file_name[i] = Path.GetFileNameWithoutExtension(file); }
-                folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
-                i++;
-            }
-            try
-            {
-                WriteToExcel(0, 0, true, full_path, folder_name, file_name);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message == "Nothing found to print")
-                {
-                    MessageBox.Show("No results found", "Error");
-                }
-                else
-                {
-                    MessageBox.Show($"Error encountered\n\n{ex.Message}", "Error");
-                }
-            }
-            #endregion
+            importFilesOrFolders(true, false);
         }
 
+        private void importFileName_Click(object sender, EventArgs e)
+        {
+            importFilesOrFolders(true, true);
+        }
+        
         private void importFolderPath_Click(object sender, EventArgs e)
         {
-            #region Check Directory
-            if (dispDirectory.Text == "")
-            {
-                MessageBox.Show("Please provide folderpath");
-                return;
-            }
-            else if (!Directory.Exists(dispDirectory.Text))
-            {
-                MessageBox.Show($"Invalid folder path:\n\n{dispDirectory.Text}");
-                return;
-            }
-            #endregion
+            importFilesOrFolders(false, false);
+            //CheckDirectory();
 
-            #region Get Parameters
-            string directoryPath = dispDirectory.Text;
-            Workbook activeBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Worksheet activeSheet = activeBook.ActiveSheet;
-            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            #endregion
+            //#region Get Parameters
+            //string directoryPath = dispDirectory.Text;
+            //Workbook activeBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            //Worksheet activeSheet = activeBook.ActiveSheet;
+            //Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            //#endregion
 
-            #region Call method to get files and folders
-            List<string> directories = new List<string>();
-            getFolderDirectories(directoryPath, ref directories, checkNestedFolders.Checked);
-            #endregion
+            //#region Call method to get files and folders
+            //List<string> directories = new List<string>();
+            //getFolderDirectories(directoryPath, ref directories, checkNestedFolders.Checked);
+            //#endregion
 
-            #region Print results
-            // Print files array
-            string[] folder_name = new string[directories.Count()];
-            string[] full_path = new string[directories.Count()];
-            int i = 0;
-            foreach (string folder in directories)
-            {
-                full_path[i] = folder;
-                //folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
-                folder_name[i] = Path.GetFileName(folder);
-                i++;
-            }
-            try
-            {
-                WriteToExcel(0, 0, true, full_path, folder_name);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message == "Nothing found to print")
-                {
-                    MessageBox.Show("No results found");
-                }
-                else
-                {
-                    MessageBox.Show($"Error encountered\n\n{ex.Message}");
-                }
-            }
-            #endregion
+            //#region Print results
+            //// Print files array
+            //string[] folder_name = new string[directories.Count()];
+            //string[] full_path = new string[directories.Count()];
+            //int i = 0;
+            //foreach (string folder in directories)
+            //{
+            //    full_path[i] = folder;
+            //    //folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
+            //    folder_name[i] = Path.GetFileName(folder);
+            //    i++;
+            //}
+            //try
+            //{
+            //    WriteToExcel(0, 0, true, full_path, folder_name);
+            //}
+            //catch (Exception ex)
+            //{
+            //    if (ex.Message == "Nothing found to print")
+            //    {
+            //        MessageBox.Show("No results found");
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show($"Error encountered\n\n{ex.Message}");
+            //    }
+            //}
+            //#endregion
         }
-
+        
+        private void importFolderName_Click(object sender, EventArgs e)
+        {
+            importFilesOrFolders(false, true);
+        }
+        
         private void importSpecificFile_Click(object sender, EventArgs e)
         {
-            #region Check Directory and Inputs
-            if (dispDirectory.Text == "")
-            {
-                MessageBox.Show("Please provide folderpath", "Error");
-                return;
-            }
-            else if (!Directory.Exists(dispDirectory.Text))
-            {
-                MessageBox.Show($"Invalid folder path:\n\n{dispDirectory.Text}", "Error");
-                return;
-            }
-
+            #region Get Extension
             if (dispExtension.Text == "")
             {
-                MessageBox.Show("Please provide extension type", "Error");
+                MessageBox.Show("No extension type provided.", "Error");
                 return;
             }
             else if (dispExtension.Text[0] != '.')
@@ -208,178 +180,90 @@ namespace ExcelAddIn2
             }
             #endregion
 
-            #region Get Parameters
-            string directoryPath = dispDirectory.Text;
-            Workbook activeBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Worksheet activeSheet = activeBook.ActiveSheet;
-            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            #endregion
-
-            #region Call method to get files and folders
-            List<string> files = new List<string>();
-            getSpecificFiles(directoryPath, dispExtension.Text, ref files, checkNestedFolders.Checked);
-            #endregion
-
-            #region Print results
-            // Print files array
-            string[] folder_name = new string[files.Count()];
-            string[] file_name = new string[files.Count()];
-            string[] full_path = new string[files.Count()];
-            int i = 0;
-            foreach (string file in files)
-            {
-                full_path[i] = file;
-                if (addExtensionCheck.Checked) { file_name[i] = Path.GetFileName(file); }
-                else { file_name[i] = Path.GetFileNameWithoutExtension(file); }
-                folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
-                i++;
-            }
-            try
-            {
-                WriteToExcel(0, 0, true, full_path, folder_name, file_name);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message == "Nothing found to print")
-                {
-                    MessageBox.Show("No results found", "Error");
-                }
-                else
-                {
-                    MessageBox.Show($"Error encountered\n\n{ex.Message}", "Error");
-                }
-            }
-            #endregion
+            importFilesOrFolders(true, false, dispExtension.Text);
         }
-
-        private void renameFiles_Click(object sender, EventArgs e)
+        private void importSpecificFileNames_Click(object sender, EventArgs e)
         {
-            #region Check Input Size
-            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            try { CheckRangeSize(selectedRange, 0, 4); }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
-            #endregion
-
-            #region Get Confirmation
-            if (DialogResult.OK != MessageBox.Show($"Confirm to rename {selectedRange.Rows.Count} files? This cannot be undone.", "Confirmation"))
+            #region Get Extension
+            if (dispExtension.Text == "")
             {
+                MessageBox.Show("No extension type provided.", "Error");
+                return;
+            }
+            else if (dispExtension.Text[0] != '.')
+            {
+                MessageBox.Show($"Invalid extension type provided. Extension should start with '.'", "Error");
                 return;
             }
             #endregion
 
-            #region Read Excel Info
-            ExcelTable thisTable = new ExcelTable(selectedRange, "Selected Table");
-            thisTable.AddColumn(1, "sourcePaths");
-            thisTable.AddColumn(4, "newNames");
-            thisTable.ReadRangeFromTable();
-
-            string[] sourcePaths = thisTable.GetColumnFromName("sourcePaths").ConvertRangeToStringArray();
-            string[] newNames = thisTable.GetColumnFromName("newNames").ConvertRangeToStringArray();
-            #endregion
-
-            #region Change Names
-            string[] status = new string[sourcePaths.Length];
-            int failures = 0;
-            for (int i = 0; i < sourcePaths.Length; i++)
+            importFilesOrFolders(true, true, dispExtension.Text);
+        }
+        #endregion
+        
+        #region Main File Path Function
+        private void importFilesOrFolders(bool isFile, bool nameOnly, string specifiedExtension = "")
+        {
+            try
             {
-                try
+                #region Get Parameters
+                CheckDirectory();
+                string directoryPath = dispDirectory.Text;
+                Workbook activeBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+                Worksheet activeSheet = activeBook.ActiveSheet;
+                Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                #endregion
+
+                #region Get Directories and Files
+                List<string> files = new List<string>();
+                if (isFile)
                 {
-                    string sourcePath = sourcePaths[i];
-                    string newName = newNames[i];
-                    if (newName == "")
+                    if (specifiedExtension == "")
                     {
-                        throw new Exception("Error: File Name cannot be empty");
+                        getFilesAndDirectories(directoryPath, ref files, checkNestedFolders.Checked);
                     }
-                    string folder = Path.GetDirectoryName(sourcePath);
-                    string newPath = Path.Combine(folder, newName);
+                    else
+                    {
+                        getSpecificFiles(directoryPath, specifiedExtension, ref files, checkNestedFolders.Checked);
+                    }
 
-                    status[i] = renameOneFile(sourcePath, newPath);
                 }
-                catch (Exception ex)
-                {
-                    status[i] = "Error: " + ex.Message;
-                }
-                if (status[i] != "Completed: File renamed")
-                {
-                    failures++;
-                }
-            }
-            #endregion
+                else { getFolderDirectories(directoryPath, ref files, checkNestedFolders.Checked); }
 
-            if (failures == 0)
-            {
-                MessageBox.Show("Rename operation completed.\n" +
-                     $"{sourcePaths.Length - failures}/{sourcePaths.Length} files renamed", "Completed");
-            }
-            else
-            {
-                CommonUtilities.WriteToExcel(0, 4, false, status);
-                MessageBox.Show("Rename operation incomplete.\n" +
-                     $"{sourcePaths.Length - failures}/{sourcePaths.Length} files renamed. Check status.", "Completed");
-            }
-        }
-        private void insertRenameHeader_Click(object sender, EventArgs e) { }
-        private string renameOneFile(string sourcePath, string newPath)
-        {
-            
-            FileAttributes attribute = File.GetAttributes(sourcePath);
-
-            if (attribute == FileAttributes.Directory)
-            {
-                try
-                {
-                    Directory.Move(sourcePath, newPath);
-                    return "Completed: File renamed";
-                }
-                catch (Exception ex)
-                {
-                    return "Error: " + ex.Message;
-                }
-            }
-            else
-            {
-                #region Check if Path Exist
-                if (!File.Exists(sourcePath))
-                {
-                    //MessageBox.Show($"The following file does not exist\n{sourcePath}", "Error");
-                    //throw new Exception($"The following file does not exist\n{sourcePath}", "Error");
-                    return "Error: File does not exist";
-                }
+                if (files.Count == 0) { throw new Exception("No items found to print"); }
                 #endregion
 
-                #region Check Extension
-                if (!Path.HasExtension(newPath))
+                #region Print results
+                string[] fullPath = files.ToArray();
+                string[] folderName = new string[files.Count()];
+                string[] fileName = new string[files.Count()];
+
+                for (int i = 0; i < fullPath.Length; i++)
                 {
-                    newPath += Path.GetExtension(sourcePath);
+                    string file = fullPath[i];
+                    if (addExtensionCheck.Checked) { fileName[i] = Path.GetFileName(file); }
+                    else { fileName[i] = Path.GetFileNameWithoutExtension(file); }
+                    folderName[i] = Path.GetFileName(Path.GetDirectoryName(file));
                 }
-                else if (Path.GetExtension(sourcePath) != Path.GetExtension(newPath))
-                {
-                    //MessageBox.Show("Inconsistent extension type.\n" +
-                    //    $"Original extension is {Path.GetExtension(sourcePath)} but new extension is {Path.GetExtension(newPath)}.\n" +
-                    //    "Source Path:\n" +
-                    //    $"{sourcePath}");
-                    return "Warning: Inconsistent extension type";
-                }
+
+                if (isFile && !nameOnly) { WriteToExcelSelection(0, 0, true, fullPath, folderName, fileName); }
+                else if (isFile && nameOnly) { WriteToExcelSelection(0, 0, true, fileName); }
+                else if (!isFile && !nameOnly) { WriteToExcelSelection(0, 0, true, fullPath, folderName); }
+                else if (!isFile && nameOnly) { WriteToExcelSelection(0, 0, true, folderName); }
                 #endregion
 
-                try
+                #region Format Path to be less annoying
+                if (!nameOnly)
                 {
-                    File.Move(sourcePath, newPath);
-                    return "Completed: File renamed";
+                    Range startCell = selectedRange.Cells[1];
+                    Range endCell = startCell.Offset[fullPath.Length - 1];
+                    Range formatRange = selectedRange.Worksheet.Range[startCell, endCell];
+                    formatRange.Cells.Font.Color = Color.Gainsboro;
                 }
-                catch (Exception ex)
-                {
-                    return "Error: " + ex.Message;
-                }
+                #endregion
             }
-        }    
-        private void renameFiles_RightClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Right) { return; }
-            List<string> headers = new List<string> { "File Path", "Folder", "File Name", "New File Name", "Status" };
-            InsertHeadersAtSelection(headers, "cols");
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
-        #region Recursive Function to get all file paths
         private void getFilesAndDirectories(string directory, ref List<string> globalFileList, bool checkNest = true)
         {
             // Get all directories and files within the specified directory
@@ -398,7 +282,6 @@ namespace ExcelAddIn2
                 }
             }
         }
-
         private void getFolderDirectories(string directory, ref List<string> globalDirectoryList, bool checkNest = true)
         {
             // Get all directories and files within the specified directory
@@ -444,9 +327,20 @@ namespace ExcelAddIn2
                 }
             }
         }
-
         #endregion
 
+        #region Helper Functions
+        private void CheckDirectory()
+        {
+            if (dispDirectory.Text == "")
+            {
+                throw new ArgumentException("No folder path provided");
+            }
+            else if (!Directory.Exists(dispDirectory.Text))
+            {
+                throw new ArgumentException($"Invalid folder path:\n{dispDirectory.Text}");
+            }
+        }
         private static void WriteToExcel(int rowOff, int colOff, bool setCellToText, params Array[] arrays)
         {
             // This code takes any number of arrays (of various types) and outputs them into excel 
@@ -517,6 +411,145 @@ namespace ExcelAddIn2
             activeWB.Application.ScreenUpdating = true;
             activeWorkSheet = null;
         }
+
         #endregion
+        #endregion
+
+        #region Rename
+        private void renameFiles_Click(object sender, EventArgs e)
+        {
+            #region Check Input Size
+            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            try { CheckRangeSize(selectedRange, 0, 4); }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+            #endregion
+
+            #region Get Confirmation
+            if (DialogResult.OK != MessageBox.Show($"Confirm to rename {selectedRange.Rows.Count} files? This cannot be undone.", "Confirmation"))
+            {
+                return;
+            }
+            #endregion
+
+            #region Read Excel Info
+            ExcelTable thisTable = new ExcelTable(selectedRange, "Selected Table");
+            thisTable.AddColumn(1, "sourcePaths");
+            thisTable.AddColumn(4, "newNames");
+            thisTable.ReadRangeFromTable();
+
+            string[] sourcePaths = thisTable.GetColumnFromName("sourcePaths").ConvertRangeToStringArray();
+            string[] newNames = thisTable.GetColumnFromName("newNames").ConvertRangeToStringArray();
+            #endregion
+
+            #region Change Names
+            string[] status = new string[sourcePaths.Length];
+            int failures = 0;
+            for (int i = 0; i < sourcePaths.Length; i++)
+            {
+                try
+                {
+                    string sourcePath = sourcePaths[i];
+                    string newName = newNames[i];
+                    if (newName == "")
+                    {
+                        throw new Exception("Error: File Name cannot be empty");
+                    }
+                    string folder = Path.GetDirectoryName(sourcePath);
+                    string newPath = Path.Combine(folder, newName);
+
+                    status[i] = renameOneFile(sourcePath, newPath);
+                }
+                catch (Exception ex)
+                {
+                    status[i] = "Error: " + ex.Message;
+                }
+                if (status[i] != "Completed: File renamed")
+                {
+                    failures++;
+                }
+            }
+            #endregion
+
+            if (failures == 0)
+            {
+                MessageBox.Show("Rename operation completed.\n" +
+                     $"{sourcePaths.Length - failures}/{sourcePaths.Length} files renamed", "Completed");
+            }
+            else
+            {
+                CommonUtilities.WriteToExcelSelection(0, 4, false, status);
+                MessageBox.Show("Rename operation incomplete.\n" +
+                     $"{sourcePaths.Length - failures}/{sourcePaths.Length} files renamed. Check status.", "Completed");
+            }
+        }
+        
+        private void insertRenameHeader_Click(object sender, EventArgs e) { }
+        
+        private string renameOneFile(string sourcePath, string newPath)
+        {
+
+            FileAttributes attribute = File.GetAttributes(sourcePath);
+
+            if (attribute == FileAttributes.Directory)
+            {
+                try
+                {
+                    Directory.Move(sourcePath, newPath);
+                    return "Completed: File renamed";
+                }
+                catch (Exception ex)
+                {
+                    return "Error: " + ex.Message;
+                }
+            }
+            else
+            {
+                #region Check if Path Exist
+                if (!File.Exists(sourcePath))
+                {
+                    //MessageBox.Show($"The following file does not exist\n{sourcePath}", "Error");
+                    //throw new Exception($"The following file does not exist\n{sourcePath}", "Error");
+                    return "Error: File does not exist";
+                }
+                #endregion
+
+                #region Check Extension
+                if (!Path.HasExtension(newPath))
+                {
+                    newPath += Path.GetExtension(sourcePath);
+                }
+                else if (Path.GetExtension(sourcePath) != Path.GetExtension(newPath))
+                {
+                    //MessageBox.Show("Inconsistent extension type.\n" +
+                    //    $"Original extension is {Path.GetExtension(sourcePath)} but new extension is {Path.GetExtension(newPath)}.\n" +
+                    //    "Source Path:\n" +
+                    //    $"{sourcePath}");
+                    return "Warning: Inconsistent extension type";
+                }
+                #endregion
+
+                try
+                {
+                    File.Move(sourcePath, newPath);
+                    return "Completed: File renamed";
+                }
+                catch (Exception ex)
+                {
+                    return "Error: " + ex.Message;
+                }
+            }
+        }
+
+        #endregion
+
+        
+
+
+
+
+
+
+
+
     }
 }
