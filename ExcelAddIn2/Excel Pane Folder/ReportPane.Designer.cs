@@ -105,9 +105,9 @@
             // directoryUserControl1
             // 
             this.directoryUserControl1.Location = new System.Drawing.Point(9, 9);
-            this.directoryUserControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.directoryUserControl1.Margin = new System.Windows.Forms.Padding(4);
             this.directoryUserControl1.Name = "directoryUserControl1";
-            this.directoryUserControl1.Size = new System.Drawing.Size(502, 462);
+            this.directoryUserControl1.Size = new System.Drawing.Size(502, 431);
             this.directoryUserControl1.TabIndex = 9;
             // 
             // groupBox4
@@ -115,7 +115,7 @@
             this.groupBox4.Controls.Add(this.importToPpt);
             this.groupBox4.Controls.Add(this.setImportRange);
             this.groupBox4.Controls.Add(this.dispImportRange);
-            this.groupBox4.Location = new System.Drawing.Point(17, 896);
+            this.groupBox4.Location = new System.Drawing.Point(17, 866);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(6);
@@ -170,7 +170,7 @@
             this.groupBox2.Controls.Add(this.dispInsertY);
             this.groupBox2.Controls.Add(this.dispInsertX);
             this.groupBox2.Controls.Add(this.textBox3);
-            this.groupBox2.Location = new System.Drawing.Point(17, 650);
+            this.groupBox2.Location = new System.Drawing.Point(17, 620);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
@@ -306,7 +306,7 @@
             this.groupBox1.Controls.Add(this.openPpt);
             this.groupBox1.Controls.Add(this.setPptFile);
             this.groupBox1.Controls.Add(this.dispPptFile);
-            this.groupBox1.Location = new System.Drawing.Point(12, 480);
+            this.groupBox1.Location = new System.Drawing.Point(12, 450);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(6);

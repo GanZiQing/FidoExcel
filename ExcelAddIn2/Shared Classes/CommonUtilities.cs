@@ -9,9 +9,8 @@ using System.IO;
 
 
 namespace ExcelAddIn2
-//namespace ExcelAddIn2.Excel_Pane_Folder
 {
-    class CommonUtilities
+    static class CommonUtilities
     {
         #region Read Data from Excel
         public static double ReadDoubleFromCell(Range cell, bool emptyIsZero = false)
@@ -74,7 +73,7 @@ namespace ExcelAddIn2
 
             for (int i = 0; i < range.Cells.Count; i++)
             {
-                Range cell = range.Cells[i+1];
+                Range cell = range.Cells[i + 1];
                 var cellValue = cell.Value2;
                 output[i] = ReadDoubleFromCell2(cell, emptyValue, errorValue);
             }
@@ -85,7 +84,7 @@ namespace ExcelAddIn2
         public static HashSet<string> GetContentsAsStringHash(Range range)
         {
             List<string> rangeList = GetContentsAsStringList(range, true);
-            return new HashSet<string> (rangeList);
+            return new HashSet<string>(rangeList);
         }
 
         public static string[] GetContentsAsStringArray(Range range, bool ignoreEmpty)
@@ -229,7 +228,7 @@ namespace ExcelAddIn2
             return endPoint;
         }
 
-        public (int, int, int) DecimalToRGB(double decimalColor)
+        public static (int, int, int) DecimalToRGB(double decimalColor)
         {
             //decimalColor = B * 65536 + G * 256 + R
 
@@ -240,7 +239,7 @@ namespace ExcelAddIn2
             return ((int)R, (int)G, (int)B);
         }
 
-        public double RGBToDecimal(int R, int G, int B)
+        public static double RGBToDecimal(int R, int G, int B)
         {
             double decimalColor = B * 65536 + G * 256 + R;
             return decimalColor;
@@ -256,13 +255,13 @@ namespace ExcelAddIn2
         public static string ConvertToString(IEnumerable<string> items, string delimitor = "\n")
         {
             string finalString = "";
-            foreach(string item in items)
+            foreach (string item in items)
             {
                 finalString += item + delimitor;
             }
             return finalString;
         }
-        
+
 
         #endregion
 
@@ -294,12 +293,12 @@ namespace ExcelAddIn2
             // If file doesn't exist return true
             // If file exist and is deleted return true
             // If file exist and is not deleted return false
-            
+
             if (!File.Exists(filePath))
             {
                 return true;
             }
-            
+
             if (DialogResult.Yes == MessageBox.Show($"File already exist at following path, delete file and proceed?\n\n{filePath}", "Error", MessageBoxButtons.YesNo))
             {
                 return DeleteFile(filePath);
@@ -378,7 +377,7 @@ namespace ExcelAddIn2
                     string cellValue = cell.Value2.ToString();
                     if (!File.Exists(cellValue))
                     {
-                        if (!showError) 
+                        if (!showError)
                         {
                             // Terminate upon first occurrence
                             return false;
@@ -457,7 +456,7 @@ namespace ExcelAddIn2
             }
             return true;
         }
-        
+
         public static void CheckRangeSize(Range selectedRange, int numRows, int numCols, string attName = "")
         {
             if (numRows > 0 && numRows != selectedRange.Rows.Count)
@@ -710,37 +709,7 @@ namespace ExcelAddIn2
         #endregion
 
         #region Write to Excel
-        public static void InsertHeadersAtSelection(List<string> headers, string type = "cols", bool format = true)
-        {
-            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            (int startRow, int endRow, int startCol, int endCol) = GetRangeDetails(selectedRange);
-            Worksheet activeSheet = selectedRange.Worksheet;
-            int currentRow = startRow;
-            int currentCol = startCol;
-            foreach (string header in headers)
-            {
-                Range cell = activeSheet.Cells[startRow, startCol];
-                cell.Value2 = header;
-
-                if (type == "cols")
-                {
-                    startCol++; 
-                }
-                else
-                {
-                    startRow++;
-                }
-            }
-            if (format)
-            {
-                Range writeRange = activeSheet.Range[activeSheet.Cells[startRow, startCol], activeSheet.Cells[currentRow, currentCol]];
-                writeRange.Font.Bold = true;
-                writeRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
-                writeRange.VerticalAlignment = XlVAlign.xlVAlignCenter;
-            }
-        }
-
-        public static void WriteToExcel(int rowOff, int colOff, bool warning, params Array[] arrays)
+        public static void WriteToExcelSelection(int rowOff, int colOff, bool warning, params Array[] arrays)
         {
             // This code takes any number of arrays (of various types) and outputs them into excel 
             // Output order depends on order of the input array
@@ -800,7 +769,67 @@ namespace ExcelAddIn2
                 objBook.Application.ScreenUpdating = true;
             }
         }
-        
+
+        public static void WriteToExcelRange(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
+        {
+            // This code takes any number of arrays (of various types) and outputs them into excel 
+            // Output order depends on order of the input array
+            // Output location is the first cell of the provided range, offset by rowOff and colOff
+
+            // Find number of rows and columns
+            int numRow = arrays.Length;
+            int numCol = 0;
+            foreach (Array array in arrays)
+            {
+                if (array.Length > numCol) { numCol = array.Length; }
+            }
+
+            #region Get Confirmation
+            if (warning)
+            {
+                DialogResult result = MessageBox.Show("Confirm to export values to current selection? This will override cell values at current selection and cannot be undone.\n" +
+                "Output table size:\n" +
+                $"Number of rows: {numRow}\n" +
+                $"Number of columns: {numCol}", "Confirmation", MessageBoxButtons.YesNo);
+                if (result != DialogResult.Yes)
+                {
+                    throw new Exception("Terminated by user");
+                }
+            }
+            #endregion
+
+            #region Create Data Array
+            object[,] dataArray = new object[numRow, numCol];
+            for (int row = 0; row < numRow; row++)
+            {
+                for (int col = 0; col < numCol; col++)
+                {
+                    dataArray[row, col] = arrays[row].GetValue(col);
+                }
+            }
+            #endregion
+
+            #region Write to Excel
+            // Add section to read input data from Excel
+            Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet workSheet = startRange.Worksheet;
+
+            try
+            {
+                workBook.Application.ScreenUpdating = false;
+                Range startCell = startRange.Cells[1, 1];
+                Range endCell = startCell.Offset[numRow - 1, numCol - 1];
+                Range writeRange = workSheet.Range[startCell, endCell];
+                writeRange.Value2 = dataArray;
+            }
+            finally
+            {
+                workBook.Application.ScreenUpdating = true;
+            }
+            #endregion
+        }
+        #endregion
+
         public static Worksheet CopyNewSheetAtBack(Worksheet refSheet, string newName = "")
         {
             Workbook thisWorkbook = refSheet.Parent;
@@ -858,63 +887,46 @@ namespace ExcelAddIn2
             return listToWrinte.ToArray();
         }
 
-        public static void WriteToExcelRows(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
+
+
+        #region Insert Headers
+        public static void InsertHeadersAtSelection(List<string> headers, string type = "cols", bool format = true)
         {
-            // This code takes any number of arrays (of various types) and outputs them into excel 
-            // Output order depends on order of the input array
-            // Output location is the first cell of the provided range, offset by rowOff and colOff
-
-            // Find number of rows and columns
-            int numRow = arrays.Length;
-            int numCol = 0;
-            foreach (Array array in arrays)
+            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            (int startRow, int endRow, int startCol, int endCol) = GetRangeDetails(selectedRange);
+            Worksheet activeSheet = selectedRange.Worksheet;
+            int currentRow = startRow;
+            int currentCol = startCol;
+            foreach (string header in headers)
             {
-                if (array.Length > numCol) { numCol = array.Length; }
-            }
+                Range cell = activeSheet.Cells[startRow, startCol];
+                cell.Value2 = header;
 
-            #region Get Confirmation
-            if (warning)
-            {
-                DialogResult result = MessageBox.Show("Confirm to export values to current selection? This will override cell values at current selection and cannot be undone.\n" +
-                "Output table size:\n" +
-                $"Number of rows: {numRow}\n" +
-                $"Number of columns: {numCol}", "Confirmation", MessageBoxButtons.YesNo);
-                if (result != DialogResult.Yes)
+                if (type == "cols")
                 {
-                    throw new Exception("Terminated by user");
+                    startCol++;
+                }
+                else
+                {
+                    startRow++;
                 }
             }
-            #endregion
-
-            #region Create Data Array
-            object[,] dataArray = new object[numRow, numCol];
-            for (int row = 0; row < numRow; row++)
+            if (format)
             {
-                for (int col = 0; col < numCol; col++)
-                {
-                    dataArray[row, col] = arrays[row].GetValue(col);
-                }
+                Range writeRange = activeSheet.Range[activeSheet.Cells[startRow, startCol], activeSheet.Cells[currentRow, currentCol]];
+                writeRange.Font.Bold = true;
+                writeRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+                writeRange.VerticalAlignment = XlVAlign.xlVAlignCenter;
             }
-            #endregion
+        }
 
-            #region Write to Excel
-            // Add section to read input data from Excel
-            Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Worksheet workSheet = startRange.Worksheet;
+        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, List<string> headerText, string headerOrientation = "cols")
+        {
 
-            try
-            {
-                workBook.Application.ScreenUpdating = false;
-                Range startCell = startRange.Cells[1, 1];
-                Range endCell = startCell.Offset[numRow - 1, numCol - 1];
-                Range writeRange = workSheet.Range[startCell, endCell];
-                writeRange.Value2 = dataArray;
-            }
-            finally
-            {
-                workBook.Application.ScreenUpdating = true;
-            }
-            #endregion
+            button.ContextMenuStrip = new ContextMenuStrip();
+            ToolStripMenuItem headerItem = new ToolStripMenuItem("Add Header");
+            button.ContextMenuStrip.Items.Add(headerItem);
+            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, headerOrientation);
         }
         #endregion
     }

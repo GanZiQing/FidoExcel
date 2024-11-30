@@ -157,7 +157,7 @@ namespace ExcelAddIn2.Piling
                 if (double.IsNaN(sptValueList.Last()))
                 {
                     sptValueList[sptValueList.Count - 1] = -1;
-                    Beaver.LogError($"Final SPT value for {name} is empty, please check output");
+                    Beaver.LogError($"Final SPT value for {name} is empty, check output");
                 }
             }
 

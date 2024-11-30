@@ -1002,13 +1002,13 @@ namespace ExcelAddIn2
                     PrintSheets = ((MultipleSheetsAttribute)OtherAttributeDic["SavedDupeSheet"]).GetSheetNamesHash();
                     if (PrintSheets == null || PrintSheets.Count == 0)
                     {
-                        MessageBox.Show("Please set sheets to duplicate");
+                        MessageBox.Show("Set sheets to duplicate");
                         return OGSheets;
                     }
                 }
                 catch
                 {
-                    MessageBox.Show("Please set sheets to duplicate");
+                    MessageBox.Show("Set sheets to duplicate");
                     return OGSheets;
                 }
 
@@ -2601,7 +2601,7 @@ namespace ExcelAddIn2
             #region Confirmation
             try
             {
-                WriteToExcel(0, 0, true, names.ToArray());
+                WriteToExcelSelection(0, 0, true, names.ToArray());
                 MessageBox.Show("Completed", "Completed");
             }
             catch (Exception ex)
@@ -2658,7 +2658,7 @@ namespace ExcelAddIn2
                 DialogResult res = MessageBox.Show($"Print final sheet names to adjacent cells?", "Confirmation", MessageBoxButtons.YesNo);
                 if (res == DialogResult.Yes)
                 {
-                    WriteToExcel(0, 2, false, finalSheetNames);
+                    WriteToExcelSelection(0, 2, false, finalSheetNames);
                 }
             }
             else
@@ -2885,7 +2885,7 @@ namespace ExcelAddIn2
                 folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
                 i++;
             }
-            CommonUtilities.WriteToExcel(0, 0, true, full_path, folder_name, file_name);
+            CommonUtilities.WriteToExcelSelection(0, 0, true, full_path, folder_name, file_name);
         }
 
 

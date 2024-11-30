@@ -273,12 +273,6 @@
     <Compile Include="Shared Classes\DirectoryUserControl.Designer.cs">
       <DependentUpon>DirectoryUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Excel Pane Folder\Backup Pane\ReportPaneBackup.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Excel Pane Folder\Backup Pane\ReportPaneBackup.designer.cs">
-      <DependentUpon>ReportPaneBackup.cs</DependentUpon>
-    </Compile>
     <Compile Include="Excel Pane Folder\BeamDesign.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -400,9 +394,6 @@
     <EmbeddedResource Include="Excel Pane Folder\ETABSTaskPane.resx">
       <DependentUpon>ETABSTaskPane.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Excel Pane Folder\Backup Pane\ReportPaneBackup.resx">
-      <DependentUpon>ReportPaneBackup.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\BeamDesign.resx">
       <DependentUpon>BeamDesign.cs</DependentUpon>
     </EmbeddedResource>
@@ -457,6 +448,7 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ExcelAddIn2_1_TemporaryKey.pfx" />
     <None Include="ExcelAddIn2_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -500,11 +492,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile>ExcelAddIn2_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6AC3C2F4C8FCCCF62B9E1070F5A6EEA5FEE95C7A</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>4EB54BD9093C0B453B2BC39D19F95E1D003B821E</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>

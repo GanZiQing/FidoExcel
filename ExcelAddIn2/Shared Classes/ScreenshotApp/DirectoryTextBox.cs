@@ -117,7 +117,7 @@ namespace ScreenshotApp
 
             if (!Path.IsPathRooted(textBox.Text) || !Directory.Exists(textBox.Text))
             {
-                MessageBox.Show("Please provide a valid path", "Error");
+                MessageBox.Show("Invalid path provided.", "Error");
                 RefreshTextBox();
                 return;
             }
