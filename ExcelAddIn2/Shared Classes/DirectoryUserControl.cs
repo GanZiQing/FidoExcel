@@ -20,8 +20,15 @@ namespace ExcelAddIn2
         {
             InitializeComponent();
             //CreateAttributes();
+            SubscribeToEvents();
             AddToolTips();
         }
+
+        private void SubscribeToEvents()
+        {
+            this.renameFiles.MouseDown += new MouseEventHandler(renameFiles_RightClick);
+        }
+        
         bool attributeCreated = false;
         public void CreateAttributes(ref 
             Dictionary<string, AttributeTextBox> AttributeTextBoxDic, ref
@@ -311,7 +318,7 @@ namespace ExcelAddIn2
                      $"{sourcePaths.Length - failures}/{sourcePaths.Length} files renamed. Check status.", "Completed");
             }
         }
-
+        private void insertRenameHeader_Click(object sender, EventArgs e) { }
         private string renameOneFile(string sourcePath, string newPath)
         {
             
@@ -365,10 +372,10 @@ namespace ExcelAddIn2
                     return "Error: " + ex.Message;
                 }
             }
-        }
-
-        private void insertRenameHeader_Click(object sender, EventArgs e)
+        }    
+        private void renameFiles_RightClick(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Right) { return; }
             List<string> headers = new List<string> { "File Path", "Folder", "File Name", "New File Name", "Status" };
             InsertHeadersAtSelection(headers, "cols");
         }
