@@ -478,8 +478,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Combine_Logo.bmp" />
     <Content Include="Resources\etabs.png" />
+    <Content Include="Resources\Intersect_Logo.bmp" />
     <Content Include="Resources\ppt.png" />
+    <None Include="Resources\ReversSubtract_Logo.bmp" />
+    <Content Include="Resources\Subtract_Logo.bmp" />
+    <Content Include="Resources\Union_Logo.bmp" />
     <None Include="Resources\Windows Print complete.wav" />
     <None Include="Resources\excel.png" />
   </ItemGroup>

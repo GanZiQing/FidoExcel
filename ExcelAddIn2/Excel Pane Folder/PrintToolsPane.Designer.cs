@@ -58,6 +58,21 @@
             this.DispAppLeft = new System.Windows.Forms.TextBox();
             this.ExcelTabControl = new System.Windows.Forms.TabControl();
             this.dirPage = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.reverseSubtractFiles = new System.Windows.Forms.Button();
+            this.subtractFiles = new System.Windows.Forms.Button();
+            this.unionFiles = new System.Windows.Forms.Button();
+            this.dispExtension = new System.Windows.Forms.TextBox();
+            this.searchSubFoldersCheck = new System.Windows.Forms.CheckBox();
+            this.specifyExtensionCheck = new System.Windows.Forms.CheckBox();
+            this.intersectFiles = new System.Windows.Forms.Button();
+            this.openFolder2 = new System.Windows.Forms.Button();
+            this.setFolder2 = new System.Windows.Forms.Button();
+            this.removeIntersectFiles = new System.Windows.Forms.Button();
+            this.dispFolder2 = new System.Windows.Forms.TextBox();
+            this.openFolder1 = new System.Windows.Forms.Button();
+            this.setFolder1 = new System.Windows.Forms.Button();
+            this.dispFolder1 = new System.Windows.Forms.TextBox();
             this.openFilesGroup = new System.Windows.Forms.GroupBox();
             this.dispOpenDelay = new System.Windows.Forms.TextBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
@@ -108,6 +123,7 @@
             this.PrintSettingsGroup.SuspendLayout();
             this.ExcelTabControl.SuspendLayout();
             this.dirPage.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.openFilesGroup.SuspendLayout();
             this.pdfPage.SuspendLayout();
             this.addPageNumGroup.SuspendLayout();
@@ -474,6 +490,7 @@
             // dirPage
             // 
             this.dirPage.BackColor = System.Drawing.SystemColors.Control;
+            this.dirPage.Controls.Add(this.groupBox5);
             this.dirPage.Controls.Add(this.openFilesGroup);
             this.dirPage.Controls.Add(this.directoryUserControl);
             this.dirPage.Location = new System.Drawing.Point(4, 33);
@@ -483,6 +500,211 @@
             this.dirPage.Size = new System.Drawing.Size(531, 1484);
             this.dirPage.TabIndex = 3;
             this.dirPage.Text = "Directory";
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.reverseSubtractFiles);
+            this.groupBox5.Controls.Add(this.subtractFiles);
+            this.groupBox5.Controls.Add(this.unionFiles);
+            this.groupBox5.Controls.Add(this.dispExtension);
+            this.groupBox5.Controls.Add(this.searchSubFoldersCheck);
+            this.groupBox5.Controls.Add(this.specifyExtensionCheck);
+            this.groupBox5.Controls.Add(this.intersectFiles);
+            this.groupBox5.Controls.Add(this.openFolder2);
+            this.groupBox5.Controls.Add(this.setFolder2);
+            this.groupBox5.Controls.Add(this.removeIntersectFiles);
+            this.groupBox5.Controls.Add(this.dispFolder2);
+            this.groupBox5.Controls.Add(this.openFolder1);
+            this.groupBox5.Controls.Add(this.setFolder1);
+            this.groupBox5.Controls.Add(this.dispFolder1);
+            this.groupBox5.Location = new System.Drawing.Point(9, 705);
+            this.groupBox5.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox5.Size = new System.Drawing.Size(502, 370);
+            this.groupBox5.TabIndex = 46;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Compare Folders";
+            // 
+            // reverseSubtractFiles
+            // 
+            this.reverseSubtractFiles.BackgroundImage = global::ExcelAddIn2.Properties.Resources.ReversSubtract_Logo;
+            this.reverseSubtractFiles.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.reverseSubtractFiles.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.reverseSubtractFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.reverseSubtractFiles.Location = new System.Drawing.Point(392, 303);
+            this.reverseSubtractFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.reverseSubtractFiles.Name = "reverseSubtractFiles";
+            this.reverseSubtractFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.reverseSubtractFiles.Size = new System.Drawing.Size(50, 50);
+            this.reverseSubtractFiles.TabIndex = 110;
+            this.reverseSubtractFiles.UseVisualStyleBackColor = true;
+            this.reverseSubtractFiles.Click += new System.EventHandler(this.reverseSubtractFiles_Click);
+            // 
+            // subtractFiles
+            // 
+            this.subtractFiles.BackgroundImage = global::ExcelAddIn2.Properties.Resources.Subtract_Logo;
+            this.subtractFiles.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.subtractFiles.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.subtractFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.subtractFiles.Location = new System.Drawing.Point(305, 303);
+            this.subtractFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.subtractFiles.Name = "subtractFiles";
+            this.subtractFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.subtractFiles.Size = new System.Drawing.Size(50, 50);
+            this.subtractFiles.TabIndex = 12;
+            this.subtractFiles.UseVisualStyleBackColor = true;
+            this.subtractFiles.Click += new System.EventHandler(this.subtractFiles_Click);
+            // 
+            // unionFiles
+            // 
+            this.unionFiles.BackgroundImage = global::ExcelAddIn2.Properties.Resources.Union_Logo;
+            this.unionFiles.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.unionFiles.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.unionFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.unionFiles.Location = new System.Drawing.Point(44, 303);
+            this.unionFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.unionFiles.Name = "unionFiles";
+            this.unionFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.unionFiles.Size = new System.Drawing.Size(50, 50);
+            this.unionFiles.TabIndex = 13;
+            this.unionFiles.UseVisualStyleBackColor = true;
+            this.unionFiles.Click += new System.EventHandler(this.union_Click);
+            // 
+            // dispExtension
+            // 
+            this.dispExtension.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispExtension.Location = new System.Drawing.Point(237, 262);
+            this.dispExtension.Margin = new System.Windows.Forms.Padding(6);
+            this.dispExtension.MaxLength = 100;
+            this.dispExtension.Name = "dispExtension";
+            this.dispExtension.Size = new System.Drawing.Size(250, 29);
+            this.dispExtension.TabIndex = 46;
+            this.dispExtension.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // searchSubFoldersCheck
+            // 
+            this.searchSubFoldersCheck.Checked = true;
+            this.searchSubFoldersCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.searchSubFoldersCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.searchSubFoldersCheck.Location = new System.Drawing.Point(14, 228);
+            this.searchSubFoldersCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.searchSubFoldersCheck.Name = "searchSubFoldersCheck";
+            this.searchSubFoldersCheck.Size = new System.Drawing.Size(240, 31);
+            this.searchSubFoldersCheck.TabIndex = 109;
+            this.searchSubFoldersCheck.Text = "Check Subfolders";
+            this.searchSubFoldersCheck.UseVisualStyleBackColor = true;
+            // 
+            // specifyExtensionCheck
+            // 
+            this.specifyExtensionCheck.Checked = true;
+            this.specifyExtensionCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.specifyExtensionCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.specifyExtensionCheck.Location = new System.Drawing.Point(14, 262);
+            this.specifyExtensionCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.specifyExtensionCheck.Name = "specifyExtensionCheck";
+            this.specifyExtensionCheck.Size = new System.Drawing.Size(240, 31);
+            this.specifyExtensionCheck.TabIndex = 108;
+            this.specifyExtensionCheck.Text = "Specify Extension";
+            this.specifyExtensionCheck.UseVisualStyleBackColor = true;
+            // 
+            // intersectFiles
+            // 
+            this.intersectFiles.BackgroundImage = global::ExcelAddIn2.Properties.Resources.Intersect_Logo;
+            this.intersectFiles.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.intersectFiles.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.intersectFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.intersectFiles.Location = new System.Drawing.Point(218, 303);
+            this.intersectFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.intersectFiles.Name = "intersectFiles";
+            this.intersectFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.intersectFiles.Size = new System.Drawing.Size(50, 50);
+            this.intersectFiles.TabIndex = 11;
+            this.intersectFiles.UseVisualStyleBackColor = true;
+            this.intersectFiles.Click += new System.EventHandler(this.intersectFiles_Click);
+            // 
+            // openFolder2
+            // 
+            this.openFolder2.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.openFolder2.Location = new System.Drawing.Point(261, 130);
+            this.openFolder2.Margin = new System.Windows.Forms.Padding(6);
+            this.openFolder2.Name = "openFolder2";
+            this.openFolder2.Size = new System.Drawing.Size(229, 46);
+            this.openFolder2.TabIndex = 8;
+            this.openFolder2.Text = "Open Folder 2";
+            this.openFolder2.UseVisualStyleBackColor = true;
+            // 
+            // setFolder2
+            // 
+            this.setFolder2.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setFolder2.Location = new System.Drawing.Point(12, 130);
+            this.setFolder2.Margin = new System.Windows.Forms.Padding(6);
+            this.setFolder2.Name = "setFolder2";
+            this.setFolder2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.setFolder2.Size = new System.Drawing.Size(229, 46);
+            this.setFolder2.TabIndex = 7;
+            this.setFolder2.Text = "Set Folder 2";
+            this.setFolder2.UseVisualStyleBackColor = true;
+            // 
+            // removeIntersectFiles
+            // 
+            this.removeIntersectFiles.BackgroundImage = global::ExcelAddIn2.Properties.Resources.Combine_Logo;
+            this.removeIntersectFiles.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.removeIntersectFiles.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.removeIntersectFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.removeIntersectFiles.Location = new System.Drawing.Point(131, 303);
+            this.removeIntersectFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.removeIntersectFiles.Name = "removeIntersectFiles";
+            this.removeIntersectFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.removeIntersectFiles.Size = new System.Drawing.Size(50, 50);
+            this.removeIntersectFiles.TabIndex = 10;
+            this.removeIntersectFiles.UseVisualStyleBackColor = true;
+            this.removeIntersectFiles.Click += new System.EventHandler(this.removeIntersectFiles_Click);
+            // 
+            // dispFolder2
+            // 
+            this.dispFolder2.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispFolder2.Location = new System.Drawing.Point(12, 187);
+            this.dispFolder2.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFolder2.MaxLength = 1000;
+            this.dispFolder2.Name = "dispFolder2";
+            this.dispFolder2.Size = new System.Drawing.Size(475, 29);
+            this.dispFolder2.TabIndex = 9;
+            this.dispFolder2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // openFolder1
+            // 
+            this.openFolder1.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.openFolder1.Location = new System.Drawing.Point(261, 32);
+            this.openFolder1.Margin = new System.Windows.Forms.Padding(6);
+            this.openFolder1.Name = "openFolder1";
+            this.openFolder1.Size = new System.Drawing.Size(229, 46);
+            this.openFolder1.TabIndex = 5;
+            this.openFolder1.Text = "Open Folder 1";
+            this.openFolder1.UseVisualStyleBackColor = true;
+            // 
+            // setFolder1
+            // 
+            this.setFolder1.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setFolder1.Location = new System.Drawing.Point(12, 32);
+            this.setFolder1.Margin = new System.Windows.Forms.Padding(6);
+            this.setFolder1.Name = "setFolder1";
+            this.setFolder1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.setFolder1.Size = new System.Drawing.Size(229, 46);
+            this.setFolder1.TabIndex = 4;
+            this.setFolder1.Text = "Set Folder 1";
+            this.setFolder1.UseVisualStyleBackColor = true;
+            // 
+            // dispFolder1
+            // 
+            this.dispFolder1.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispFolder1.Location = new System.Drawing.Point(12, 89);
+            this.dispFolder1.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFolder1.MaxLength = 1000;
+            this.dispFolder1.Name = "dispFolder1";
+            this.dispFolder1.Size = new System.Drawing.Size(475, 29);
+            this.dispFolder1.TabIndex = 6;
+            this.dispFolder1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // openFilesGroup
             // 
@@ -1041,6 +1263,8 @@
             this.PrintSettingsGroup.PerformLayout();
             this.ExcelTabControl.ResumeLayout(false);
             this.dirPage.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.openFilesGroup.ResumeLayout(false);
             this.openFilesGroup.PerformLayout();
             this.pdfPage.ResumeLayout(false);
@@ -1130,5 +1354,20 @@
         private System.Windows.Forms.TextBox textBox13;
         private System.Windows.Forms.Button openFilesInOrder;
         private System.Windows.Forms.CheckBox createBookmarksCheck;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Button openFolder2;
+        private System.Windows.Forms.Button setFolder2;
+        private System.Windows.Forms.TextBox dispFolder2;
+        private System.Windows.Forms.Button openFolder1;
+        private System.Windows.Forms.Button setFolder1;
+        private System.Windows.Forms.TextBox dispFolder1;
+        private System.Windows.Forms.Button removeIntersectFiles;
+        private System.Windows.Forms.Button unionFiles;
+        private System.Windows.Forms.Button subtractFiles;
+        private System.Windows.Forms.Button intersectFiles;
+        private System.Windows.Forms.TextBox dispExtension;
+        private System.Windows.Forms.CheckBox searchSubFoldersCheck;
+        private System.Windows.Forms.CheckBox specifyExtensionCheck;
+        private System.Windows.Forms.Button reverseSubtractFiles;
     }
 }

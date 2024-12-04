@@ -118,6 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Union_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Union_Logo.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Windows_Print_complete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Windows Print complete.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ScreenshotApp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScreenshotApp.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="etabs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\etabs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -127,10 +136,16 @@
   <data name="ppt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ppt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ScreenshotApp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ScreenshotApp.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Combine_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Combine_Logo.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Windows_Print_complete" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Windows Print complete.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Subtract_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Subtract_Logo.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Intersect_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intersect_Logo.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReversSubtract_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ReversSubtract_Logo.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

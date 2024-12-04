@@ -929,6 +929,82 @@ namespace ExcelAddIn2
             headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, headerOrientation);
         }
         #endregion
+
+        #region Get Directories
+        public static void getFiles(string directory, ref List<string> globalFileList, bool checkNest = true, string extensionType = "")
+        {
+            // Get all directories and files within the current directory
+            string[] subDirectoryList = Directory.GetDirectories(directory);
+            string[] fileList = Directory.GetFiles(directory);
+
+            //Add current files to global list
+            if (extensionType == "") { globalFileList.AddRange(fileList); }
+            else
+            {
+                foreach (string file in fileList)
+                {
+                    Path.GetExtension(file);
+                    if (Path.GetExtension(file) == extensionType)
+                    {
+                        globalFileList.Add(file);
+                    }
+                }
+            }
+
+            // Recursively call this method to get files for each subdirectory
+            if (!checkNest) { return; }
+            
+            foreach (string subDir in subDirectoryList)
+            {
+                getFiles(subDir, ref globalFileList, checkNest, extensionType);
+            }
+        }
+        public static void getFolders(string directory, ref List<string> globalDirectoryList, bool checkNest = true)
+        {
+            // Get all directories and files within the specified directory
+            string[] subDirectoryList = Directory.GetDirectories(directory);
+
+            // Recursively call this method for each subdirectory
+            if (checkNest)
+            {
+                foreach (string subDir in subDirectoryList)
+                {
+                    globalDirectoryList.Add(subDir);
+                    getFolders(subDir, ref globalDirectoryList);
+                }
+            }
+            else
+            {
+                globalDirectoryList.AddRange(subDirectoryList);
+            }
+        }
+
+        //public static void getSpecificFiles(string directory, string extensionType, ref List<string> globalFileList, bool checkNest = true)
+        //{
+        //    // Get all directories and files within the specified directory
+        //    string[] subDirectoryList = Directory.GetDirectories(directory);
+        //    string[] fileList = Directory.GetFiles(directory);
+
+        //    // Add directories and files to the global lists
+        //    foreach (string file in fileList)
+        //    {
+        //        Path.GetExtension(file);
+        //        if (Path.GetExtension(file) == extensionType)
+        //        {
+        //            globalFileList.Add(file);
+        //        }
+        //    }
+
+        //    // Recursively call this method for each subdirectory
+        //    if (checkNest)
+        //    {
+        //        foreach (string subDir in subDirectoryList)
+        //        {
+        //            getSpecificFiles(subDir, extensionType, ref globalFileList);
+        //        }
+        //    }
+        //}
+        #endregion
     }
 
     class CustomFolderBrowser

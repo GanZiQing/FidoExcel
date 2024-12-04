@@ -24,6 +24,8 @@ using Application = Microsoft.Office.Interop.Excel.Application;
 using System.Runtime.CompilerServices;
 using System.Linq.Expressions;
 using System.Xml.Linq;
+using static System.Net.WebRequestMethods;
+using File = System.IO.File;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -79,6 +81,25 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             //thisCustomAtt = new CheckBoxAttribute("includeExtension", addExtensionCheck, true);
             //CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
             directoryUserControl.CreateAttributes(ref AttributeTextBoxDic, ref CustomAttributeDic);
+            #endregion
+
+            #region Compare Folders
+            DirectoryTextBox dir = new DirectoryTextBox("FolderPath1", dispFolder1, setFolder1);
+            dir.AddOpenButton(openFolder1);
+            AttributeTextBoxDic.Add(dir.attName, dir);
+
+            dir = new DirectoryTextBox("FolderPath2", dispFolder2, setFolder2);
+            dir.AddOpenButton(openFolder2);
+            AttributeTextBoxDic.Add(dir.attName, dir);
+
+            thisAtt = new AttributeTextBox("ExtensionTypeComparison", dispExtension, true);
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisCustomAtt = new CheckBoxAttribute("IncludeExtensionComparison", specifyExtensionCheck, true);
+            CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
+
+            thisCustomAtt = new CheckBoxAttribute("SearchSubFoldersComparison", searchSubFoldersCheck, true);
+            CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
             #endregion
 
             #region PDF
@@ -162,6 +183,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             //toolTip1.SetToolTip(insertRenameHeader,
             //    "Inserts reference headers used for \"Import Paths\" and \"Rename Files\"\n" +
             //    "File Path | Folder | File Name | New File Name | Status");
+            #endregion
+
+            #region Compare Folders
+            toolTip1.SetToolTip(unionFiles, "Union");
+            toolTip1.SetToolTip(removeIntersectFiles, "Remove Intersect");
+            toolTip1.SetToolTip(intersectFiles, "Intersect");
+            toolTip1.SetToolTip(subtractFiles, "Subtract");
+            toolTip1.SetToolTip(reverseSubtractFiles, "Reverse Subtract");
             #endregion
 
             #region Merge PDF
@@ -1719,6 +1748,107 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
 
         #endregion
+
+        #region Compare Folders
+        private void union_Click(object sender, EventArgs e)
+        {
+            CompareFolders("union");
+        }
+
+        private void intersectFiles_Click(object sender, EventArgs e)
+        {
+            CompareFolders("intersect");
+        }
+
+        private void subtractFiles_Click(object sender, EventArgs e)
+        {
+            CompareFolders("subtract");
+        }
+
+        private void removeIntersectFiles_Click(object sender, EventArgs e)
+        {
+            CompareFolders("removeIntersect");
+        }
+
+        private void reverseSubtractFiles_Click(object sender, EventArgs e)
+        {
+            CompareFolders("reverseSubtract");
+        }
+        
+        private void CompareFolders(string comparisonType)
+        {
+            try
+            {
+                #region Get Paths
+                string folderPath1 = ((DirectoryTextBox)AttributeTextBoxDic["FolderPath1"]).CheckAndGetPath();
+                HashSet<string> files1 = GetFileNamesOnly(folderPath1);
+
+                string folderPath2 = ((DirectoryTextBox)AttributeTextBoxDic["FolderPath2"]).CheckAndGetPath();
+                HashSet<string> files2 = GetFileNamesOnly(folderPath2);
+                #endregion
+
+                #region Compare
+                string[] resultant;
+                switch (comparisonType)
+                {
+                    case "union":
+                        {
+                            resultant = files1.Union(files2).OrderBy(s => s).ToArray();
+                            break;
+                        }
+                    case "intersect":
+                        {
+                            resultant = files1.Intersect(files2).OrderBy(s => s).ToArray();
+                            break;
+                        }
+                    case "subtract":
+                        {
+                            resultant = files1.Except(files2).OrderBy(s => s).ToArray();
+                            break;
+                        }
+                    case "removeIntersect":
+                        {
+                            resultant = files1.Except(files2).Union(files2.Except(files1)).OrderBy(s => s).ToArray();
+                            break;
+                        }
+                    case "reverseSubtract":
+                        {
+                            resultant = files2.Except(files1).OrderBy(s => s).ToArray();
+                            break;
+                        }
+                    default:
+                        throw new ArgumentException($"Comparison Type {comparisonType} not valid.");
+                }
+                #endregion
+
+                WriteToExcelSelection(0, 0, true, resultant);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        
+        private HashSet<string> GetFileNamesOnly(string folderPath)
+        {
+
+            string extension = "";
+            if (specifyExtensionCheck.Checked)
+            {
+                extension = AttributeTextBoxDic["ExtensionTypeComparison"].textBox.Text;
+            }
+
+            List<string> files1 = new List<string>();
+            getFiles(folderPath, ref files1, searchSubFoldersCheck.Checked, extension);
+            HashSet<string> fileNames = new HashSet<string>();
+            foreach (string file in files1)
+            {
+                string fileName = Path.GetFileName(file);
+                if (!fileNames.Contains(file)) { fileNames.Add(fileName); }
+            }
+            return fileNames;
+        }
+
+        #endregion
+
+
     }
 }
 

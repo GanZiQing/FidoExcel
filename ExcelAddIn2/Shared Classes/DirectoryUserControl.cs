@@ -220,15 +220,15 @@ namespace ExcelAddIn2
                 {
                     if (specifiedExtension == "")
                     {
-                        getFilesAndDirectories(directoryPath, ref files, checkNestedFolders.Checked);
+                        getFiles(directoryPath, ref files, checkNestedFolders.Checked);
                     }
                     else
                     {
-                        getSpecificFiles(directoryPath, specifiedExtension, ref files, checkNestedFolders.Checked);
+                        getFiles(directoryPath, ref files, checkNestedFolders.Checked, specifiedExtension);
                     }
 
                 }
-                else { getFolderDirectories(directoryPath, ref files, checkNestedFolders.Checked); }
+                else { getFolders(directoryPath, ref files, checkNestedFolders.Checked); }
 
                 if (files.Count == 0) { throw new Exception("No items found to print"); }
                 #endregion
@@ -264,69 +264,7 @@ namespace ExcelAddIn2
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
-        private void getFilesAndDirectories(string directory, ref List<string> globalFileList, bool checkNest = true)
-        {
-            // Get all directories and files within the specified directory
-            string[] subDirectoryList = Directory.GetDirectories(directory);
-            string[] fileList = Directory.GetFiles(directory);
 
-            // Add directories and files to the global lists
-            globalFileList.AddRange(fileList);
-
-            // Recursively call this method for each subdirectory
-            if (checkNest)
-            {
-                foreach (string subDir in subDirectoryList)
-                {
-                    getFilesAndDirectories(subDir, ref globalFileList);
-                }
-            }
-        }
-        private void getFolderDirectories(string directory, ref List<string> globalDirectoryList, bool checkNest = true)
-        {
-            // Get all directories and files within the specified directory
-            string[] subDirectoryList = Directory.GetDirectories(directory);
-
-            // Recursively call this method for each subdirectory
-            if (checkNest)
-            {
-                foreach (string subDir in subDirectoryList)
-                {
-                    globalDirectoryList.Add(subDir);
-                    getFolderDirectories(subDir, ref globalDirectoryList);
-                }
-            }
-            else
-            {
-                globalDirectoryList.AddRange(subDirectoryList);
-            }
-        }
-
-        private void getSpecificFiles(string directory, string extensionType, ref List<string> globalFileList, bool checkNest = true)
-        {
-            // Get all directories and files within the specified directory
-            string[] subDirectoryList = Directory.GetDirectories(directory);
-            string[] fileList = Directory.GetFiles(directory);
-
-            // Add directories and files to the global lists
-            foreach (string file in fileList)
-            {
-                Path.GetExtension(file);
-                if (Path.GetExtension(file) == extensionType)
-                {
-                    globalFileList.Add(file);
-                }
-            }
-
-            // Recursively call this method for each subdirectory
-            if (checkNest)
-            {
-                foreach (string subDir in subDirectoryList)
-                {
-                    getSpecificFiles(subDir, extensionType, ref globalFileList);
-                }
-            }
-        }
         #endregion
 
         #region Helper Functions
@@ -541,15 +479,5 @@ namespace ExcelAddIn2
         }
 
         #endregion
-
-        
-
-
-
-
-
-
-
-
     }
 }
