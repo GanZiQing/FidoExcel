@@ -294,11 +294,11 @@
     <Compile Include="Excel Pane Folder\GraphToolsPane.Designer.cs">
       <DependentUpon>GraphToolsPane.cs</DependentUpon>
     </Compile>
-    <Compile Include="Excel Pane Folder\PrintToolsPane.cs">
+    <Compile Include="Excel Pane Folder\DirectoryAndPdf.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Excel Pane Folder\PrintToolsPane.Designer.cs">
-      <DependentUpon>PrintToolsPane.cs</DependentUpon>
+    <Compile Include="Excel Pane Folder\DirectoryAndPdf.Designer.cs">
+      <DependentUpon>DirectoryAndPdf.cs</DependentUpon>
     </Compile>
     <Compile Include="Excel Pane Folder\ReportPane.cs">
       <SubType>UserControl</SubType>
@@ -406,8 +406,8 @@
     <EmbeddedResource Include="Excel Pane Folder\GraphToolsPane.resx">
       <DependentUpon>GraphToolsPane.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Excel Pane Folder\PrintToolsPane.resx">
-      <DependentUpon>PrintToolsPane.cs</DependentUpon>
+    <EmbeddedResource Include="Excel Pane Folder\DirectoryAndPdf.resx">
+      <DependentUpon>DirectoryAndPdf.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\ReportPane.resx">
       <DependentUpon>ReportPane.cs</DependentUpon>

@@ -29,7 +29,7 @@ using File = System.IO.File;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
-    public partial class PrintToolsPane : UserControl
+    public partial class DirectoryAndPdf : UserControl
     {
         #region Initialisers
         Workbook ThisWorkBook;
@@ -38,7 +38,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         Dictionary<string, AttributeTextBox> AttributeTextBoxDic = new Dictionary<string, AttributeTextBox>();
         Dictionary<string, CustomAttribute> CustomAttributeDic = new Dictionary<string, CustomAttribute>();
 
-        public PrintToolsPane()
+        public DirectoryAndPdf()
         {
             InitializeComponent();
             ThisApplication = Globals.ThisAddIn.Application;
@@ -46,7 +46,26 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             AllCustProps = ThisWorkBook.CustomDocumentProperties;
             CreateAttributes();
             AddToolTips();
+            AddHeaders();
         }
+
+        private void AddHeaders()
+        {
+            List<string> headers = new List<string>
+            {
+            "Section Title",
+            "Start Pg Num",
+            "End Pg Num",
+            "Total Pg Num",
+            "Insert New Page",
+            "File Path",
+            };
+            AddHeaderMenuToButton(advanceMerge, headers);
+
+            headers = new List<string> { "File Path" };
+
+        }
+
         private void CreateAttributes()
         {
             // Create Attribute Objects 
@@ -194,6 +213,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #endregion
 
             #region Merge PDF
+            toolTip1.SetToolTip(setRefTitlePage,
+                "Set reference title page (provide PDF file).\n" +
+                "Required for Advance Merge and Create Section Title Page");
+
             toolTip1.SetToolTip(basicMergePDF,
                 "Merges PDF based on file path provided by current excel selection (1 col).\n" +
                 "Output folder and file name as defined in task pane above.");
@@ -206,7 +229,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 "Uses current Excel selection (2 cols).\n" +
                 "Col 1 = Pdf Name, Col 2 = Section Title\n" +
                 "Files saved in output folder defined above.");
-            toolTip1.SetToolTip(advancedMerge,
+            toolTip1.SetToolTip(advanceMerge,
                 "Merge files and adds section dividers\nReference range based on current Excel selection (6 cols).\n" +
                 "Assumes the following column order:\n" +
                 "Section Title | Start Pg No. | End Pg No.| Total Pg No. | Insert New Page | File Path");
@@ -1085,7 +1108,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         #endregion
 
         #region Advance Merge PDF
-        private void advancedMerge_Click(object sender, EventArgs e)
+        private void advanceMerge_Click(object sender, EventArgs e)
         {
             try
             {
@@ -1214,7 +1237,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                                 page = outputDocument.AddPage();
                             }
                             //PdfPage page = outputDocument.AddPage();
-                            InsertHeader(page, headers[relRowNum]);
+                            InsertHeaderPage(page, headers[relRowNum]);
                             sectionStartRow = relRowNum;
                         }
                     }
@@ -1294,7 +1317,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             
         }
 
-        private void InsertHeader(PdfPage page, string headerText)
+        private void InsertHeaderPage(PdfPage page, string headerText)
         {
             XGraphics gfx = XGraphics.FromPdfPage(page);
             string fontName = "Arial";
@@ -1302,28 +1325,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             XFont fontType = new XFont(fontName, fontSize);
 
             XRect rect = new XRect(page.Width.Value/6, page.Height.Value/2-50, page.Width.Value/6*4, page.Height.Value-60);
-            //gfx.DrawRectangle(XBrushes.AliceBlue, rect);
             string textContents = headerText;
             XTextFormatter tf = new XTextFormatter(gfx);
             tf.LayoutRectangle = rect;
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString(textContents, fontType, XBrushes.Black, rect, XStringFormats.TopLeft);
-        }
-
-        private void insertRefHeader_Click(object sender, EventArgs e)
-        {
-            List<string> headers = new List<string>
-            {
-            "Section Title",
-            "Start Pg Num",
-            "End Pg Num",
-            "Total Pg Num",
-            "Insert New Page",
-            "File Path",
-            "Folder Name",
-            "FileName"
-            };
-            InsertHeadersAtSelection(headers);
         }
         #endregion
         
@@ -1510,7 +1516,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 {
                     page = outputDocument.AddPage();
                 }
-                InsertHeader(page, titleText[index]);
+                InsertHeaderPage(page, titleText[index]);
                 #endregion
 
                 #region Save File

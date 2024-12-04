@@ -151,14 +151,14 @@ namespace ExcelAddIn2
         {
             int NumPanes = 1;
             List<CustomTaskPane> thisPaneList = PrintPaneList;
-            string title = "Print Tools";
+            string title = "Directory and Pdf";
 
             #region Default Code - Replace Task Pane Type
             List<CustomTaskPane> windowTaskPane = GetWindowPanes(ref thisPaneList);
 
             if (windowTaskPane.Count < NumPanes) // add new panes to list 
             {
-                AddPane<PrintToolsPane>(ref thisPaneList, title);
+                AddPane<DirectoryAndPdf>(ref thisPaneList, title);
             }
             else // Start toggling visibility of lists
             {

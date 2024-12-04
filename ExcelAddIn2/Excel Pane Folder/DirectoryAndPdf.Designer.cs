@@ -1,6 +1,6 @@
 ﻿namespace ExcelAddIn2.Excel_Pane_Folder
 {
-    partial class PrintToolsPane
+    partial class DirectoryAndPdf
     {
         /// <summary> 
         /// Required designer variable.
@@ -101,13 +101,11 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.generateSections = new System.Windows.Forms.Button();
             this.setRefTitlePage = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.dispRefTitlePage = new System.Windows.Forms.TextBox();
             this.dispTitleFontSize = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.insertRefHeader = new System.Windows.Forms.Button();
-            this.advancedMerge = new System.Windows.Forms.Button();
+            this.advanceMerge = new System.Windows.Forms.Button();
             this.openPdfOutFolder = new System.Windows.Forms.Button();
             this.setPdfOutFolder = new System.Windows.Forms.Button();
             this.dispPdfOutFolder = new System.Windows.Forms.TextBox();
@@ -146,7 +144,7 @@
             this.PrintPage.Padding = new System.Windows.Forms.Padding(6);
             this.PrintPage.Size = new System.Drawing.Size(531, 1484);
             this.PrintPage.TabIndex = 1;
-            this.PrintPage.Text = "Print Tools";
+            this.PrintPage.Text = "Excel To PDF";
             // 
             // groupBox4
             // 
@@ -476,16 +474,16 @@
             // 
             // ExcelTabControl
             // 
-            this.ExcelTabControl.Controls.Add(this.PrintPage);
             this.ExcelTabControl.Controls.Add(this.dirPage);
             this.ExcelTabControl.Controls.Add(this.pdfPage);
+            this.ExcelTabControl.Controls.Add(this.PrintPage);
             this.ExcelTabControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.ExcelTabControl.Location = new System.Drawing.Point(6, 6);
             this.ExcelTabControl.Margin = new System.Windows.Forms.Padding(6);
             this.ExcelTabControl.Name = "ExcelTabControl";
             this.ExcelTabControl.SelectedIndex = 0;
             this.ExcelTabControl.Size = new System.Drawing.Size(539, 1521);
-            this.ExcelTabControl.TabIndex = 2;
+            this.ExcelTabControl.TabIndex = 1;
             // 
             // dirPage
             // 
@@ -597,8 +595,6 @@
             // 
             // specifyExtensionCheck
             // 
-            this.specifyExtensionCheck.Checked = true;
-            this.specifyExtensionCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.specifyExtensionCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.specifyExtensionCheck.Location = new System.Drawing.Point(14, 262);
             this.specifyExtensionCheck.Margin = new System.Windows.Forms.Padding(6);
@@ -769,7 +765,9 @@
             // 
             this.pdfPage.BackColor = System.Drawing.SystemColors.Control;
             this.pdfPage.Controls.Add(this.addPageNumGroup);
+            this.pdfPage.Controls.Add(this.groupBox2);
             this.pdfPage.Controls.Add(this.mergePdfGroup);
+            this.pdfPage.Controls.Add(this.groupBox1);
             this.pdfPage.Location = new System.Drawing.Point(4, 33);
             this.pdfPage.Margin = new System.Windows.Forms.Padding(6);
             this.pdfPage.Name = "pdfPage";
@@ -789,7 +787,7 @@
             this.addPageNumGroup.Controls.Add(this.textBox6);
             this.addPageNumGroup.Controls.Add(this.dispFirstPageNum);
             this.addPageNumGroup.Controls.Add(this.textBox4);
-            this.addPageNumGroup.Location = new System.Drawing.Point(16, 683);
+            this.addPageNumGroup.Location = new System.Drawing.Point(11, 415);
             this.addPageNumGroup.Margin = new System.Windows.Forms.Padding(6);
             this.addPageNumGroup.Name = "addPageNumGroup";
             this.addPageNumGroup.Padding = new System.Windows.Forms.Padding(6);
@@ -1010,29 +1008,28 @@
             // mergePdfGroup
             // 
             this.mergePdfGroup.Controls.Add(this.createBookmarksCheck);
-            this.mergePdfGroup.Controls.Add(this.groupBox2);
-            this.mergePdfGroup.Controls.Add(this.groupBox1);
+            this.mergePdfGroup.Controls.Add(this.setRefTitlePage);
+            this.mergePdfGroup.Controls.Add(this.dispRefTitlePage);
             this.mergePdfGroup.Controls.Add(this.openPdfOutFolder);
             this.mergePdfGroup.Controls.Add(this.setPdfOutFolder);
             this.mergePdfGroup.Controls.Add(this.dispPdfOutFolder);
             this.mergePdfGroup.Controls.Add(this.dispMergeName);
             this.mergePdfGroup.Controls.Add(this.labelMergeName);
-            this.mergePdfGroup.Controls.Add(this.basicMergePDF);
             this.mergePdfGroup.Location = new System.Drawing.Point(11, 11);
             this.mergePdfGroup.Margin = new System.Windows.Forms.Padding(6);
             this.mergePdfGroup.Name = "mergePdfGroup";
             this.mergePdfGroup.Padding = new System.Windows.Forms.Padding(6);
-            this.mergePdfGroup.Size = new System.Drawing.Size(502, 661);
+            this.mergePdfGroup.Size = new System.Drawing.Size(502, 284);
             this.mergePdfGroup.TabIndex = 1;
             this.mergePdfGroup.TabStop = false;
-            this.mergePdfGroup.Text = "Merge PDF";
+            this.mergePdfGroup.Text = "Merge Settings";
             // 
             // createBookmarksCheck
             // 
             this.createBookmarksCheck.Checked = true;
             this.createBookmarksCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.createBookmarksCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.createBookmarksCheck.Location = new System.Drawing.Point(251, 198);
+            this.createBookmarksCheck.Location = new System.Drawing.Point(17, 178);
             this.createBookmarksCheck.Margin = new System.Windows.Forms.Padding(6);
             this.createBookmarksCheck.Name = "createBookmarksCheck";
             this.createBookmarksCheck.Size = new System.Drawing.Size(240, 31);
@@ -1043,16 +1040,13 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.generateSections);
-            this.groupBox2.Controls.Add(this.setRefTitlePage);
-            this.groupBox2.Controls.Add(this.button2);
-            this.groupBox2.Controls.Add(this.dispRefTitlePage);
             this.groupBox2.Controls.Add(this.dispTitleFontSize);
             this.groupBox2.Controls.Add(this.textBox5);
-            this.groupBox2.Location = new System.Drawing.Point(0, 258);
+            this.groupBox2.Location = new System.Drawing.Point(11, 833);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox2.Size = new System.Drawing.Size(502, 301);
+            this.groupBox2.Size = new System.Drawing.Size(502, 143);
             this.groupBox2.TabIndex = 42;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Create Section Dividers";
@@ -1060,7 +1054,7 @@
             // generateSections
             // 
             this.generateSections.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.generateSections.Location = new System.Drawing.Point(11, 240);
+            this.generateSections.Location = new System.Drawing.Point(10, 82);
             this.generateSections.Margin = new System.Windows.Forms.Padding(6);
             this.generateSections.Name = "generateSections";
             this.generateSections.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -1073,44 +1067,30 @@
             // setRefTitlePage
             // 
             this.setRefTitlePage.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setRefTitlePage.Location = new System.Drawing.Point(11, 35);
+            this.setRefTitlePage.Location = new System.Drawing.Point(17, 221);
             this.setRefTitlePage.Margin = new System.Windows.Forms.Padding(6);
             this.setRefTitlePage.Name = "setRefTitlePage";
             this.setRefTitlePage.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.setRefTitlePage.Size = new System.Drawing.Size(229, 46);
+            this.setRefTitlePage.Size = new System.Drawing.Size(223, 46);
             this.setRefTitlePage.TabIndex = 60;
-            this.setRefTitlePage.Text = "Set Ref Title Page File";
+            this.setRefTitlePage.Text = "Set Title Page File";
             this.setRefTitlePage.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Enabled = false;
-            this.button2.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.button2.Location = new System.Drawing.Point(11, 183);
-            this.button2.Margin = new System.Windows.Forms.Padding(6);
-            this.button2.Name = "button2";
-            this.button2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.button2.Size = new System.Drawing.Size(229, 46);
-            this.button2.TabIndex = 41;
-            this.button2.Text = "FontDialog";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.titleFont_Click);
             // 
             // dispRefTitlePage
             // 
             this.dispRefTitlePage.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispRefTitlePage.Location = new System.Drawing.Point(11, 92);
+            this.dispRefTitlePage.Location = new System.Drawing.Point(265, 229);
             this.dispRefTitlePage.Margin = new System.Windows.Forms.Padding(6);
             this.dispRefTitlePage.MaxLength = 1000;
             this.dispRefTitlePage.Name = "dispRefTitlePage";
-            this.dispRefTitlePage.Size = new System.Drawing.Size(475, 29);
+            this.dispRefTitlePage.Size = new System.Drawing.Size(220, 29);
             this.dispRefTitlePage.TabIndex = 61;
             this.dispRefTitlePage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // dispTitleFontSize
             // 
             this.dispTitleFontSize.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispTitleFontSize.Location = new System.Drawing.Point(204, 135);
+            this.dispTitleFontSize.Location = new System.Drawing.Point(203, 34);
             this.dispTitleFontSize.Margin = new System.Windows.Forms.Padding(6);
             this.dispTitleFontSize.MaxLength = 100;
             this.dispTitleFontSize.Name = "dispTitleFontSize";
@@ -1122,7 +1102,7 @@
             // 
             this.textBox5.BackColor = System.Drawing.SystemColors.Control;
             this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox5.Location = new System.Drawing.Point(11, 140);
+            this.textBox5.Location = new System.Drawing.Point(10, 39);
             this.textBox5.Margin = new System.Windows.Forms.Padding(6);
             this.textBox5.Multiline = true;
             this.textBox5.Name = "textBox5";
@@ -1135,42 +1115,29 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.insertRefHeader);
-            this.groupBox1.Controls.Add(this.advancedMerge);
-            this.groupBox1.Location = new System.Drawing.Point(0, 565);
+            this.groupBox1.Controls.Add(this.advanceMerge);
+            this.groupBox1.Controls.Add(this.basicMergePDF);
+            this.groupBox1.Location = new System.Drawing.Point(12, 307);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
             this.groupBox1.Size = new System.Drawing.Size(502, 96);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Advance Merge";
+            this.groupBox1.Text = "Merge Operation";
             // 
-            // insertRefHeader
+            // advanceMerge
             // 
-            this.insertRefHeader.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.insertRefHeader.Location = new System.Drawing.Point(11, 35);
-            this.insertRefHeader.Margin = new System.Windows.Forms.Padding(6);
-            this.insertRefHeader.Name = "insertRefHeader";
-            this.insertRefHeader.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.insertRefHeader.Size = new System.Drawing.Size(229, 46);
-            this.insertRefHeader.TabIndex = 2;
-            this.insertRefHeader.Text = "Insert Ref. Header";
-            this.insertRefHeader.UseVisualStyleBackColor = true;
-            this.insertRefHeader.Click += new System.EventHandler(this.insertRefHeader_Click);
-            // 
-            // advancedMerge
-            // 
-            this.advancedMerge.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.advancedMerge.Location = new System.Drawing.Point(260, 35);
-            this.advancedMerge.Margin = new System.Windows.Forms.Padding(6);
-            this.advancedMerge.Name = "advancedMerge";
-            this.advancedMerge.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.advancedMerge.Size = new System.Drawing.Size(229, 46);
-            this.advancedMerge.TabIndex = 3;
-            this.advancedMerge.Text = "Advanced Merge PDF";
-            this.advancedMerge.UseVisualStyleBackColor = true;
-            this.advancedMerge.Click += new System.EventHandler(this.advancedMerge_Click);
+            this.advanceMerge.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.advanceMerge.Location = new System.Drawing.Point(259, 34);
+            this.advanceMerge.Margin = new System.Windows.Forms.Padding(6);
+            this.advanceMerge.Name = "advanceMerge";
+            this.advanceMerge.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.advanceMerge.Size = new System.Drawing.Size(229, 46);
+            this.advanceMerge.TabIndex = 3;
+            this.advanceMerge.Text = "Advance Merge PDF";
+            this.advanceMerge.UseVisualStyleBackColor = true;
+            this.advanceMerge.Click += new System.EventHandler(this.advanceMerge_Click);
             // 
             // openPdfOutFolder
             // 
@@ -1209,7 +1176,7 @@
             // dispMergeName
             // 
             this.dispMergeName.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispMergeName.Location = new System.Drawing.Point(205, 140);
+            this.dispMergeName.Location = new System.Drawing.Point(205, 135);
             this.dispMergeName.Margin = new System.Windows.Forms.Padding(6);
             this.dispMergeName.MaxLength = 100;
             this.dispMergeName.Name = "dispMergeName";
@@ -1221,7 +1188,7 @@
             // 
             this.labelMergeName.BackColor = System.Drawing.SystemColors.Control;
             this.labelMergeName.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.labelMergeName.Location = new System.Drawing.Point(11, 146);
+            this.labelMergeName.Location = new System.Drawing.Point(11, 141);
             this.labelMergeName.Margin = new System.Windows.Forms.Padding(6);
             this.labelMergeName.Name = "labelMergeName";
             this.labelMergeName.ReadOnly = true;
@@ -1234,7 +1201,7 @@
             // basicMergePDF
             // 
             this.basicMergePDF.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.basicMergePDF.Location = new System.Drawing.Point(11, 188);
+            this.basicMergePDF.Location = new System.Drawing.Point(10, 34);
             this.basicMergePDF.Margin = new System.Windows.Forms.Padding(6);
             this.basicMergePDF.Name = "basicMergePDF";
             this.basicMergePDF.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -1244,14 +1211,14 @@
             this.basicMergePDF.UseVisualStyleBackColor = true;
             this.basicMergePDF.Click += new System.EventHandler(this.basicMergePDF_Click);
             // 
-            // PrintToolsPane
+            // DirectoryAndPdf
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.Controls.Add(this.ExcelTabControl);
             this.Margin = new System.Windows.Forms.Padding(6);
-            this.Name = "PrintToolsPane";
+            this.Name = "DirectoryAndPdf";
             this.Size = new System.Drawing.Size(550, 1532);
             this.PrintPage.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
@@ -1314,7 +1281,7 @@
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.TextBox dispFirstPageNum;
         private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.Button advancedMerge;
+        private System.Windows.Forms.Button advanceMerge;
         private System.Windows.Forms.TextBox dispAppendName;
         private System.Windows.Forms.TextBox textBox8;
         private System.Windows.Forms.CheckBox checkOpenOutput;
@@ -1326,14 +1293,12 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox dispFontSize;
-        private System.Windows.Forms.Button insertRefHeader;
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox dispTitleFontSize;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button setRefTitlePage;
         private System.Windows.Forms.TextBox dispRefTitlePage;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button generateSections;
         private System.Windows.Forms.TabPage dirPage;

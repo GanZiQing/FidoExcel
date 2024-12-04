@@ -36,24 +36,24 @@
         {
             this.FidoRibbon = this.Factory.CreateRibbonTab();
             this.AutomationToolsGroup = this.Factory.CreateRibbonGroup();
-            this.forSharing = this.Factory.CreateRibbonGroup();
-            this.tab1 = this.Factory.CreateRibbonTab();
-            this.toHide = this.Factory.CreateRibbonGroup();
             this.group2 = this.Factory.CreateRibbonGroup();
+            this.forSharing = this.Factory.CreateRibbonGroup();
+            this.toHide = this.Factory.CreateRibbonGroup();
+            this.tab1 = this.Factory.CreateRibbonTab();
             this.ETABSPaneLauncher = this.Factory.CreateRibbonButton();
             this.reportPane = this.Factory.CreateRibbonButton();
             this.ExcelToolsButton = this.Factory.CreateRibbonButton();
             this.FormatToolsButton = this.Factory.CreateRibbonButton();
             this.PlottingTools = this.Factory.CreateRibbonButton();
-            this.PrintToolsButton = this.Factory.CreateRibbonButton();
+            this.DirectoryAndPdfButton = this.Factory.CreateRibbonButton();
             this.PilingToolsButton = this.Factory.CreateRibbonButton();
             this.beamDesign = this.Factory.CreateRibbonButton();
             this.FidoRibbon.SuspendLayout();
             this.AutomationToolsGroup.SuspendLayout();
-            this.forSharing.SuspendLayout();
-            this.tab1.SuspendLayout();
-            this.toHide.SuspendLayout();
             this.group2.SuspendLayout();
+            this.forSharing.SuspendLayout();
+            this.toHide.SuspendLayout();
+            this.tab1.SuspendLayout();
             this.SuspendLayout();
             // 
             // FidoRibbon
@@ -73,17 +73,19 @@
             this.AutomationToolsGroup.Label = "ETABS";
             this.AutomationToolsGroup.Name = "AutomationToolsGroup";
             // 
+            // group2
+            // 
+            this.group2.Items.Add(this.ExcelToolsButton);
+            this.group2.Items.Add(this.FormatToolsButton);
+            this.group2.Items.Add(this.PlottingTools);
+            this.group2.Label = "Excel";
+            this.group2.Name = "group2";
+            // 
             // forSharing
             // 
-            this.forSharing.Items.Add(this.PrintToolsButton);
+            this.forSharing.Items.Add(this.DirectoryAndPdfButton);
             this.forSharing.Label = "Directories and PDF";
             this.forSharing.Name = "forSharing";
-            // 
-            // tab1
-            // 
-            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
-            this.tab1.Label = "TabAddIns";
-            this.tab1.Name = "tab1";
             // 
             // toHide
             // 
@@ -93,13 +95,11 @@
             this.toHide.Name = "toHide";
             this.toHide.Visible = false;
             // 
-            // group2
+            // tab1
             // 
-            this.group2.Items.Add(this.ExcelToolsButton);
-            this.group2.Items.Add(this.FormatToolsButton);
-            this.group2.Items.Add(this.PlottingTools);
-            this.group2.Label = "Excel";
-            this.group2.Name = "group2";
+            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
+            this.tab1.Label = "TabAddIns";
+            this.tab1.Name = "tab1";
             // 
             // ETABSPaneLauncher
             // 
@@ -146,14 +146,14 @@
             this.PlottingTools.ShowImage = true;
             this.PlottingTools.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.PlottingTools_Click);
             // 
-            // PrintToolsButton
+            // DirectoryAndPdfButton
             // 
-            this.PrintToolsButton.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.PrintToolsButton.Image = global::ExcelAddIn2.Properties.Resources.excel;
-            this.PrintToolsButton.Label = "Print and PDF";
-            this.PrintToolsButton.Name = "PrintToolsButton";
-            this.PrintToolsButton.ShowImage = true;
-            this.PrintToolsButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.PrintToolsButton_Click);
+            this.DirectoryAndPdfButton.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.DirectoryAndPdfButton.Image = global::ExcelAddIn2.Properties.Resources.excel;
+            this.DirectoryAndPdfButton.Label = "Directory and PDF";
+            this.DirectoryAndPdfButton.Name = "DirectoryAndPdfButton";
+            this.DirectoryAndPdfButton.ShowImage = true;
+            this.DirectoryAndPdfButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.PrintToolsButton_Click);
             // 
             // PilingToolsButton
             // 
@@ -182,14 +182,14 @@
             this.FidoRibbon.PerformLayout();
             this.AutomationToolsGroup.ResumeLayout(false);
             this.AutomationToolsGroup.PerformLayout();
-            this.forSharing.ResumeLayout(false);
-            this.forSharing.PerformLayout();
-            this.tab1.ResumeLayout(false);
-            this.tab1.PerformLayout();
-            this.toHide.ResumeLayout(false);
-            this.toHide.PerformLayout();
             this.group2.ResumeLayout(false);
             this.group2.PerformLayout();
+            this.forSharing.ResumeLayout(false);
+            this.forSharing.PerformLayout();
+            this.toHide.ResumeLayout(false);
+            this.toHide.PerformLayout();
+            this.tab1.ResumeLayout(false);
+            this.tab1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -202,7 +202,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton FormatToolsButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton PilingToolsButton;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton PrintToolsButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton DirectoryAndPdfButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup forSharing;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton reportPane;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton PlottingTools;
