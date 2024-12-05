@@ -96,21 +96,21 @@
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.dispFirstPageNum = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
-            this.mergePdfGroup = new System.Windows.Forms.GroupBox();
-            this.createBookmarksCheck = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.generateSections = new System.Windows.Forms.Button();
-            this.setRefTitlePage = new System.Windows.Forms.Button();
-            this.dispRefTitlePage = new System.Windows.Forms.TextBox();
             this.dispTitleFontSize = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.advanceMerge = new System.Windows.Forms.Button();
+            this.mergePdfGroup = new System.Windows.Forms.GroupBox();
+            this.createBookmarksCheck = new System.Windows.Forms.CheckBox();
+            this.setRefTitlePage = new System.Windows.Forms.Button();
+            this.dispRefTitlePage = new System.Windows.Forms.TextBox();
             this.openPdfOutFolder = new System.Windows.Forms.Button();
             this.setPdfOutFolder = new System.Windows.Forms.Button();
             this.dispPdfOutFolder = new System.Windows.Forms.TextBox();
             this.dispMergeName = new System.Windows.Forms.TextBox();
             this.labelMergeName = new System.Windows.Forms.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.advanceMerge = new System.Windows.Forms.Button();
             this.basicMergePDF = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.PrintPage.SuspendLayout();
@@ -126,8 +126,8 @@
             this.pdfPage.SuspendLayout();
             this.addPageNumGroup.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.mergePdfGroup.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.mergePdfGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -752,6 +752,7 @@
             this.openFilesInOrder.TabIndex = 6;
             this.openFilesInOrder.Text = "Open Files In Order";
             this.openFilesInOrder.UseVisualStyleBackColor = true;
+            this.openFilesInOrder.Click += new System.EventHandler(this.openFilesInOrder_Click);
             // 
             // directoryUserControl
             // 
@@ -1005,6 +1006,59 @@
             this.textBox4.TabStop = false;
             this.textBox4.Text = "First Page Number";
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.generateSections);
+            this.groupBox2.Controls.Add(this.dispTitleFontSize);
+            this.groupBox2.Controls.Add(this.textBox5);
+            this.groupBox2.Location = new System.Drawing.Point(11, 833);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox2.Size = new System.Drawing.Size(502, 143);
+            this.groupBox2.TabIndex = 42;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Create Section Dividers";
+            // 
+            // generateSections
+            // 
+            this.generateSections.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.generateSections.Location = new System.Drawing.Point(10, 82);
+            this.generateSections.Margin = new System.Windows.Forms.Padding(6);
+            this.generateSections.Name = "generateSections";
+            this.generateSections.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.generateSections.Size = new System.Drawing.Size(478, 46);
+            this.generateSections.TabIndex = 62;
+            this.generateSections.Text = "Create Section Title Page";
+            this.generateSections.UseVisualStyleBackColor = true;
+            this.generateSections.Click += new System.EventHandler(this.generateSections_Click);
+            // 
+            // dispTitleFontSize
+            // 
+            this.dispTitleFontSize.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispTitleFontSize.Location = new System.Drawing.Point(203, 34);
+            this.dispTitleFontSize.Margin = new System.Windows.Forms.Padding(6);
+            this.dispTitleFontSize.MaxLength = 100;
+            this.dispTitleFontSize.Name = "dispTitleFontSize";
+            this.dispTitleFontSize.Size = new System.Drawing.Size(283, 29);
+            this.dispTitleFontSize.TabIndex = 1;
+            this.dispTitleFontSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox5
+            // 
+            this.textBox5.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox5.Location = new System.Drawing.Point(10, 39);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox5.Multiline = true;
+            this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
+            this.textBox5.ShortcutsEnabled = false;
+            this.textBox5.Size = new System.Drawing.Size(178, 31);
+            this.textBox5.TabIndex = 59;
+            this.textBox5.TabStop = false;
+            this.textBox5.Text = "Title Font Size";
+            // 
             // mergePdfGroup
             // 
             this.mergePdfGroup.Controls.Add(this.createBookmarksCheck);
@@ -1037,33 +1091,6 @@
             this.createBookmarksCheck.Text = "Create Bookmarks";
             this.createBookmarksCheck.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.generateSections);
-            this.groupBox2.Controls.Add(this.dispTitleFontSize);
-            this.groupBox2.Controls.Add(this.textBox5);
-            this.groupBox2.Location = new System.Drawing.Point(11, 833);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox2.Size = new System.Drawing.Size(502, 143);
-            this.groupBox2.TabIndex = 42;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Create Section Dividers";
-            // 
-            // generateSections
-            // 
-            this.generateSections.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.generateSections.Location = new System.Drawing.Point(10, 82);
-            this.generateSections.Margin = new System.Windows.Forms.Padding(6);
-            this.generateSections.Name = "generateSections";
-            this.generateSections.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.generateSections.Size = new System.Drawing.Size(478, 46);
-            this.generateSections.TabIndex = 62;
-            this.generateSections.Text = "Create Section Title Page";
-            this.generateSections.UseVisualStyleBackColor = true;
-            this.generateSections.Click += new System.EventHandler(this.generateSections_Click);
-            // 
             // setRefTitlePage
             // 
             this.setRefTitlePage.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -1086,58 +1113,6 @@
             this.dispRefTitlePage.Size = new System.Drawing.Size(220, 29);
             this.dispRefTitlePage.TabIndex = 61;
             this.dispRefTitlePage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // dispTitleFontSize
-            // 
-            this.dispTitleFontSize.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispTitleFontSize.Location = new System.Drawing.Point(203, 34);
-            this.dispTitleFontSize.Margin = new System.Windows.Forms.Padding(6);
-            this.dispTitleFontSize.MaxLength = 100;
-            this.dispTitleFontSize.Name = "dispTitleFontSize";
-            this.dispTitleFontSize.Size = new System.Drawing.Size(283, 29);
-            this.dispTitleFontSize.TabIndex = 1;
-            this.dispTitleFontSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox5
-            // 
-            this.textBox5.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox5.Location = new System.Drawing.Point(10, 39);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(6);
-            this.textBox5.Multiline = true;
-            this.textBox5.Name = "textBox5";
-            this.textBox5.ReadOnly = true;
-            this.textBox5.ShortcutsEnabled = false;
-            this.textBox5.Size = new System.Drawing.Size(178, 31);
-            this.textBox5.TabIndex = 59;
-            this.textBox5.TabStop = false;
-            this.textBox5.Text = "Title Font Size";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.advanceMerge);
-            this.groupBox1.Controls.Add(this.basicMergePDF);
-            this.groupBox1.Location = new System.Drawing.Point(12, 307);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox1.Size = new System.Drawing.Size(502, 96);
-            this.groupBox1.TabIndex = 6;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Merge Operation";
-            // 
-            // advanceMerge
-            // 
-            this.advanceMerge.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.advanceMerge.Location = new System.Drawing.Point(259, 34);
-            this.advanceMerge.Margin = new System.Windows.Forms.Padding(6);
-            this.advanceMerge.Name = "advanceMerge";
-            this.advanceMerge.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.advanceMerge.Size = new System.Drawing.Size(229, 46);
-            this.advanceMerge.TabIndex = 3;
-            this.advanceMerge.Text = "Advance Merge PDF";
-            this.advanceMerge.UseVisualStyleBackColor = true;
-            this.advanceMerge.Click += new System.EventHandler(this.advanceMerge_Click);
             // 
             // openPdfOutFolder
             // 
@@ -1198,6 +1173,32 @@
             this.labelMergeName.TabStop = false;
             this.labelMergeName.Text = "Output File Name";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.advanceMerge);
+            this.groupBox1.Controls.Add(this.basicMergePDF);
+            this.groupBox1.Location = new System.Drawing.Point(12, 307);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox1.Size = new System.Drawing.Size(502, 96);
+            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Merge Operation";
+            // 
+            // advanceMerge
+            // 
+            this.advanceMerge.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.advanceMerge.Location = new System.Drawing.Point(259, 34);
+            this.advanceMerge.Margin = new System.Windows.Forms.Padding(6);
+            this.advanceMerge.Name = "advanceMerge";
+            this.advanceMerge.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.advanceMerge.Size = new System.Drawing.Size(229, 46);
+            this.advanceMerge.TabIndex = 3;
+            this.advanceMerge.Text = "Advance Merge PDF";
+            this.advanceMerge.UseVisualStyleBackColor = true;
+            this.advanceMerge.Click += new System.EventHandler(this.advanceMerge_Click);
+            // 
             // basicMergePDF
             // 
             this.basicMergePDF.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -1239,10 +1240,10 @@
             this.addPageNumGroup.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.mergePdfGroup.ResumeLayout(false);
-            this.mergePdfGroup.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.mergePdfGroup.ResumeLayout(false);
+            this.mergePdfGroup.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
