@@ -25,7 +25,7 @@
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>ExcelAddIn2</RootNamespace>
-    <AssemblyName>ExcelAddIn2</AssemblyName>
+    <AssemblyName>Fido_Excel</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <IsWebBootstrapper>False</IsWebBootstrapper>
@@ -36,7 +36,7 @@
     <PublishUrl>C:\Users\epona\Documents\VSTO\01_Excel\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.7</ApplicationVersion>
+    <ApplicationVersion>1.0.0.8</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
@@ -267,6 +267,12 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Excel Pane Folder\WallDesign.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Excel Pane Folder\WallDesign.Designer.cs">
+      <DependentUpon>WallDesign.cs</DependentUpon>
+    </Compile>
     <Compile Include="Shared Classes\DirectoryUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -388,6 +394,9 @@
     <Compile Include="Shared Classes\ScreenshotApp\SettingsForm.designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Excel Pane Folder\WallDesign.resx">
+      <DependentUpon>WallDesign.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Shared Classes\DirectoryUserControl.resx">
       <DependentUpon>DirectoryUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -497,10 +506,11 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ExcelAddIn2_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>4EB54BD9093C0B453B2BC39D19F95E1D003B821E</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>6AC3C2F4C8FCCCF62B9E1070F5A6EEA5FEE95C7A</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>

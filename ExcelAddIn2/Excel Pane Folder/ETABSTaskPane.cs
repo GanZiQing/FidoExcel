@@ -132,7 +132,7 @@ namespace ExcelAddIn2
             Array.Copy(z, 0, z2, 0, selPointCount);
 
             // Print
-            CommonUtilities.WriteToExcelSelection(0, 0, false ,selectedJoints2, x2, y2, z2);
+            CommonUtilities.WriteToExcelSelectionAsRow(0, 0, false ,selectedJoints2, x2, y2, z2);
             MessageBox.Show("Completed", "Completed");
         }
 
@@ -498,7 +498,7 @@ namespace ExcelAddIn2
                 }
             }
 
-            CommonUtilities.WriteToExcelSelection(0, 0, false, errorJoints.ToArray(), coord1.ToArray(), coord2.ToArray(), coord3.ToArray(), grouped.ToArray());
+            CommonUtilities.WriteToExcelSelectionAsRow(0, 0, false, errorJoints.ToArray(), coord1.ToArray(), coord2.ToArray(), coord3.ToArray(), grouped.ToArray());
             string msgText = "Coding completed, " + counter.ToString() + " added.";
             MessageBox.Show(msgText, "Completed");
         }

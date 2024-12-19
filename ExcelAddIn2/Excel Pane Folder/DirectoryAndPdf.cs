@@ -523,7 +523,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #region Confirmation
             try
             {
-                CommonUtilities.WriteToExcelSelection(0, 0, true, names.ToArray());
+                CommonUtilities.WriteToExcelSelectionAsRow(0, 0, true, names.ToArray());
                 MessageBox.Show("Completed", "Completed");
             }
             catch (Exception ex)
@@ -1827,7 +1827,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 }
                 #endregion
 
-                WriteToExcelSelection(0, 0, true, resultant);
+                WriteToExcelSelectionAsRow(0, 0, true, resultant);
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }

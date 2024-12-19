@@ -246,10 +246,10 @@ namespace ExcelAddIn2
                     folderName[i] = Path.GetFileName(Path.GetDirectoryName(file));
                 }
 
-                if (isFile && !nameOnly) { WriteToExcelSelection(0, 0, true, fullPath, folderName, fileName); }
-                else if (isFile && nameOnly) { WriteToExcelSelection(0, 0, true, fileName); }
-                else if (!isFile && !nameOnly) { WriteToExcelSelection(0, 0, true, fullPath, folderName); }
-                else if (!isFile && nameOnly) { WriteToExcelSelection(0, 0, true, folderName); }
+                if (isFile && !nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fullPath, folderName, fileName); }
+                else if (isFile && nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fileName); }
+                else if (!isFile && !nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fullPath, folderName); }
+                else if (!isFile && nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, folderName); }
                 #endregion
 
                 #region Format Path to be less annoying
@@ -415,7 +415,7 @@ namespace ExcelAddIn2
             }
             else
             {
-                CommonUtilities.WriteToExcelSelection(0, 4, false, status);
+                CommonUtilities.WriteToExcelSelectionAsRow(0, 4, false, status);
                 MessageBox.Show("Rename operation incomplete.\n" +
                      $"{sourcePaths.Length - failures}/{sourcePaths.Length} files renamed. Check status.", "Completed");
             }

@@ -96,7 +96,7 @@ namespace ExcelAddIn2
         public static List<string> GetContentsAsStringList(Range range, bool ignoreEmpty)
         {
             List<string> rangeList = new List<string>();
-            foreach (Range cell in range)
+            foreach (Range cell in range.Cells)
             {
                 if (cell.Value2 != null && cell.Value2.ToString() != "")
                 {
@@ -709,7 +709,7 @@ namespace ExcelAddIn2
         #endregion
 
         #region Write to Excel
-        public static void WriteToExcelSelection(int rowOff, int colOff, bool warning, params Array[] arrays)
+        public static void WriteToExcelSelectionAsRow(int rowOff, int colOff, bool warning, params Array[] arrays)
         {
             // This code takes any number of arrays (of various types) and outputs them into excel 
             // Output order depends on order of the input array
@@ -770,7 +770,7 @@ namespace ExcelAddIn2
             }
         }
 
-        public static void WriteToExcelRange(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
+        public static void WriteToExcelRangeAsRow(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
         {
             // This code takes any number of arrays (of various types) and outputs them into excel 
             // Output order depends on order of the input array
@@ -818,6 +818,68 @@ namespace ExcelAddIn2
             {
                 workBook.Application.ScreenUpdating = false;
                 Range startCell = startRange.Cells[1, 1];
+                startCell = startCell.Offset[rowOff, colOff];
+                Range endCell = startCell.Offset[numRow - 1, numCol - 1];
+                Range writeRange = workSheet.Range[startCell, endCell];
+                writeRange.Value2 = dataArray;
+            }
+            finally
+            {
+                workBook.Application.ScreenUpdating = true;
+            }
+            #endregion
+        }
+
+        public static void WriteToExcelRangeAsCol(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
+        {
+            // This code takes any number of arrays (of various types) and outputs them into excel 
+            // Output order depends on order of the input array
+            // Output location is the first cell of the provided range, offset by rowOff and colOff
+
+            // Find number of rows and columns
+            int numCol = arrays.Length;
+            int numRow = 0;
+            
+            foreach (Array array in arrays)
+            {
+                if (array.Length > numRow) { numRow = array.Length; }
+            }
+
+            #region Get Confirmation
+            if (warning)
+            {
+                DialogResult result = MessageBox.Show("Confirm to export values to current selection? This will override cell values at current selection and cannot be undone.\n" +
+                "Output table size:\n" +
+                $"Number of rows: {numRow}\n" +
+                $"Number of columns: {numCol}", "Confirmation", MessageBoxButtons.YesNo);
+                if (result != DialogResult.Yes)
+                {
+                    throw new Exception("Terminated by user");
+                }
+            }
+            #endregion
+
+            #region Create Data Array
+            object[,] dataArray = new object[numRow, numCol];
+            for (int row = 0; row < numRow; row++)
+            {
+                for (int col = 0; col < numCol; col++)
+                {
+                    dataArray[row, col] = arrays[col].GetValue(row);
+                }
+            }
+            #endregion
+
+            #region Write to Excel
+            // Add section to read input data from Excel
+            Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet workSheet = startRange.Worksheet;
+
+            try
+            {
+                workBook.Application.ScreenUpdating = false;
+                Range startCell = startRange.Cells[1, 1];
+                startCell = startCell.Offset[rowOff, colOff];
                 Range endCell = startCell.Offset[numRow - 1, numCol - 1];
                 Range writeRange = workSheet.Range[startCell, endCell];
                 writeRange.Value2 = dataArray;

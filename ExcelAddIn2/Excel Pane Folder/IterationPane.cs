@@ -2601,7 +2601,7 @@ namespace ExcelAddIn2
             #region Confirmation
             try
             {
-                WriteToExcelSelection(0, 0, true, names.ToArray());
+                WriteToExcelSelectionAsRow(0, 0, true, names.ToArray());
                 MessageBox.Show("Completed", "Completed");
             }
             catch (Exception ex)
@@ -2658,7 +2658,7 @@ namespace ExcelAddIn2
                 DialogResult res = MessageBox.Show($"Print final sheet names to adjacent cells?", "Confirmation", MessageBoxButtons.YesNo);
                 if (res == DialogResult.Yes)
                 {
-                    WriteToExcelSelection(0, 2, false, finalSheetNames);
+                    WriteToExcelSelectionAsRow(0, 2, false, finalSheetNames);
                 }
             }
             else
@@ -2885,7 +2885,7 @@ namespace ExcelAddIn2
                 folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
                 i++;
             }
-            CommonUtilities.WriteToExcelSelection(0, 0, true, full_path, folder_name, file_name);
+            CommonUtilities.WriteToExcelSelectionAsRow(0, 0, true, full_path, folder_name, file_name);
         }
 
 

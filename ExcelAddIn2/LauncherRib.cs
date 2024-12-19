@@ -286,5 +286,29 @@ namespace ExcelAddIn2
         }
         #endregion
 
+
+
+        #region Wall Design
+        private List<CustomTaskPane> wallList = new List<CustomTaskPane>();
+        private void wallDesign_Click(object sender, RibbonControlEventArgs e)
+        {
+            int NumPanes = 1;
+            List<CustomTaskPane> thisPaneList = wallList;
+            string title = "Wall Design Tools";
+
+            #region Default Code - Replace Task Pane Type
+            List<CustomTaskPane> windowTaskPane = GetWindowPanes(ref thisPaneList);
+
+            if (windowTaskPane.Count < NumPanes) // add new panes to list 
+            {
+                AddPane<WallDesign>(ref thisPaneList, title);
+            }
+            else // Start toggling visibility of lists
+            {
+                TogglePaneVisibility(windowTaskPane, NumPanes);
+            }
+            #endregion
+        }
+        #endregion
     }
 }
