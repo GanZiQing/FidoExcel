@@ -115,9 +115,9 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     TerminateRangeAtNullFirstCell(ref xRange);
                     {
                         Range yCell = ((RangeTextBox)RangeAttributeDic["yRange_chart"]).GetRangeFromFullAddress();
-                        yRange = GetEquivalentRangeFromRowRange(yCell, xRange);
+                        yRange = GetColRangeFromRanges(xRange, yCell);
                         Range nameCell = ((RangeTextBox)RangeAttributeDic["nameRange_chart"]).GetRangeFromFullAddress();
-                        nameRange = GetEquivalentRangeFromRowRange(nameCell, xRange);
+                        nameRange = GetColRangeFromRanges(xRange, nameCell);
                     }
                 }
                 catch (Exception ex)

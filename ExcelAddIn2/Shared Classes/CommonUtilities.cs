@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using System.IO;
+using System.Drawing;
+using PdfSharp.Pdf.Content.Objects;
 
 
 namespace ExcelAddIn2
@@ -13,6 +15,7 @@ namespace ExcelAddIn2
     static class CommonUtilities
     {
         #region Read Data from Excel
+        #region Doubles
         public static double ReadDoubleFromCell(Range cell, bool emptyIsZero = false)
         {
             if (cell.Value2 is double)
@@ -81,6 +84,28 @@ namespace ExcelAddIn2
             return output;
         }
 
+        //public static double GetDoubleFromObject(object item)
+        //{
+        //    if (item is double)
+        //    {
+        //        return (double)item;
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            return double.Parse(item.ToString());
+        //        }
+        //        catch
+        //        {
+        //            ThrowExceptionBox($"Unable to parse value {item} to double");
+        //            throw new Exception();
+        //        }
+        //    }
+        //}
+        #endregion
+
+        #region String
         public static HashSet<string> GetContentsAsStringHash(Range range)
         {
             List<string> rangeList = GetContentsAsStringList(range, true);
@@ -121,6 +146,34 @@ namespace ExcelAddIn2
                 return range.Value2.ToString();
             }
         }
+        #endregion
+
+        #region Object
+        public static object[,] GetContentsAsObject2DArray(Range range)
+        {
+            object[,] rangeArray = new object[range.Rows.Count, range.Columns.Count];
+            for (int rowNum = 0; rowNum < range.Rows.Count; rowNum++)
+            {
+                for (int colNum = 0; colNum < range.Columns.Count; colNum++)
+                {
+                    Range cell = range.Cells[rowNum+1, colNum+1];
+                    rangeArray[rowNum, colNum] = cell.Value2;
+                }
+            }
+            return rangeArray;
+        }
+        public static object[] GetContentsAsObject1DArray(Range range)
+        {
+            object[] rangeArray = new object[range.Cells.Count];
+            int counter = 0;
+            foreach (Range cell in range.Cells)
+            {
+                rangeArray[counter] = cell.Value2;
+                counter++;
+            }
+            return rangeArray;
+        }
+        #endregion
 
         public static (int, int, int, int) GetRangeDetails(Range selectedRange)
         {
@@ -459,6 +512,7 @@ namespace ExcelAddIn2
 
         public static void CheckRangeSize(Range selectedRange, int numRows, int numCols, string attName = "")
         {
+            // Checks that range meets the desired size. Set numRows/numCols = 0 to skip check
             if (numRows > 0 && numRows != selectedRange.Rows.Count)
             {
                 string msg = $"Number of rows expected is {numRows}\nNumber of rows selected is {selectedRange.Rows.Count}";
@@ -480,8 +534,9 @@ namespace ExcelAddIn2
             }
         }
 
-        public static (bool passCheck, List<Range> failedRanges) AssertRangeSize(Range[] ranges, string type = null, bool throwError = true)
+        public static (bool passCheck, List<Range> failedRanges) AssertStandardRangeSize(Range[] ranges, string type = null, bool throwError = true)
         {
+            //Checks that all ranges have the same size
             #region Generate check type
             bool checkRow;
             bool checkCol;
@@ -696,14 +751,23 @@ namespace ExcelAddIn2
                 }
             }
         }
-        public static Range GetEquivalentRangeFromRowRange(Range columnCell, Range rowRange)
+
+        //public static Range GetColRangeFromRanges(Range columnCell, Range rowRange, int offsetRow = 0, int offsetCol = 0)
+        public static Range GetColRangeFromRanges(Range rowRange, Range columnCell, int offsetRow = 0, int offsetCol = 0)
         {
+            // Returns a range with column number equals to column range, but row(s) equal to rowRange
             (int startRowNum, int endRowNum, _, _) = GetRangeDetails(rowRange);
             int colNum = columnCell.Column;
             Worksheet worksheet = columnCell.Worksheet;
             Range startCellL = worksheet.Cells[startRowNum, colNum];
             Range endCellL = worksheet.Cells[endRowNum, colNum];
             Range returnRange = worksheet.Range[startCellL, endCellL];
+
+            if (offsetRow != 0 || offsetCol != 0)
+            {
+                returnRange = returnRange.Offset[offsetRow, offsetCol];
+            }
+
             return returnRange;
         }
         #endregion
@@ -890,9 +954,31 @@ namespace ExcelAddIn2
             }
             #endregion
         }
+        
+        public static void WriteObjectToExcelRange(Range startRange, int rowOff, int colOff, bool warning, object[,] writeObject)
+        {
+            int numRow = writeObject.GetLength(0);
+            int numCol = writeObject.GetLength(1);
+            Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet workSheet = startRange.Worksheet;
+
+            try
+            {
+                workBook.Application.ScreenUpdating = false;
+                Range startCell = startRange.Cells[1, 1];
+                startCell = startCell.Offset[rowOff, colOff];
+                Range endCell = startCell.Offset[numRow - 1, numCol - 1];
+                Range writeRange = workSheet.Range[startCell, endCell];
+                writeRange.Value2 = writeObject;
+            }
+            finally
+            {
+                workBook.Application.ScreenUpdating = true;
+            }
+        }
         #endregion
 
-        public static Worksheet CopyNewSheetAtBack(Worksheet refSheet, string newName = "")
+        public static Worksheet CopyNewSheetAtBack(Worksheet refSheet, string newName = "", bool deleteExisting = false)
         {
             Workbook thisWorkbook = refSheet.Parent;
             Worksheet newSheet;
@@ -903,7 +989,24 @@ namespace ExcelAddIn2
                 {
                     if (sheet.Name == newName)
                     {
-                        throw new Exception($"Worksheet already exist.\nWorksheet Name:{newName}");
+                        if (deleteExisting)
+                        {
+                            try
+                            {
+                                refSheet.Application.DisplayAlerts = false;
+                                sheet.Delete();
+                            }
+                            finally
+                            {
+                                refSheet.Application.DisplayAlerts = true;
+                            }
+                            
+                        }
+                        else
+                        {
+                            throw new Exception($"Worksheet already exist.\nWorksheet Name:{newName}");
+                        }
+                        
                     }
                 }
             }
@@ -911,8 +1014,9 @@ namespace ExcelAddIn2
             // Copy sheet
             try
             {
-                refSheet.Copy(After: thisWorkbook.Sheets[thisWorkbook.Sheets.Count]);
-                newSheet = thisWorkbook.Sheets[thisWorkbook.Sheets.Count];
+                refSheet.Copy(Before: refSheet);
+                newSheet = thisWorkbook.Sheets[refSheet.Index - 1];
+                newSheet.Move(After: thisWorkbook.Sheets[thisWorkbook.Sheets.Count]);
             }
             catch (Exception ex)
             {

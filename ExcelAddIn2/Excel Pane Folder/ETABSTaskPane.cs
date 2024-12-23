@@ -911,8 +911,8 @@ namespace ExcelAddIn2
             }
 
             result = MessageBox.Show("Insert sample data? This will increase output table by one row", "Confirmation", MessageBoxButtons.YesNo);
-            bool insertSample = false;
-            if (result == DialogResult.Yes) { insertSample = true; }
+            //bool insertSample = false;
+            //if (result == DialogResult.Yes) { insertSample = true; }
             #endregion
 
             #region Format Frist Row
