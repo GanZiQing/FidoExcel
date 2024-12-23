@@ -494,7 +494,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                         range1.Font.Color = Color.Black;
                         range2.Font.Color = Color.Black;
                     }
-                    if (rangeSizeCheck.Checked) { AssertRangeSize(new Range[] { range1, range2 }, null, true); }
+                    if (rangeSizeCheck.Checked) { AssertStandardRangeSize(new Range[] { range1, range2 }, null, true); }
                     else { IntersectRanges(ref range1, ref range2); }
                     failedRanges = new List<Range>();
                     unmatchedRanges = new List<Range>();
@@ -565,7 +565,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                         TerminateRangeAtFirstNullRow(ref range2);
                     }
 
-                    if (rangeSizeCheck.Checked) { AssertRangeSize(new Range[] { range1, range2 }, "column", true); }
+                    if (rangeSizeCheck.Checked) { AssertStandardRangeSize(new Range[] { range1, range2 }, "column", true); }
                     else { IntersectRanges(ref range1, ref range2, "column"); }
 
                     Worksheet sheet1 = range1.Worksheet;
