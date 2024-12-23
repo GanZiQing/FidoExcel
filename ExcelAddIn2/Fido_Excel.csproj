@@ -36,15 +36,15 @@
     <PublishUrl>C:\Users\epona\Documents\VSTO\01_Excel\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.10</ApplicationVersion>
+    <ApplicationVersion>1.0.0.11</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
-    <ProductName>ExcelAddIn2</ProductName>
+    <ProductName>Fido_Excel</ProductName>
     <PublisherName />
     <SupportUrl />
-    <FriendlyName>ExcelAddIn2</FriendlyName>
+    <FriendlyName>Fido_Excel</FriendlyName>
     <OfficeApplicationDescription />
     <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
