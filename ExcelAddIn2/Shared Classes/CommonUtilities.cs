@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
 using PdfSharp.Pdf.Content.Objects;
+//using Microsoft.Office.Tools.Excel;
 
 
 namespace ExcelAddIn2
@@ -315,7 +316,15 @@ namespace ExcelAddIn2
             return finalString;
         }
 
-
+        public static string[] SplitAndTrim(string inputString, char deliminator = ',')
+        {
+            string[] parts = inputString.Split(deliminator);
+            for (int i = 0; i < parts.Length; i++)
+            {
+                parts[i] = parts[i].Trim();
+            }
+            return parts;
+        }
         #endregion
 
         #region File Operations
@@ -770,6 +779,19 @@ namespace ExcelAddIn2
 
             return returnRange;
         }
+        public static Range GetLastCell(Worksheet worksheet, int colNum = 1)
+        {
+            if (colNum < 1) { throw new ArgumentException($"Column number cannot be < 1. Col num = 1 refers to column A. Column number provided = {colNum}."); }
+
+            Range lastCell = worksheet.Cells[1048576, colNum];
+            Range lastUsedCell = lastCell.End[XlDirection.xlUp];
+            if (lastUsedCell.MergeCells)
+            {
+                Range mergedArea = lastUsedCell.MergeArea;
+                lastUsedCell = mergedArea.Rows[mergedArea.Rows.Count];
+            }
+            return lastUsedCell;
+        }
         #endregion
 
         #region Write to Excel
@@ -975,6 +997,26 @@ namespace ExcelAddIn2
             {
                 workBook.Application.ScreenUpdating = true;
             }
+        }
+        
+        public static void ClearRangeForPrintingObject(Range startRange, int rowOff, int colOff, object[,] writeObject)
+        {
+            
+            Worksheet workSheet = startRange.Worksheet;
+            Range startCell = startRange.Cells[1, 1];
+            startCell = startCell.Offset[rowOff, colOff];
+
+            int numRow = writeObject.GetLength(0);
+            int numCol = writeObject.GetLength(1);
+            Range endCell = startCell.Offset[numRow - 1, numCol - 1];
+            Range writeRange = workSheet.Range[startCell, endCell];
+            MessageBox.Show($"startRange = {startRange.Address}");
+            MessageBox.Show($"writeRange = {writeRange.Address}");
+            writeRange.Select();
+
+            writeRange.UnMerge();
+            if (writeRange.MergeCells) { writeRange.UnMerge(); }
+            writeRange.ClearContents();
         }
         #endregion
 

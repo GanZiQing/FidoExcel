@@ -267,6 +267,12 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Excel Pane Folder\HDB Design\WallCheckPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Excel Pane Folder\HDB Design\WallCheckPane.Designer.cs">
+      <DependentUpon>WallCheckPane.cs</DependentUpon>
+    </Compile>
     <Compile Include="Excel Pane Folder\WallDesign.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -394,6 +400,9 @@
     <Compile Include="Shared Classes\ScreenshotApp\SettingsForm.designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Excel Pane Folder\HDB Design\WallCheckPane.resx">
+      <DependentUpon>WallCheckPane.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\WallDesign.resx">
       <DependentUpon>WallDesign.cs</DependentUpon>
     </EmbeddedResource>

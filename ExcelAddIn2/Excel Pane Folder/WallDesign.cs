@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using ETABSv1;
+using Microsoft.Office.Interop.Excel;
 using MigraDoc.DocumentObjectModel;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using Application = Microsoft.Office.Interop.Excel.Application;
 using Color = System.Drawing.Color;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
@@ -93,6 +96,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             att = new CheckBoxAttribute("backupSheetCheck_WD", backupSheetCheck);
             att = new CheckBoxAttribute("resetFontColorRebarTable_WD", resetFontColourRebarTableCheck);
             att = new CheckBoxAttribute("resetFontColorCheckSheet_WD", resetFontColourCheckSheetCheck);
+            #endregion
+
+            #region Decomposer
+            attTB = new RangeTextBox("decomposeRange_WD", dispDecomposeRange, setDecomposeRange, "range");
+            TextBoxAttributeDic.Add(attTB.attName, attTB);
             #endregion
         }
 
@@ -686,6 +694,100 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 #endregion
             }
             catch (Exception ex) { throw new Exception("Error unifying rebars\n" + ex.Message); }
+        }
+        #endregion
+
+        #region Decomposer
+        private void decomposeTable_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Range targetRange = GetFullTableRange();
+                object[,] printObject = DecomposeTable(targetRange);
+
+                (Worksheet outputSheet, Range outputRange) = ReplicateSheet(targetRange);
+                ClearRangeForPrintingObject(outputRange, 0, 0, printObject);
+                WriteObjectToExcelRange(outputRange, 0, 0, false, printObject);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+
+        private Range GetFullTableRange()
+        {
+            Range targetRange = ((RangeTextBox)TextBoxAttributeDic["decomposeRange_WD"]).GetRangeFromFullAddress();
+            Range lastUsedCell = GetLastCell(targetRange.Worksheet, 1);
+
+            Range startCell = targetRange.Worksheet.Cells[targetRange.Row, 1];
+            Range endCell = targetRange.Worksheet.Cells[lastUsedCell.Row, targetRange.Column + targetRange.Columns.Count - 1];
+            return targetRange.Worksheet.Range[startCell,endCell];
+        }
+        
+        private (Worksheet outputSheet,Range outputRange) ReplicateSheet(Range targetRange)
+        {
+            Worksheet worksheet = targetRange.Worksheet;
+            Worksheet outputSheet = CopyNewSheetAtBack(worksheet, worksheet.Name + "_decomposed", true);
+            string targetRangeAddress = targetRange.Address;
+            Range outputRange = outputSheet.Range[targetRangeAddress];
+            return (outputSheet, outputRange);
+        }
+        
+        private object[,] DecomposeTable(Range targetRange)
+        {
+            #region Loop through data
+            object[,] dataContents = GetContentsAsObject2DArray(targetRange);
+            List<object[]> finalOutput = new List<object[]>();
+            int numCol = targetRange.Columns.Count;
+
+            for (int rowNum = 0; rowNum < dataContents.GetLength(0); rowNum++)
+            {
+                if (dataContents[rowNum, 0] == null) { continue; }
+
+                #region Decompose Pier Labels to parts
+                string[] pierLabelsInMerged = SplitAndTrim(dataContents[rowNum, 0].ToString());
+                #endregion
+                #region Define start and end row number
+                int startRowNum = rowNum;
+                int endRowNum = rowNum;
+                while ((endRowNum < dataContents.GetLength(0) - 1))
+                {
+                    if (dataContents[endRowNum + 1, 0] != null) { break; }
+                    endRowNum++;
+                }
+                rowNum = endRowNum;
+                #endregion
+
+                #region Loop through to add to final arrage
+                foreach (string pierLabel in pierLabelsInMerged)
+                {
+                    for (int localRowNum = startRowNum; localRowNum <= endRowNum; localRowNum++)
+                    {
+                        object[] rowData = new object[numCol];
+                        rowData[0] = pierLabel;
+                        for (int colNum = 1; colNum < numCol; colNum++)
+                        {
+                            rowData[colNum] = dataContents[localRowNum, colNum];
+                        }
+                        finalOutput.Add(rowData);
+                    }
+                }
+                #endregion
+            }
+            #endregion
+
+            #region Convert to object
+            object[,] printObject = new object[finalOutput.Count, numCol];
+            int printRowNum = 0;
+            foreach (object[] row in finalOutput)
+            {
+                for (int colNum = 0; colNum < printObject.GetLength(1); colNum++)
+                {
+                    printObject[printRowNum, colNum] = row[colNum];
+                }
+                printRowNum++;
+            }
+            #endregion
+
+            return printObject;
         }
         #endregion
     }
