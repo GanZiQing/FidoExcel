@@ -8,7 +8,9 @@ using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
 using PdfSharp.Pdf.Content.Objects;
+using Application = Microsoft.Office.Interop.Excel.Application;
 //using Microsoft.Office.Tools.Excel;
+
 
 
 namespace ExcelAddIn2
@@ -779,17 +781,54 @@ namespace ExcelAddIn2
 
             return returnRange;
         }
-        public static Range GetLastCell(Worksheet worksheet, int colNum = 1)
+        public static Range GetLastCellFromEnd(Worksheet worksheet, int colOrRowNum = 1, XlDirection xlDirection = XlDirection.xlUp)
         {
-            if (colNum < 1) { throw new ArgumentException($"Column number cannot be < 1. Col num = 1 refers to column A. Column number provided = {colNum}."); }
+            if (colOrRowNum < 1) { throw new ArgumentException($"Column or row number cannot be < 1. Col num = 1 refers to column A. Number provided = {colOrRowNum}."); }
+            Range lastCell = null;
+            if (xlDirection == XlDirection.xlUp)
+            {
+                lastCell = worksheet.Cells[1048576, colOrRowNum];
+            }
+            else if (xlDirection == XlDirection.xlToLeft)
+            {
+                lastCell = worksheet.Cells[colOrRowNum, 16384];
+            }
+            else { throw new Exception($"Invalid xlDirection"); }
 
-            Range lastCell = worksheet.Cells[1048576, colNum];
-            Range lastUsedCell = lastCell.End[XlDirection.xlUp];
+            Range lastUsedCell = lastCell.End[xlDirection];
             if (lastUsedCell.MergeCells)
             {
                 Range mergedArea = lastUsedCell.MergeArea;
-                lastUsedCell = mergedArea.Rows[mergedArea.Rows.Count];
+                if (xlDirection == XlDirection.xlUp)
+                {
+                    lastUsedCell = mergedArea.Rows[mergedArea.Rows.Count];
+                }
+                else if (xlDirection == XlDirection.xlToLeft)
+                {
+                    lastUsedCell = mergedArea.Columns[mergedArea.Columns.Count];
+                }
+                else { throw new Exception($"Invalid xlDirection"); }
             }
+            return lastUsedCell;
+        }
+
+        public static Range GetLastCellFromStartCell(Worksheet worksheet, int rowNum = 1, int colNum = 1)
+        {
+            if (colNum < 1) { throw new ArgumentException($"Column or row number cannot be < 1. Col num = 1 refers to column A. Number provided = {colNum}."); }
+            if (rowNum < 1) { throw new ArgumentException($"Column or row number cannot be < 1. Row num = 1 refers to row 1. Number provided = {rowNum}."); }
+
+            Range startCell = worksheet.Cells[rowNum, colNum];
+            Range lastVerticalCell = startCell.End[XlDirection.xlDown];
+            lastVerticalCell.Select();
+            Range lastHorizontalCell = startCell.End[XlDirection.xlToRight];
+            Range lastUsedCell = worksheet.Cells[lastVerticalCell.Row, lastHorizontalCell.Column];
+
+            if (lastUsedCell.MergeCells)
+            {
+                Range mergedArea = lastUsedCell.MergeArea;
+                lastUsedCell = mergedArea.Cells[mergedArea.Rows.Count - 1, mergedArea.Columns.Count - 1];
+            }
+            MessageBox.Show($"Last Cell range = {lastUsedCell.Address}");
             return lastUsedCell;
         }
         #endregion
@@ -1095,7 +1134,35 @@ namespace ExcelAddIn2
             return listToWrinte.ToArray();
         }
 
+        #region Get Excel Workbook
+        public static Workbook OpenAndGetWorkbook(Application app, string path)
+        {
+            string extension = Path.GetExtension(path);
+            if (!(extension.Equals(".xls", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".xlsm", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".xlsb", StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new Exception($"File type is not valid excel file.\n{path}");
+            }
+            string workbookName = Path.GetFileName(path);
 
+            Workbook workbook;
+            try
+            {
+                workbook = app.Workbooks[workbookName];
+            }
+            catch
+            {
+                workbook = app.Workbooks.Open(path, ReadOnly: true);
+                return workbook;
+            }
+
+            string workbookPath = workbook.FullName;
+            if (workbookPath == path) { return workbook; }
+            else { throw new Exception($"File with similar workbook name {workbook.Name} is already open. Please close this workbook before proceeding."); }
+        }
+        #endregion
 
         #region Insert Headers
         public static void InsertHeadersAtSelection(List<string> headers, string type = "cols", bool format = true)

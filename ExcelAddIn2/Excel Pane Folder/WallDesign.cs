@@ -23,10 +23,19 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         public WallDesign()
         {
             InitializeComponent();
+            ImportTaskPane();
             CreateAttributes();
             AddToolTips();
         }
-
+        private void ImportTaskPane()
+        {
+            var RefPane = new HDB_Design.WallCheckPane();
+            TabControl.TabPageCollection tabCollection = RefPane.GetPageTaskPane;
+            foreach (TabPage tab in tabCollection)
+            {
+                tabControl1.TabPages.Add(tab);
+            }
+        }
         private void AddToolTips()
         {
             #region MyRegion
@@ -715,7 +724,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         private Range GetFullTableRange()
         {
             Range targetRange = ((RangeTextBox)TextBoxAttributeDic["decomposeRange_WD"]).GetRangeFromFullAddress();
-            Range lastUsedCell = GetLastCell(targetRange.Worksheet, 1);
+            Range lastUsedCell = GetLastCellFromEnd(targetRange.Worksheet, 1);
 
             Range startCell = targetRange.Worksheet.Cells[targetRange.Row, 1];
             Range endCell = targetRange.Worksheet.Cells[lastUsedCell.Row, targetRange.Column + targetRange.Columns.Count - 1];

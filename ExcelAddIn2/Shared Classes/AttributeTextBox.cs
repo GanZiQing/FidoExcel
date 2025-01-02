@@ -10,6 +10,7 @@ using ExcelAddIn2.Excel_Pane_Folder;
 using Button = System.Windows.Forms.Button;
 using TextBox = System.Windows.Forms.TextBox;
 using System.IO;
+using Application = Microsoft.Office.Interop.Excel.Application;
 
 namespace ExcelAddIn2
 {
@@ -31,6 +32,18 @@ namespace ExcelAddIn2
             }
 
             RefreshTextBox();
+        }
+
+        public AttributeTextBox(string attName, TextBox textBox, string defaultValue, bool isBasicValue = false)
+        {
+            this.attName = attName;
+            this.textBox = textBox;
+
+            if (isBasicValue)
+            {
+                SubscribeToTextBoxEvents();
+            }
+            SetDefaultValue(defaultValue);
         }
 
         protected void SubscribeToTextBoxEvents()
@@ -1138,7 +1151,6 @@ namespace ExcelAddIn2
         }
         #endregion
 
-
         #region Basic Operations
         private void setButton_Click(object sender, EventArgs e)
         {
@@ -1221,8 +1233,38 @@ namespace ExcelAddIn2
         }
         #endregion
 
+        #region Open Excel Workbook
+        public Workbook OpenAndGetWorkbook(Application app)
+        {
+            string path = CheckAndGetValue();
+            string extension = Path.GetExtension(path);
+            if (!(extension.Equals(".xls", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".xlsm", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".xlsb", StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new Exception($"File type is not valid excel file.\n{path}");
+            }
+            string workbookName = Path.GetFileName(path);
+            
+            Workbook workbook;
+            try
+            {
+                workbook = app.Workbooks[workbookName];
+            }
+            catch
+            {
+                workbook = app.Workbooks.Open(path, ReadOnly: true);
+                return workbook;
+            }
+
+            string workbookPath = workbook.FullName;
+            if (workbookPath == path) { return workbook; }
+            else { throw new Exception($"File with similar workbook name {workbook.Name} is already open. Please close this workbook before proceeding."); }
+        }
+        #endregion
     }
-    
+
     public class TargetCriteria
     {
         // Links together several objects to allow checking of source criterial easily
