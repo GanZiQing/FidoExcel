@@ -9,6 +9,7 @@ using System.IO;
 using System.Drawing;
 using PdfSharp.Pdf.Content.Objects;
 using Application = Microsoft.Office.Interop.Excel.Application;
+using Microsoft.Office.Tools;
 //using Microsoft.Office.Tools.Excel;
 
 
@@ -679,6 +680,39 @@ namespace ExcelAddIn2
 
         #endregion
 
+        #region Format Excel
+        //public static void FormatCellEqualsTo(Range range, string matchString, Color fontColor)
+        //{
+
+        //}
+
+        public static void FormatCellEqualsTo(Range range, string[] rangeContents, string matchString, Color fontColor)
+        {
+            Range formatRange = null;
+
+            foreach (Range cell in range)
+            {
+                string cellValue = cell.Value2?.ToString().Trim();
+                if (cellValue == matchString)
+                {
+                    if (formatRange == null)
+                    {
+                        formatRange = cell;
+                    }
+                    else
+                    {
+                        formatRange = range.Application.Union(formatRange, cell);
+                    }
+                }
+            }
+
+            if (formatRange != null)
+            {
+                formatRange.Font.Color = fontColor;
+            }
+        }
+        #endregion
+
         #region Manipulate Excel Ranges
         public static void TerminateRangeAtNullFirstCell(ref Range range, int checkCol = 0)
         {
@@ -828,7 +862,6 @@ namespace ExcelAddIn2
                 Range mergedArea = lastUsedCell.MergeArea;
                 lastUsedCell = mergedArea.Cells[mergedArea.Rows.Count - 1, mergedArea.Columns.Count - 1];
             }
-            MessageBox.Show($"Last Cell range = {lastUsedCell.Address}");
             return lastUsedCell;
         }
         #endregion

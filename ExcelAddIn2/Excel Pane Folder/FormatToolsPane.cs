@@ -789,7 +789,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 }
             }
             
-            if (diff < lowerBound || diff > upperBound)
+            if (diff < -lowerBound || diff > upperBound)
             {
                 //FormatFailedRange(cell1);
                 //FormatFailedRange(cell2);

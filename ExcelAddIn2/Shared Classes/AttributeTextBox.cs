@@ -1234,7 +1234,7 @@ namespace ExcelAddIn2
         #endregion
 
         #region Open Excel Workbook
-        public Workbook OpenAndGetWorkbook(Application app)
+        public (Workbook workbook, bool newWorkbookOpened) OpenAndGetWorkbook(Application app)
         {
             string path = CheckAndGetValue();
             string extension = Path.GetExtension(path);
@@ -1255,11 +1255,11 @@ namespace ExcelAddIn2
             catch
             {
                 workbook = app.Workbooks.Open(path, ReadOnly: true);
-                return workbook;
+                return (workbook, true);
             }
 
             string workbookPath = workbook.FullName;
-            if (workbookPath == path) { return workbook; }
+            if (workbookPath == path) { return (workbook, false); }
             else { throw new Exception($"File with similar workbook name {workbook.Name} is already open. Please close this workbook before proceeding."); }
         }
         #endregion

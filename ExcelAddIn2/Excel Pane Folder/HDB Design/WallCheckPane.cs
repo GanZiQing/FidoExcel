@@ -15,6 +15,7 @@ using static ExcelAddIn2.CommonUtilities;
 using System.Windows.Forms.VisualStyles;
 using System.Web;
 using System.Text.RegularExpressions;
+using System.ComponentModel.DataAnnotations;
 
 namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
 {
@@ -36,7 +37,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             #region Base
             AttributeTextBox attTB = new FileTextBox("etabsOutputFile_WC", dispEtabsOutputFile, setEtabsOutputFile);
             attributeDic.Add(attTB.attName, attTB);
-            var att = new CheckBoxAttribute("copyFromEtabs_WC", copyFromEtabsCheck);
+            //var att = new CheckBoxAttribute("copyFromEtabs_WC", copyFromEtabsCheck);
             attTB = new FileTextBox("bimOutputFile_WC", dispBimOutputFile, setBimOutputFile);
             attributeDic.Add(attTB.attName, attTB);
             #endregion
@@ -77,234 +78,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         }
         #endregion
 
-        private void runRefCode_Click(object sender, EventArgs e)
-        {
-            Stopwatch stopwatch = new Stopwatch();
-            try
-            {
-                stopwatch.Start();
-                CreateTablePier();
-                stopwatch.Stop();
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
-            MessageBox.Show($"Completed, executiong time: {stopwatch.ElapsedTicks}", "Completed");
-        }
-
-        #region ChatGPT Code
-        public void CreateTablePier()
-        {
-            // Declare and initialize variables for Excel workbooks and worksheets
-            Application excelApp = Globals.ThisAddIn.Application;
-            Workbook wallReport = null, sampleExcel = null, sampleData = null;
-            Worksheet columnSheet = null, wallSheet = null, storySheet = null, labelSheet = null, pierDgn = null;
-
-            // Paths to the workbooks
-            string wallReportPath = Globals.ThisAddIn.Application.ActiveWorkbook.FullName;
-            string directoryPath = Path.GetDirectoryName(wallReportPath);
-            string sampleExcelPath = Path.Combine(directoryPath, "Sample_EXCEL from BIM.xlsx");
-            string sampleDataPath = Path.Combine(directoryPath, "Sample_Data Mapping.xlsx");
-            //string wallReportPath = @"C:\Users\horei\Downloads\Intern 2024\Intern\Task 3\Wall Report.xlsm";
-            //string sampleExcelPath = @"C:\Users\horei\Downloads\Intern 2024\Intern\Task 3\20240605 to Reiko_Task 2\Sample_EXCEL from BIM.xlsx";
-            //string sampleDataPath = @"C:\Users\horei\Downloads\Intern 2024\Intern\Task 3\20240605 to Reiko_Task 2\Sample_Data Mapping.xlsx";
-
-            try
-            {
-                // Open workbooks if they are not already open
-                wallReport = OpenWorkbookIfNotOpen(excelApp, wallReportPath);
-                sampleExcel = OpenWorkbookIfNotOpen(excelApp, sampleExcelPath);
-                sampleData = OpenWorkbookIfNotOpen(excelApp, sampleDataPath);
-
-                // Ensure workbooks are opened successfully
-                if (wallReport == null || sampleExcel == null || sampleData == null)
-                {
-                    MessageBox.Show("One or more workbooks could not be opened.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // Assign worksheets
-                columnSheet = sampleExcel.Sheets["RC COLUMN"];
-                wallSheet = sampleExcel.Sheets["RC WALL"];
-                storySheet = sampleData.Sheets["Storey Mapping"];
-                labelSheet = sampleData.Sheets["Label Mapping"];
-                pierDgn = wallReport.Sheets["Pier Dgn Sum - Eurocode 2-2004"];
-
-                if (columnSheet == null || wallSheet == null || storySheet == null || labelSheet == null || pierDgn == null)
-                {
-                    MessageBox.Show("One or more worksheets could not be found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // Find the last rows
-                int pdsLastRow = pierDgn.Cells[pierDgn.Rows.Count, 1].End(XlDirection.xlUp).Row;
-                int rcwLastRow = wallSheet.Cells[wallSheet.Rows.Count, 1].End(XlDirection.xlUp).Row;
-                int rccLastRow = columnSheet.Cells[columnSheet.Rows.Count, 1].End(XlDirection.xlUp).Row;
-
-                // Clear old data
-                ClearRange(columnSheet, "R:V");
-                ClearRange(wallSheet, "R:V");
-                ClearRange(pierDgn, "Z4:AJ1048576");
-
-                // Remove fill
-                Range pierRange = pierDgn.Range["Z4:AJ1048576"];
-                pierRange.Interior.Pattern = XlPattern.xlPatternNone;
-
-                // Loop through PierDgn Range to perform data mapping
-                foreach (Range cell in pierDgn.Range["B4:B" + pdsLastRow])
-                {
-                    string markKeyword = cell.Value;
-                    Range foundCell = labelSheet.Columns["A"].Find(markKeyword, Type.Missing, XlFindLookIn.xlValues, XlLookAt.xlWhole);
-
-                    if (foundCell != null)
-                    {
-                        pierDgn.Cells[cell.Row, 26].Value = labelSheet.Cells[foundCell.Row, 2].Value; // Column Z
-                    }
-                }
-
-                // Find maximum story number
-                int maxStory = 0;
-                foreach (Range cell in pierDgn.Range["A4:A" + pdsLastRow])
-                {
-                    if (cell.Value != null && cell.Value.ToString().StartsWith("Story"))
-                    {
-                        string storeyName = cell.Value.ToString();
-                        storeyName = storeyName.Substring(5);
-                        string storeyNameWithoutChar = "";
-                        foreach (char c in storeyName)
-                        {
-                            if (!char.IsNumber(c)) { break; }
-                            storeyNameWithoutChar += c;
-                        }
-
-                        int storyNumber = int.Parse(storeyNameWithoutChar);
-                        if (storyNumber > maxStory)
-                        {
-                            maxStory = storyNumber;
-                        }
-                    }
-                }
-
-                // Copy ranges from RC WALL and RC COLUMN
-                wallSheet.Range["A1:C" + rcwLastRow].Copy(wallSheet.Range["R1"]);
-                wallSheet.Range["G1:H" + rcwLastRow].Copy(wallSheet.Range["U1"]);
-                columnSheet.Range["A1:C" + rccLastRow].Copy(columnSheet.Range["Q1"]);
-                columnSheet.Range["F1:G" + rccLastRow].Copy(columnSheet.Range["T1"]);
-                columnSheet.Range["I1:J" + rccLastRow].Copy(columnSheet.Range["V1"]);
-                pierDgn.Range["A4:A" + pdsLastRow].Copy(pierDgn.Range["AJ4"]);
-
-                // Update story labels to numbers
-                UpdateStoryLabels(wallSheet, "S2:T" + rcwLastRow, maxStory);
-                UpdateStoryLabels(columnSheet, "R2:S" + rccLastRow, maxStory);
-
-                // Increment values in specific columns
-                IncrementRangeValues(wallSheet, "S2:S" + rcwLastRow);
-                IncrementRangeValues(columnSheet, "R2:R" + rccLastRow);
-
-                // Process PierDgn for bar calculations
-                ProcessPierDgnBars(pierDgn, pdsLastRow, maxStory);
-
-                MessageBox.Show("Pier table creation completed.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                // Clean up COM objects to avoid memory leaks
-                ReleaseObject(columnSheet);
-                ReleaseObject(wallSheet);
-                ReleaseObject(storySheet);
-                ReleaseObject(labelSheet);
-                ReleaseObject(pierDgn);
-                ReleaseObject(wallReport);
-                ReleaseObject(sampleExcel);
-                ReleaseObject(sampleData);
-            }
-        }
-
-        // Helper methods
-        private Workbook OpenWorkbookIfNotOpen(Application excelApp, string path)
-        {
-            // Come back and refractor this to check if open workbook has the correct path
-            string workbookName = Path.GetFileName(path);
-            Workbook workbook; ;
-            try
-            {
-                workbook = excelApp.Workbooks[workbookName];
-            }
-            catch { workbook = excelApp.Workbooks.Open(path); }
-            return workbook;
-        }
-
-        private void ClearRange(Worksheet sheet, string range)
-        {
-            sheet.Range[range].Clear();
-        }
-
-        private void IncrementRangeValues(Worksheet sheet, string range)
-        {
-            foreach (Range cell in sheet.Range[range])
-            {
-                if (cell.Value != null && double.TryParse(cell.Value.ToString(), out double value))
-                {
-                    cell.Value = cell.Value + 1;
-                }
-            }
-        }
-
-        private void UpdateStoryLabels(Worksheet sheet, string range, int maxStory)
-        {
-            foreach (Range cell in sheet.Range[range])
-            {
-                if (cell.Value != null)
-                {
-                    string cellValue = cell.Value.ToString();
-                    if (int.TryParse(cellValue, out int numericValue))
-                    {
-                        cell.Value = numericValue;
-                    }
-                    else
-                    {
-                        switch (cellValue)
-                        {
-                            case "Main Roof": cell.Value = maxStory + 1; break;
-                            case "Mid Roof": cell.Value = maxStory + 2; break;
-                            case "Upper Roof": cell.Value = maxStory + 3; break;
-                            case "Foundation": cell.Value = 0; break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ProcessPierDgnBars(Worksheet pierDgn, int lastRow, int maxStory)
-        {
-            // Example for calculating and processing bar data
-            for (int i = 4; i <= lastRow; i++)
-            {
-                Range cell = pierDgn.Cells[i, "AA"];
-                if (cell.Value != null)
-                {
-                    string cellValue = cell.Value.ToString();
-                    // Implement your bar calculation logic here
-                }
-            }
-        }
-
-        private void ReleaseObject(object obj)
-        {
-            if (obj != null)
-            {
-                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
-                obj = null;
-            }
-        }
-        #endregion
-
         #region Check Walls
         private void checkWalls_Click(object sender, EventArgs e)
         {
-            //List<TrackedRange> trackedRanges = null;
+            
             try
             {
                 Stopwatch totalStopwatch = Stopwatch.StartNew();
@@ -312,26 +89,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 ReadMapping();
                 ReadETABSInput();
                 ReadBIMInput();
-                MatchDesignLabels();
-
-                //object[] designLabels = MatchDesignLabels();
-                //MatchRebars();
-
-                //Range pierLabelRange = ((RangeTextBox)TextBoxAttributeDic["pierLabelRange_WD"]).GetRangeFromFullAddress();
-                //pierLabelRange.Worksheet.Activate();
-
-                totalStopwatch.Stop();
+                MatchDesignLabels(totalStopwatch);
+                //totalStopwatch.Stop();
                 MessageBox.Show($"Total Execution Time: {totalStopwatch.ElapsedMilliseconds} ms", "Completed");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
             finally
             {
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
-                //HighlightChangesForMatchRebar(trackedRanges);
-                //#region Release Dictionaries
-                //rebarDic = null;
-                //storeyTracker = null;
-                //#endregion
                 storeyMap = null;
                 labelMap = null;
                 etabsRange = null;
@@ -339,7 +104,45 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             }
         }
 
+        #endregion
 
+        #region Copy from ETABS
+        private void copyFromETABS_Click(object sender, EventArgs e)
+        {
+            Workbook etabsWorkbook = null;
+            bool workbookOpened = false;
+            try
+            {
+                #region Clear current sheet
+                Range destinationRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range["A4"];
+                #endregion
+
+                #region Get Copy Range
+                (etabsWorkbook,workbookOpened) = ((FileTextBox)attributeDic["etabsOutputFile_WC"]).OpenAndGetWorkbook(Globals.ThisAddIn.Application);
+                string worksheetNm = ((AttributeTextBox)attributeDic["etabsSheetName_WC"]).textBox.Text;
+                etabsRange = new ExcelTableRange("etabs", etabsWorkbook, worksheetNm);
+                etabsRange.GetUsedRangeFromEnd(2, 1, 2);
+                Range copyRange = etabsRange.activeRange;                
+                #endregion
+
+                #region Clear
+                string copyRangeAddress = copyRange.Address;
+                Range startCell = destinationRange.Worksheet.Range["A4"];
+                Range endCell = destinationRange.Worksheet.Cells[1048576, copyRange.Column + copyRange.Columns.Count - 1];
+                Range clearRange = destinationRange.Worksheet.Range[startCell, endCell];
+                MessageBox.Show($"Clear range address = {clearRange.Address}");
+                clearRange.Clear();
+                #endregion
+
+                copyRange.Copy(destinationRange);
+            }
+            catch (Exception ex) { throw new Exception("Error copying ETABS table\n" + ex.Message); }
+            finally
+            {
+                if (etabsWorkbook != null && workbookOpened) { etabsWorkbook.Close(); etabsWorkbook = null; }
+            }
+
+        }
         #endregion
 
         #region Read Reference Files
@@ -367,59 +170,35 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         {
             try
             {
-                if (copyFromEtabsCheck.Checked)
-                {
-                    #region Clear current sheet
-                    Range destinationRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range["A4"];
-                    Range clearRange = destinationRange.Worksheet.Range["A4:AJ1048576"];
-                    clearRange.Clear();
-                    #endregion
-
-                    #region Copy
-                    Workbook etabsWorkbook = ((FileTextBox)attributeDic["etabsOutputFile_WC"]).OpenAndGetWorkbook(Globals.ThisAddIn.Application);
-                    string worksheetNm = ((AttributeTextBox)attributeDic["etabsSheetName_WC"]).textBox.Text;
-                    etabsRange = new ExcelTableRange("etabs", etabsWorkbook, worksheetNm);
-                    etabsRange.GetUsedRangeFromEnd(2, 1, 2);
-                    Range copyRange = etabsRange.activeRange;
-                    string copyRangeAddress = copyRange.Address;
-                    copyRange.Copy(destinationRange);
-                    etabsWorkbook.Close();
-                    #endregion
-
-                    etabsRange = new ExcelTableRange("etabs", destinationRange.Worksheet);
-                    etabsRange.SetActiveRange(destinationRange.Worksheet.Range[copyRangeAddress], 2);
-                }
-                else
-                {
-                    Range destinationRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range["A4"];
-                    etabsRange = new ExcelTableRange("etabs", destinationRange.Worksheet);
-                    etabsRange.GetUsedRangeFromStart(2, 1, 2);
-                }
+                Range destinationRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range["A4"];
+                etabsRange = new ExcelTableRange("etabs", destinationRange.Worksheet);
+                etabsRange.GetUsedRangeFromStart(2, 1, 2);
             }
             catch (Exception ex) { throw new Exception("Error reading ETABS Input table\n" + ex.Message); }
         }        
-        Dictionary<string, AssignedWallRebarBIM> rebarAssignmentDic;
+        Dictionary<string, DesignGroupBIM> designGroupsDic;
         Dictionary<string, string> wallToGroupingDic;
         private void ReadBIMInput()
         {
             Workbook bimWorkbook = null;
+            bool workbookOpened = false;
             try
             {
-                bimWorkbook = ((FileTextBox)attributeDic["bimOutputFile_WC"]).OpenAndGetWorkbook(Globals.ThisAddIn.Application);
-                rebarAssignmentDic = new Dictionary<string, AssignedWallRebarBIM>();
+                (bimWorkbook, workbookOpened) = ((FileTextBox)attributeDic["bimOutputFile_WC"]).OpenAndGetWorkbook(Globals.ThisAddIn.Application);
+                designGroupsDic = new Dictionary<string, DesignGroupBIM>();
                 ReadBimWallSheet(((AttributeTextBox)attributeDic["bimWallSheetName_WC"]).textBox.Text);
                 ReadBimWallSheet(((AttributeTextBox)attributeDic["bimHsSheetName_WC"]).textBox.Text);
-                
+                ReadBimColSheet(((AttributeTextBox)attributeDic["bimColSheetName_WC"]).textBox.Text);
+
                 void ReadBimWallSheet(string sheetName) 
                 {
-                    //string sheetName = ((AttributeTextBox)attributeDic["bimWallSheetName_WC"]).textBox.Text;
-                    ExcelTableRange bimRange = new ExcelTableRange("bim", bimWorkbook, sheetName);
+                    ExcelTableRange bimRange = new ExcelTableRange(sheetName, bimWorkbook, sheetName);
                     bimRange.GetUsedRangeFromEnd(1, 1, 1);
-                    int mainBarIndex = bimRange.headerMapping["VerticalRebar"];
-                    int shearBarIndex = bimRange.headerMapping["HorizontalRebar"];
-                    int thicknessIndex = bimRange.headerMapping["Thickness"];
-                    int startStoreyIndex = bimRange.headerMapping["DetailStartStorey"];
-                    int endStoreyIndex = bimRange.headerMapping["DetailEndStorey"];
+                    int mainBarIndex = bimRange.GetHeaderIndex("VerticalRebar");
+                    int shearBarIndex = bimRange.GetHeaderIndex("HorizontalRebar");
+                    int thicknessIndex = bimRange.GetHeaderIndex("Thickness");
+                    int startStoreyIndex = bimRange.GetHeaderIndex("DetailStartStorey");
+                    int endStoreyIndex = bimRange.GetHeaderIndex("DetailEndStorey");
 
                     Range bimTableRange = bimRange.activeRange;
                     
@@ -428,29 +207,53 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                     {
                         string newName = row.Cells[1].Text;
                         if (newName != "") { name = newName; }
-                        if (!rebarAssignmentDic.ContainsKey(name)) { rebarAssignmentDic[name] = new AssignedWallRebarBIM(name, storeyMap); }
-                        AssignedWallRebarBIM wallRebar = rebarAssignmentDic[name];
-                        wallRebar.AddRow(row, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, thicknessIndex);
+                        if (!designGroupsDic.ContainsKey(name)) { designGroupsDic[name] = new DesignGroupBIM(name, storeyMap); }
+                        DesignGroupBIM wallRebar = designGroupsDic[name];
+                        wallRebar.AddWallRow(row, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, thicknessIndex);
+                    }
+                }
+
+                void ReadBimColSheet(string sheetName)
+                {
+                    ExcelTableRange bimRange = new ExcelTableRange(sheetName, bimWorkbook, sheetName);
+                    bimRange.GetUsedRangeFromEnd(1, 1, 1);
+                    int mainBarIndex = bimRange.GetHeaderIndex("MainRebar");
+                    int shearBarIndex = bimRange.GetHeaderIndex("Stirrups");
+                    int widthIndex = bimRange.GetHeaderIndex("Width");
+                    int breathIndex = bimRange.GetHeaderIndex("Breadth");
+                    int startStoreyIndex = bimRange.GetHeaderIndex("DetailStartStorey");
+                    int endStoreyIndex = bimRange.GetHeaderIndex("DetailEndStorey");
+
+                    Range bimTableRange = bimRange.activeRange;
+
+                    string name = "";
+                    foreach (Range row in bimTableRange.Rows)
+                    {
+                        string newName = row.Cells[1].Text;
+                        if (newName != "") { name = newName; }
+                        if (!designGroupsDic.ContainsKey(name)) { designGroupsDic[name] = new DesignGroupBIM(name, storeyMap); }
+                        DesignGroupBIM designGroup = designGroupsDic[name];
+                        designGroup.AddColRow(row, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, widthIndex, breathIndex);
                     }
                 }
 
                 wallToGroupingDic = new Dictionary<string, string>();
-                foreach (AssignedWallRebarBIM wallRebar in rebarAssignmentDic.Values)
+                foreach (DesignGroupBIM designGroup in designGroupsDic.Values)
                 {
-                    wallRebar.SortStories();
-                    wallRebar.MapIndividualPierLabels(wallToGroupingDic);
+                    designGroup.SortStories();
+                    designGroup.MapIndividualPierLabels(wallToGroupingDic);
                 }
             }
             catch (Exception ex) { throw new Exception("Error reading BIM Input table\n" + ex.Message); }
             finally
             {
-                if (bimWorkbook != null) { bimWorkbook.Close(); }
+                if (bimWorkbook != null && workbookOpened) { bimWorkbook.Close(); bimWorkbook = null; }
             }
         }
         #endregion
 
         #region Match
-        private void MatchDesignLabels()
+        private void MatchDesignLabels(Stopwatch totalStopwatch)
         {
             #region Init ETABS Array
             double[] verticalAsReq = etabsRange.GetDataColumnAsDoubleArray("Required Reinf. Percentage");
@@ -464,6 +267,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             //string[] matchedStorey = new string[numRows];
             string[] matchedLabel = new string[numRows];
             string[] matchedDesignGroup = new string[numRows];
+            
             string[] verticalBar = new string[numRows];
             double[] verticalAsProv = new double[numRows];
             double[] verticalAsPerc = new double[numRows];
@@ -474,6 +278,17 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             string[] horizontalCheck = new string[numRows];
             #endregion
 
+            #region Clear formats
+            Range verticalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 29];
+            Range horizontalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 32];
+            Range matchResultRange = etabsRange.activeRange.Columns[1].Offset[0, 35];
+            verticalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+            horizontalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+            matchResultRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+            #endregion
+
+            Range errorFormatRange = null;
+            HashSet<string> errorPiers = new HashSet<string>();
 
             for (int rowNum = 0; rowNum < numRows; rowNum++)
             {
@@ -485,11 +300,18 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 { 
                     matchedDesignGroup[rowNum] = wallToGroupingDic[matchedLabel[rowNum]]; 
                 }
-                else { matchedDesignGroup[rowNum] = "Error finding design group"; continue; }
+                else 
+                { 
+                    matchedDesignGroup[rowNum] = "Error finding design group";
+                    if (errorFormatRange == null) { errorFormatRange = matchResultRange.Rows[rowNum + 1]; }
+                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, matchResultRange.Rows[rowNum + 1]); }
+                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    continue; 
+                }
                 #endregion
 
                 #region Calculate As
-                WallRebarEntryBim entry = rebarAssignmentDic[matchedDesignGroup[rowNum]].GetEntryFromEtabsStorey(etabsStorey[rowNum]);
+                RebarEntryBim entry = designGroupsDic[matchedDesignGroup[rowNum]].GetEntryFromEtabsStorey(etabsStorey[rowNum]);
                 verticalBar[rowNum] = entry.vertcialBarString;
                 (verticalAsProv[rowNum], verticalAsPerc[rowNum]) = entry.VerticalAs;
 
@@ -498,6 +320,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 #endregion
 
                 #region Check As
+                
+
                 if (verticalAsReq[rowNum] < verticalAsPerc[rowNum])
                 {
                     verticalCheck[rowNum] = "Ok";
@@ -505,6 +329,9 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 else
                 {
                     verticalCheck[rowNum] = "Not Ok";
+                    if (errorFormatRange == null) { errorFormatRange = verticalCheckRange.Rows[rowNum + 1]; }
+                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, verticalCheckRange.Rows[rowNum + 1]); }
+                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
                 }
 
                 if (shearRebarReq[rowNum] < horizontalAsProv[rowNum])
@@ -514,16 +341,46 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 else
                 {
                     horizontalCheck[rowNum] = "Not Ok";
+                    if (errorFormatRange == null) { errorFormatRange = horizontalCheckRange.Rows[rowNum + 1]; }
+                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, horizontalCheckRange.Rows[rowNum + 1]); }
+                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
                 }
                 #endregion
-
             }
 
             WriteToExcelRangeAsCol(etabsRange.activeRange, 0, 25, false, matchedLabel, verticalBar, verticalAsProv, verticalAsPerc, verticalCheck, horizontalBar, horizontalAsProv, horizontalCheck);
             WriteToExcelRangeAsCol(etabsRange.activeRange, 0 , 35, false, matchedDesignGroup);
             
+            #region Error handling
+            if (errorFormatRange != null) { errorFormatRange.Font.Color = Color.Red; }
+            string errorMsg = "Error encountered in the following etabs piers, please check result. Copy error pier labels to clipboard?\n";
+            string errorMsgToClipboard = "";
+            if (errorPiers.Count != 0)
+            {
+                foreach (string errorPier in errorPiers)
+                {
+                    errorMsg += errorPier + ", ";
+                    errorMsgToClipboard += errorPier + "\n";
+                }
+                errorMsg = errorMsg.Substring(0, errorMsg.Length - 2); // remove last ", "
+                errorMsgToClipboard = errorMsgToClipboard.Substring(0, errorMsgToClipboard.Length - 1); // remove last "\n"
+                
+                totalStopwatch.Stop();
+                
+                DialogResult res = MessageBox.Show(errorMsg, "Warning", MessageBoxButtons.YesNo);
+                if (res == DialogResult.Yes)
+                {
+                    Clipboard.SetText(errorMsgToClipboard);
+                }
+            }
+            else { totalStopwatch.Stop(); }
+            #endregion
+
+
+
         }
         #endregion
+
 
     }
     public class ExcelTableRange
@@ -630,9 +487,20 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             string address = headerRange.Address;
             foreach (Range cell in headerRange.Cells)
             {
-                headerMapping.Add(cell.Value2.ToString(), colNum);
+                if (cell.Value2 == null) { continue; }
+                string headerValue = cell.Value2.ToString().Trim();
+                headerMapping.Add(headerValue, colNum);
                 colNum++;
             }
+        }
+
+        public int GetHeaderIndex(string headerValue)
+        {
+            if (headerMapping.ContainsKey(headerValue))
+            {
+                return headerMapping[headerValue];
+            }
+            throw new Exception($"Header value \"{headerValue}\" not found in headers for \"{name}\"");
         }
         #endregion
 
@@ -763,29 +631,34 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
 
     }
 
-
-    #region Wall Rebar
-    public class AssignedWallRebarBIM
+    #region Assigned Rebar
+    public class DesignGroupBIM
     {
         // Contains rebar information for a single pier label in the rebar table
         #region Init
         public string pierLabels;
-        public Dictionary<int, WallRebarEntryBim> tableContents = new Dictionary<int, WallRebarEntryBim>(); // initial data in dictionary format, storey index points to data
+        public Dictionary<int, RebarEntryBim> tableContents = new Dictionary<int, RebarEntryBim>(); // initial data in dictionary format, storey index points to data
         public List<string[]> tableContentsList = new List<string[]>(); // initial data in table format
 
         EtabsToDesignMap storeyMap;
-        public AssignedWallRebarBIM(string name, EtabsToDesignMap storeyMap)
+        public DesignGroupBIM(string name, EtabsToDesignMap storeyMap)
         {
             // Used for matching rebars only
             pierLabels = name;
             this.storeyMap = storeyMap;
         }
         
-        public void AddRow(Range row, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex)
+        public void AddWallRow(Range row, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex)
         {
             WallRebarEntryBim wallRebarEntry = new WallRebarEntryBim(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, thicknessIndex);
             tableContents.Add(wallRebarEntry.startStoreyNum, wallRebarEntry);
         }
+        public void AddColRow(Range row, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int widthIndex, int breathIndex)
+        {
+            ColumnRebarEntryBim columnRebarEntry = new ColumnRebarEntryBim(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, widthIndex, breathIndex);
+            tableContents.Add(columnRebarEntry.startStoreyNum, columnRebarEntry);
+        }
+
         #endregion
 
         #region Sort and Find Stories
@@ -799,18 +672,18 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             
             for (int i = 0; i < startStoreyNumSorted.Length; i++)
             {
-                WallRebarEntryBim wallRebarEntry = tableContents[startStoreyNumSorted[i]];
+                RebarEntryBim wallRebarEntry = tableContents[startStoreyNumSorted[i]];
                 endStoreyNumSorted[i] = wallRebarEntry.endStoreyNum;
             }
         }
 
-        public WallRebarEntryBim GetEntryFromStoreyNum(int targetStoreyNum)
+        public RebarEntryBim GetEntryFromStoreyNum(int targetStoreyNum)
         {
             for (int i = 0; i < startStoreyNumSorted.Length; i++)
             {
                 if (targetStoreyNum > startStoreyNumSorted[i] && targetStoreyNum <= endStoreyNumSorted[i])
                 {
-                    WallRebarEntryBim wallRebarEntry = tableContents[startStoreyNumSorted[i]];
+                    RebarEntryBim wallRebarEntry = tableContents[startStoreyNumSorted[i]];
                     return wallRebarEntry;
                 }
             }
@@ -818,11 +691,13 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             return null;
             //throw new Exception("Unable to find target storey");
         }
-        public WallRebarEntryBim GetEntryFromEtabsStorey(string etabsStoreyName)
+        
+        public RebarEntryBim GetEntryFromEtabsStorey(string etabsStoreyName)
         {
             int storeyNum = storeyMap.GetStoreyIndex(etabsStoreyName, "etabs");
             return GetEntryFromStoreyNum(storeyNum);
         }
+
         #endregion
 
         #region Map pier labels
@@ -831,7 +706,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             string[] parts = SplitAndTrim(pierLabels);
             foreach (string part in parts) 
             {
-                if (wallToGroupingDic.ContainsKey(part)) { throw new Exception($"Error: Duplicate pier label \"{part}\" found\n" +
+                if (wallToGroupingDic.ContainsKey(part)) { throw new Exception($"Error: Duplicate label \"{part}\" found\n" +
                     $"Pier Group 1: {wallToGroupingDic[part]}\n" +
                     $"Pier Group 2: {pierLabels}\n"); }
                 wallToGroupingDic.Add(part, pierLabels);
@@ -840,24 +715,15 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         #endregion
     }
 
-    public class WallRebarEntryBim
+    public abstract class RebarEntryBim
     {
-        // Contains rebar information for a single storey for a pier label in the rebar table
         #region Init
         public string vertcialBarString;
         public string horizontalBarString;
         public int startStoreyNum;
         public int endStoreyNum;
-        public double thickness;
 
-        /// <summary>
-        /// 1 based indexes used
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="storeyMap"></param>
-        /// <param name="mainBarIndex"></param>
-        /// <param name="shearBarIndex"></param>
-        public WallRebarEntryBim(Range row, EtabsToDesignMap storeyMap, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex)
+        public RebarEntryBim(Range row, EtabsToDesignMap storeyMap, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex)
         {
             string startStoreyName = row.Cells[startStoreyIndex].Value2.ToString();
             startStoreyNum = storeyMap.GetStoreyIndex(startStoreyName, "design");
@@ -866,19 +732,33 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             endStoreyNum = storeyMap.GetStoreyIndex(endStoreyName, "design");
             vertcialBarString = row.Cells[mainBarIndex].Value2.ToString();
             horizontalBarString = row.Cells[shearBarIndex].Value2.ToString();
+        }
+        #endregion
 
-            // Thickness
-            Range cell = row.Cells[thicknessIndex];
-            if (cell.Value2 is double) { thickness = cell.Value2; }
-            else {
-                bool canParse = double.TryParse(cell.Value2.ToString(), out thickness);
-                if (!canParse) { throw new ArgumentException($"Unable to parse value {cell.Value2} at cell {cell.Worksheet.Name}!{cell.Address[false, false]} into number."); }
-            }
+        #region Calculated Values
+        public abstract (double asProv, double asPerc) VerticalAs { get; }
+        public abstract double HorizontalAs { get; }
+        #endregion
+    }
+
+    public class WallRebarEntryBim: RebarEntryBim
+    {
+        // Contains rebar information for a single storey for a wall label in the rebar table
+        #region Init
+        public double thickness;
+
+        /// <summary>
+        /// 1 based indexes used
+        /// </summary>
+        public WallRebarEntryBim(Range row, EtabsToDesignMap storeyMap, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex): base(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex)
+        {
+
+            thickness = ReadDoubleFromCell(row.Cells[thicknessIndex]);
         }
         #endregion
 
         #region Calculated values
-        public (double asProv, double asPerc) VerticalAs
+        public override (double asProv, double asPerc) VerticalAs
         {
             get
             {
@@ -892,7 +772,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             }
         }
 
-        public double HorizontalAs
+        public override double HorizontalAs
         {
             get
             {
@@ -915,16 +795,112 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             }
             else
             {
-                throw new ArgumentException($"No match found for {inputString} at ");
+                throw new ArgumentException($"Unable to read \"{inputString}\" into format: Hxx-yyy");
             }
             
         }
         #endregion
     }
-    
-    //public class WallRebarEntry
+
+    public class ColumnRebarEntryBim: RebarEntryBim
+    {
+        // Contains rebar information for a single storey for a column label in the rebar table
+        #region Init
+        public double width;
+        public double breath;
+
+        /// <summary>
+        /// 1 based indexes used
+        /// </summary>
+        public ColumnRebarEntryBim(Range row, EtabsToDesignMap storeyMap, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int widthIndex, int breathIndex): base(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex)
+        {
+            width = ReadDoubleFromCell(row.Cells[widthIndex]);
+            breath = ReadDoubleFromCell(row.Cells[breathIndex]);
+        }
+        #endregion
+
+        #region Calculated values
+        public override (double asProv, double asPerc) VerticalAs
+        {
+            get
+            {
+                (double number, double dia) = SplitRebarNumberAndDiameter(vertcialBarString);
+                double asProv = (Math.PI * Math.Pow(dia, 2)) / 4 * number;
+                
+                double asPerc = asProv / (breath * width) * 100;
+                asProv = Math.Round(asProv, 0);
+                asPerc = Math.Round(asPerc, 3);
+                return (asProv, asPerc);
+            }
+        }
+
+        public override double HorizontalAs
+        {
+            get
+            {
+                string[] parts = SplitAndTrim(horizontalBarString, '+');
+                (double dia, double spacing) = SplitRebarAndSpacingShear(parts[0]);
+                double asProv = 2 * (Math.PI * Math.Pow(dia, 2)) / 4 * (1000 / spacing);
+                asProv = Math.Round(asProv, 0);
+                return asProv;
+            }
+        }
+
+        private (int number, double dia) SplitRebarNumberAndDiameter(string inputString)
+        {
+            Regex regex = new Regex(@"(\d+)H(\d+)");
+            Match match = regex.Match(inputString);
+            if (match.Success)
+            {
+                int number = Int32.Parse(match.Groups[1].Value);
+                double dia = double.Parse(match.Groups[2].Value);
+                return (number, dia);
+            }
+            else
+            {
+                throw new ArgumentException($"Unable to read \"{inputString}\" into format: xxHyy");
+            }
+        }
+        private (double dia, double spacing) SplitRebarAndSpacingShear(string inputString)
+        {
+            if (inputString[0] == 'H')
+            {
+                Regex regex = new Regex(@"H(\d+)-(\d+)");
+                Match match = regex.Match(inputString);
+                if (match.Success)
+                {
+                    double dia = double.Parse(match.Groups[1].Value);
+                    double spacing = double.Parse(match.Groups[2].Value);
+                    return (dia, spacing);
+                }
+                else
+                {
+                    throw new ArgumentException($"Unable to read \"{inputString}\" into format: Hxx-yyy");
+                }
+            }
+            else
+            {
+                Regex regex = new Regex(@"(\d+)H(\d+)-(\d+)");
+                Match match = regex.Match(inputString);
+                if (match.Success)
+                {
+                    double dia = double.Parse(match.Groups[2].Value);
+                    double spacing = double.Parse(match.Groups[3].Value);
+                    return (dia, spacing);
+                }
+                else
+                {
+                    throw new ArgumentException($"Unable to read \"{inputString}\" into format: xHyy-zzz");
+                }
+            }
+            
+        }
+        #endregion
+    }
 
     #endregion
 }
+
+
 
 
