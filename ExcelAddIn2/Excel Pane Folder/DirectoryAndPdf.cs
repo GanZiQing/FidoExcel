@@ -797,12 +797,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                             {
                                 //workbookFileName += ".pdf";
                                 //pdfFileName = GetPdfName();
-                                PrintEntireWorkbook(workbookToPrint, sheetName, workbookFileName, folderPath);
+                                //PrintEntireWorkbook(workbookToPrint, sheetName, workbookFileName, folderPath);
+                                PrintEntireWorkbook(workbookToPrint, sheetName, pdfFileName, folderPath);
                             }
                             else // Print single sheet
                             {
                                 //workbookFileName += $"_{sheetName}.pdf";
-                                GetAndPrintSingleSheet(workbookToPrint, sheetName, workbookFileName, folderPath);
+                                //GetAndPrintSingleSheet(workbookToPrint, sheetName, workbookFileName, folderPath);
+                                GetAndPrintSingleSheet(workbookToPrint, sheetName, pdfFileName, folderPath);
                             }
                             #endregion
 

@@ -12,10 +12,7 @@ using Application = Microsoft.Office.Interop.Excel.Application;
 using System.IO;
 using System.Diagnostics;
 using static ExcelAddIn2.CommonUtilities;
-using System.Windows.Forms.VisualStyles;
-using System.Web;
 using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations;
 
 namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
 {
@@ -194,11 +191,15 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 {
                     ExcelTableRange bimRange = new ExcelTableRange(sheetName, bimWorkbook, sheetName);
                     bimRange.GetUsedRangeFromEnd(1, 1, 1);
+                    int startStoreyIndex = bimRange.GetHeaderIndex("DetailStartStorey");
+                    int endStoreyIndex = bimRange.GetHeaderIndex("DetailEndStorey");
                     int mainBarIndex = bimRange.GetHeaderIndex("VerticalRebar");
                     int shearBarIndex = bimRange.GetHeaderIndex("HorizontalRebar");
                     int thicknessIndex = bimRange.GetHeaderIndex("Thickness");
-                    int startStoreyIndex = bimRange.GetHeaderIndex("DetailStartStorey");
-                    int endStoreyIndex = bimRange.GetHeaderIndex("DetailEndStorey");
+                    int lengthIndex = -1;
+                    try{ lengthIndex = bimRange.GetHeaderIndex("Length"); }
+                    catch { }
+                    
 
                     Range bimTableRange = bimRange.activeRange;
                     
@@ -209,7 +210,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                         if (newName != "") { name = newName; }
                         if (!designGroupsDic.ContainsKey(name)) { designGroupsDic[name] = new DesignGroupBIM(name, storeyMap); }
                         DesignGroupBIM wallRebar = designGroupsDic[name];
-                        wallRebar.AddWallRow(row, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, thicknessIndex);
+                        wallRebar.AddWallRow(row, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, thicknessIndex, lengthIndex);
                     }
                 }
 
@@ -256,8 +257,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         private void MatchDesignLabels(Stopwatch totalStopwatch)
         {
             #region Init ETABS Array
-            double[] verticalAsReq = etabsRange.GetDataColumnAsDoubleArray("Required Reinf. Percentage");
+            double[] verticalAsPrecReq = etabsRange.GetDataColumnAsDoubleArray("Required Reinf. Percentage");
             double[] shearRebarReq = etabsRange.GetDataColumnAsDoubleArray("Shear Rebar");
+            double[] etabsThickness = etabsRange.GetDataColumnAsDoubleArray("Thickness");
+            double[] etabsLength = etabsRange.GetDataColumnAsDoubleArray("Length");
             #endregion
 
             #region Init Write Arrays
@@ -269,19 +272,24 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             string[] matchedDesignGroup = new string[numRows];
             
             string[] verticalBar = new string[numRows];
-            double[] verticalAsProv = new double[numRows];
-            double[] verticalAsPerc = new double[numRows];
+            object[] verticalAsProv = new object[numRows];
+            object[] verticalAsPerc = new object[numRows];
             string[] verticalCheck  = new string[numRows];
 
             string[] horizontalBar = new string[numRows];
-            double[] horizontalAsProv = new double[numRows];
+            object[] horizontalAsProv = new object[numRows];
             string[] horizontalCheck = new string[numRows];
+
+            string[] thicknessCheck = new string[numRows];
+            string[] lengthCheck = new string[numRows];
             #endregion
 
             #region Clear formats
             Range verticalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 29];
             Range horizontalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 32];
             Range matchResultRange = etabsRange.activeRange.Columns[1].Offset[0, 35];
+            Range thicknessCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 36];
+            Range lengthCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 37];
             verticalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
             horizontalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
             matchResultRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
@@ -314,15 +322,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 RebarEntryBim entry = designGroupsDic[matchedDesignGroup[rowNum]].GetEntryFromEtabsStorey(etabsStorey[rowNum]);
                 verticalBar[rowNum] = entry.vertcialBarString;
                 (verticalAsProv[rowNum], verticalAsPerc[rowNum]) = entry.VerticalAs;
+                if (double.IsNaN((double)verticalAsProv[rowNum])) { verticalAsProv[rowNum] = ""; }
 
                 horizontalBar[rowNum] = entry.horizontalBarString;
                 horizontalAsProv[rowNum] = entry.HorizontalAs;
                 #endregion
 
                 #region Check As
-                
-
-                if (verticalAsReq[rowNum] < verticalAsPerc[rowNum])
+                if (verticalAsPrecReq[rowNum] < (double)verticalAsPerc[rowNum])
                 {
                     verticalCheck[rowNum] = "Ok";
                 }
@@ -334,7 +341,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                     if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
                 }
 
-                if (shearRebarReq[rowNum] < horizontalAsProv[rowNum])
+                if (shearRebarReq[rowNum] < (double)horizontalAsProv[rowNum])
                 {
                     horizontalCheck[rowNum] = "Ok";
                 }
@@ -346,10 +353,58 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                     if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
                 }
                 #endregion
+
+                #region Check Dimension
+
+
+                double thickness = entry.Thickness;
+                if (double.IsNaN(thickness))
+                {
+                    thicknessCheck[rowNum] = $"Error: Invalid thickness provided for check";
+
+                    if (errorFormatRange == null) { errorFormatRange = thicknessCheckRange.Rows[rowNum + 1]; }
+                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, thicknessCheckRange.Rows[rowNum + 1]); }
+                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                }
+                else if (Math.Abs(etabsThickness[rowNum] - thickness) > 10)
+                {
+                    thicknessCheck[rowNum] = $"Error: ETABS thickness differs form length in BIM data. ETABS = {etabsThickness[rowNum]}, BIM = {thickness}";
+                    if (errorFormatRange == null) { errorFormatRange = thicknessCheckRange.Rows[rowNum + 1]; }
+                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, thicknessCheckRange.Rows[rowNum + 1]); }
+                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                }
+                else
+                {
+                    thicknessCheck[rowNum] = $"Ok";
+                }
+
+                double length = entry.Length;
+                if (double.IsNaN(length))
+                {
+                    lengthCheck[rowNum] = $"Warning: Invalid length provided for check";
+
+                    if (errorFormatRange == null) { errorFormatRange = lengthCheckRange.Rows[rowNum + 1]; }
+                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, lengthCheckRange.Rows[rowNum + 1]); }
+                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                }
+                else if ((etabsLength[rowNum] - length) > 10)
+                {
+                    lengthCheck[rowNum] = $"Error: ETABS length is greater than length in BIM data. ETABS = {etabsLength[rowNum]}, BIM = {length}";
+
+                    if (errorFormatRange == null) { errorFormatRange = lengthCheckRange.Rows[rowNum + 1]; }
+                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, lengthCheckRange.Rows[rowNum + 1]); }
+                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                }
+                else
+                {
+                    lengthCheck[rowNum] = $"Ok";
+                }
+
+                #endregion
             }
 
             WriteToExcelRangeAsCol(etabsRange.activeRange, 0, 25, false, matchedLabel, verticalBar, verticalAsProv, verticalAsPerc, verticalCheck, horizontalBar, horizontalAsProv, horizontalCheck);
-            WriteToExcelRangeAsCol(etabsRange.activeRange, 0 , 35, false, matchedDesignGroup);
+            WriteToExcelRangeAsCol(etabsRange.activeRange, 0 , 35, false, matchedDesignGroup, thicknessCheck, lengthCheck);
             
             #region Error handling
             if (errorFormatRange != null) { errorFormatRange.Font.Color = Color.Red; }
@@ -648,9 +703,9 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             this.storeyMap = storeyMap;
         }
         
-        public void AddWallRow(Range row, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex)
+        public void AddWallRow(Range row, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex, int lengthIndex)
         {
-            WallRebarEntryBim wallRebarEntry = new WallRebarEntryBim(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, thicknessIndex);
+            WallRebarEntryBim wallRebarEntry = new WallRebarEntryBim(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex, thicknessIndex, lengthIndex);
             tableContents.Add(wallRebarEntry.startStoreyNum, wallRebarEntry);
         }
         public void AddColRow(Range row, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int widthIndex, int breathIndex)
@@ -739,6 +794,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         public abstract (double asProv, double asPerc) VerticalAs { get; }
         public abstract double HorizontalAs { get; }
         #endregion
+
+        #region Dimension
+        public abstract double Thickness { get; }
+        public abstract double Length { get; }
+        #endregion
     }
 
     public class WallRebarEntryBim: RebarEntryBim
@@ -746,14 +806,17 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         // Contains rebar information for a single storey for a wall label in the rebar table
         #region Init
         public double thickness;
-
+        public double length;
         /// <summary>
         /// 1 based indexes used
         /// </summary>
-        public WallRebarEntryBim(Range row, EtabsToDesignMap storeyMap, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex): base(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex)
+        public WallRebarEntryBim(Range row, EtabsToDesignMap storeyMap, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int thicknessIndex, int lengthIndex): base(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex)
         {
-
-            thickness = ReadDoubleFromCell(row.Cells[thicknessIndex]);
+            //thickness = ReadDoubleFromCell(row.Cells[thicknessIndex]);
+            //length = ReadDoubleFromCell(row.Cells[lengthIndex]);
+            thickness = ReadDoubleFromCell2(row.Cells[thicknessIndex], double.NaN, double.NaN);
+            if (lengthIndex != -1) { length = ReadDoubleFromCell2(row.Cells[lengthIndex], double.NaN, double.NaN); }
+            else { length = double.NaN; }
         }
         #endregion
 
@@ -800,6 +863,18 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             
         }
         #endregion
+
+        #region Dimensions
+        public override double Thickness
+        {
+            get { return thickness; }
+        }
+
+        public override double Length
+        {
+            get { return length; }
+        }
+        #endregion
     }
 
     public class ColumnRebarEntryBim: RebarEntryBim
@@ -814,8 +889,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         /// </summary>
         public ColumnRebarEntryBim(Range row, EtabsToDesignMap storeyMap, int startStoreyIndex, int endStoreyIndex, int mainBarIndex, int shearBarIndex, int widthIndex, int breathIndex): base(row, storeyMap, startStoreyIndex, endStoreyIndex, mainBarIndex, shearBarIndex)
         {
-            width = ReadDoubleFromCell(row.Cells[widthIndex]);
-            breath = ReadDoubleFromCell(row.Cells[breathIndex]);
+            width = ReadDoubleFromCell2(row.Cells[widthIndex], double.NaN, double.NaN);
+            breath = ReadDoubleFromCell2(row.Cells[breathIndex], double.NaN, double.NaN);
         }
         #endregion
 
@@ -830,7 +905,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 double asPerc = asProv / (breath * width) * 100;
                 asProv = Math.Round(asProv, 0);
                 asPerc = Math.Round(asPerc, 3);
-                return (asProv, asPerc);
+                return (double.NaN, asPerc); // return asProv as NaN since it should be hidden for columns
             }
         }
 
@@ -894,6 +969,18 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 }
             }
             
+        }
+        #endregion
+
+        #region Dimensions
+        public override double Thickness
+        {
+            get { return width; }
+        }
+
+        public override double Length
+        {
+            get { return breath; }
         }
         #endregion
     }
