@@ -16,6 +16,10 @@ using PdfSharp.Snippets.Font;
 using MigraDoc.DocumentObjectModel;
 using System.Security.Cryptography;
 using Microsoft.Office.Core;
+using System.Collections;
+using ETABSv1;
+using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics.Eventing.Reader;
 
 namespace ExcelAddIn2
 {
@@ -33,8 +37,23 @@ namespace ExcelAddIn2
         Dictionary<string, object> attributeDic = new Dictionary<string, object>();
         private void CreateAttributes()
         {
-            AttributeTextBox thisTBAtt = new RangeTextBox("storeyRange_AWL", dispStoreyRange, setStoreyRange);
+            AttributeTextBox thisTBAtt = new RangeTextBox("storyRange_AWL", dispStoryRange, setStoryRange);
             attributeDic.Add(thisTBAtt.attName, thisTBAtt);
+
+            thisTBAtt = new RangeTextBox("jointDataRange_AWL", dispJointDataRange, setJointDataRange);
+            attributeDic.Add(thisTBAtt.attName, thisTBAtt);
+
+            CustomAttribute thisAtt = new ComboBoxAttribute("storySortOrder_AWL", dispStorySortOrder, "Top to Bottom");
+            attributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new ComboBoxAttribute("jointSortOrder_AWL", dispJointSortOrder, "Z, X, Y");
+            attributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new ComboBoxAttribute("windLoadDir_AWL", dispWindLoadDir, "X");
+            attributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new CheckBoxAttribute("replaceLoad_AWL", replaceLoadCheck, true);
+            attributeDic.Add(thisAtt.attName, thisAtt);
         }
 
         private void AddHeaders()
@@ -42,14 +61,16 @@ namespace ExcelAddIn2
             List<string> headers = new List<string>
             {
                 "Story Name", 
-                "Minimum WL Value", 
-                "Maximum WL Value",
-                "Min X Value",
-                "Max X Value",
-                "Min Y Value",
-                "Max Y Value"
+                "Story Elevation [m]",
+                "Effective Height [m]",
+                "Minimum WL", 
+                "Maximum WL",
+                "Min X",
+                "Max X",
+                "Min Y",
+                "Max Y"
             };
-            AddHeaderMenuToButton(setStoreyRange, headers);
+            AddHeaderMenuToButton(setStoryRange, headers);
 
             headers = new List<string>
             {
@@ -59,40 +80,94 @@ namespace ExcelAddIn2
                 "Z"
             };
             AddHeaderMenuToButton(getJointCoordinates, headers);
+
+            headers = new List<string>
+            {
+                "Story Name",
+                "Story Elevation [m]",
+                "Effective Height [m]"
+            };
+            AddHeaderMenuToButton(getStoryData, headers);
+
+            headers = new List<string>
+            {
+                "Joint UN",
+                "X [m]",
+                "Y [m]",
+                "Z [m]",
+                "Start Coord [m]",
+                "End Coord [m]",
+                "Eff Width [m]",
+                "Start WL [kN/m]",
+                "End WL [kN/m]",
+                "Total WL [kN]",
+                "Direction",
+                "Load Case Name",
+                "Status"
+            };
+            AddHeaderMenuToButton(calAWL, headers);
+            AddHeaderMenuToButton(assignWL, headers);
         }
 
         private void AddToolTips()
         {
-            toolTip1.SetToolTip(setStoreyRange,
+            toolTip1.SetToolTip(setStoryRange,
                 "Takes input in the following order:\n" +
                 "  Story Name\n" +
+                "  Story Elevation [m]\n" +
+                "  Effective Height [m]\n" +
                 "  Minimum WL Value [kN/m]\n" +
                 "  Maximum WL Value [kN/m]\n" +
-                "  Min X Value\n" +
-                "  Max X Value\n" +
-                "  Min Y Value\n" + 
-                "  Max Y Value"
+                "  Min X [m]\n" +
+                "  Max X [m]\n" +
+                "  Min Y [m]\n" +
+                "  Max Y [m]"
                 );
 
             toolTip1.SetToolTip(getJointCoordinates,
-                "Gets selected joint info for attached instance of ETABS\n" +
+                "Gets selected joint info for attached instance of ETABS, values rounded to nearest 4dp\n" +
                 "  Joint UN\n" +
                 "  X\n" +
                 "  Y\n" +
                 "  Z\n"
                 );
 
+            toolTip1.SetToolTip(getStoryData,
+                "Gets selected joint info for attached instance of ETABS\n" +
+                "  Story Name\n" +
+                "  Story Elevation\n" +
+                "  Effective Height (calculated assuming 1st sty elevation = 0)\n"
+                );
+
+            toolTip1.SetToolTip(assignWL,
+                "Assigns wind load based on the currentselected range\n" +
+                "Assumes the following order:\n" +
+                "  Joint UN\n" +
+                "  X [m]\n" +
+                "  Y [m]\n" +
+                "  Z [m]\n" +
+                "  Start Coord [m]\n" +
+                "  End Coord [m]\n" +
+                "  Eff Width [m]\n" +
+                "  Start WL [kN/m]\n" +
+                "  End WL [kN/m]\n" +
+                "  Total WL [kN]\n" +
+                "  Direction\n" +
+                "  Load Pattern Name\n" +
+                "  Status\n"
+                );
+
         }
         #endregion
 
-        #region Asymmetrical Wind Load
-        private void getStoreyNames_Click(object sender, EventArgs e)
+        #region Get ETABS Data
+        private void getStoryData_Click(object sender, EventArgs e)
         {
             try
             {
-                InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel);
+                InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel, true);
 
-                // Get group names from ETABS
+                #region Get Data Using ETABS API and Redorder
                 int ret = 0;
                 double BaseElevation = 0;
                 int NumberStories = 0;
@@ -106,51 +181,294 @@ namespace ExcelAddIn2
                 int[] color = new int[0];
 
                 ret = sapModel.Story.GetStories_2(ref BaseElevation, ref NumberStories, ref storyNames, ref storyElevations, ref storyHeights, ref isMasterStory, ref similarToStory, ref spliceAbove, ref spliceHeight, ref color);
-                if (ret != 0) { throw new Exception("Unable to get storey info"); }
+                if (ret != 0) { throw new Exception("Unable to get story info"); }
+                #endregion
 
-                WriteToExcelSelection(0, 0, true, storyNames);
-                MessageBox.Show("Completed", "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                #region Calculate Effective Height
+                double[] effHeight = new double[storyNames.Length];
+                for (int i = 1; i < storyElevations.Length - 1; i++)
+                {
+                    if (storyElevations[i] <= 0) { effHeight[i] = 0; continue; }
+                    effHeight[i] = storyHeights[i]/ 2 + storyHeights[i + 1]/ 2;
                 }
-                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
-        }
+                effHeight[storyNames.Length - 1] = storyHeights[storyNames.Length - 1] / 2;
+                #endregion
 
+                #region Sort Data and Add Base Story
+                string sortType = ((ComboBoxAttribute)attributeDic["storySortOrder_AWL"]).value;
+
+                string[] storyNamesPrint = new string[storyNames.Length + 1];
+                double[] storyElevationsPrint = new double[storyNames.Length + 1];
+                double[] effHeightPrint = new double[storyNames.Length + 1];
+
+                Array.Copy(storyNames, 0, storyNamesPrint, 1, storyNames.Length);
+                Array.Copy(storyElevations, 0, storyElevationsPrint, 1, storyNames.Length);
+                Array.Copy(effHeight, 0, effHeightPrint, 1, storyNames.Length);
+                storyNamesPrint[0] = "Base";
+                storyElevationsPrint[0] = BaseElevation;
+                effHeightPrint[0] = 0;
+
+                if (sortType == "Top to Bottom")
+                {
+                    Array.Reverse(storyNamesPrint);
+                    Array.Reverse(storyElevationsPrint);
+                    Array.Reverse(effHeightPrint);
+                }
+                else if (sortType == "Bottom to Top") {}
+                else { throw new NotImplementedException($"Sort type \"{sortType}\" not implemented"); }
+                #endregion
+
+                #region Write to Excel
+                WriteToExcelRangeAsCol(null, 0, 0, true, storyNamesPrint, storyElevationsPrint, effHeightPrint);
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        
         private void getJointCoordinates_Click(object sender, EventArgs e)
         {
             try
             {
                 InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel, true);
-                (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) = GetSortedJoints(sapModel);
-                WriteToExcelSelection(0, 0, true, selectedJoints, Xs, Ys, Zs);
 
-                MessageBox.Show("Completed", "Completed");
+                string sortType = ((ComboBoxAttribute)attributeDic["jointSortOrder_AWL"]).value;
+                (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) = GetSortedJoints(sapModel, sortType);
+
+                WriteToExcelRangeAsCol(null, 0, 0, true, selectedJoints, Xs, Ys, Zs);
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
 
-        private void calAWL_Click(object sender, EventArgs e)
+        private void getLoadPatterns_Click(object sender, EventArgs e)
         {
             try
             {
                 InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel, true);
-                (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) = GetSortedJoints(sapModel);
+                int NumberNames = 0;
+                string[] MyName = new string[0];
+                int ret = sapModel.LoadPatterns.GetNameList(ref NumberNames, ref MyName);
 
-                ReadStoreyTable();
-                
-                
-                
-                
-                
-                
-                //WriteToExcelSelection(0, 0, true, selectedJoints, Xs, Ys, Zs);
+                WriteToExcelRangeAsCol(null, 0, 0, true, MyName);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
+
+        #region Asymmetrical Wind Load
+
+        ETABSv1.cOAPI etabsObject;
+        ETABSv1.cSapModel sapModel;
+        private void calAWL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                InitializeETABS(out etabsObject, out sapModel, true);
+
+                StoryTable storyTable = ReadstoryTable();
+
+                CalculateAWL(storyTable);
 
                 MessageBox.Show("Completed", "Completed");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+            finally
+            {
+                etabsObject = null;
+                sapModel = null;
+            }
         }
 
-        private void ReadStoreyTable()
+        private StoryTable ReadstoryTable()
         {
-            Range storeyRange = 
+            Range storyRange = ((RangeTextBox)attributeDic["storyRange_AWL"]).GetRangeFromFullAddress();
+            StoryTable storyTable = new StoryTable(storyRange);
+            return storyTable;
+        }
+
+        private void CalculateAWL(StoryTable storyTable)
+        {
+            #region Get sorted joints
+            string wlDir = ((ComboBoxAttribute)attributeDic["windLoadDir_AWL"]).value;
+            string[] selectedJoints;
+            double[] Xs;
+            double[] Ys;
+            double[] Zs;
+            if (wlDir == "X") { (selectedJoints, Xs, Ys, Zs) = GetSortedJoints(sapModel, "Z, Y, X"); }
+            else if (wlDir == "Y") { (selectedJoints, Xs, Ys, Zs) = GetSortedJoints(sapModel, "Z, X, Y"); }
+            else { throw new Exception($"Invalide wind load direction \"{wlDir}\""); }
+            #endregion
+
+            #region Group sorted joints into Each Floor
+            Dictionary<string, List<int>> elevationToJointIndex = new Dictionary<string, List<int>>();
+            for (int i = 0; i < selectedJoints.Length; i++)
+            {
+                string elevationString = Zs[i].ToString("#.####");
+                if (elevationString == "") { elevationString = "0"; }
+                if (!elevationToJointIndex.ContainsKey(elevationString)) { elevationToJointIndex.Add(elevationString, new List<int>()); }
+                List<int> elevationIndexList = elevationToJointIndex[elevationString];
+                elevationIndexList.Add(i);
+            }
+            #endregion
+
+            #region Calculate for each Floor
+            string[] status = new string[selectedJoints.Length];
+            double[] startCoord = new double[selectedJoints.Length];
+            double[] endCoord = new double[selectedJoints.Length];
+            double[] effWidth = new double[selectedJoints.Length];
+            double[] startWL = new double[selectedJoints.Length];
+            double[] endWL = new double[selectedJoints.Length];
+            double[] windLoad = new double[selectedJoints.Length];
+            string direction = ((ComboBoxAttribute)attributeDic["windLoadDir_AWL"]).value;
+            foreach (KeyValuePair<string, List<int>> entry in elevationToJointIndex) 
+            {
+                CalculateAWLForOneStory(storyTable, direction, entry.Key, entry.Value, 
+                    selectedJoints, Xs, Ys, Zs, 
+                    ref status, ref startCoord, ref endCoord, ref effWidth, ref startWL, ref endWL, ref windLoad);
+            }
+            string[] directionArray = new string[selectedJoints.Length];
+            for (int i = 0; i < selectedJoints.Length; i++) { directionArray[i] = direction; }
+            #endregion
+
+            #region Write to Excel
+            WriteToExcelRangeAsCol(null, 0, 0, true, selectedJoints, Xs, Ys, Zs, startCoord, endCoord, effWidth, startWL, endWL, windLoad, directionArray);
+            WriteToExcelRangeAsCol(null, 0, 12, false, status);
+            #endregion
+        }
+
+        private void CalculateAWLForOneStory(StoryTable storyTable, string direction, string elevationString, List<int> jointIndexes, 
+            string[] selectedJoints, double[] xs, double[] ys, double[] zs, 
+            ref string[] status, ref double[] globalStartCoord, ref double[] globalEndCoord,  ref double[] globalEffWidth, ref double[] globalStartWL, ref double[] globalEndWL, ref double[] globalWindLoad)
+        {
+            #region Checks
+            double elevation = double.Parse(elevationString);
+            double effHeight = storyTable.EffHeight(elevation);
+            if (effHeight == 0) // No WL to calculate
+            {
+                foreach (int index in jointIndexes)
+                {
+                    status[index] = "Effective Height is 0";
+                }
+                return;
+            }
+            #endregion
+
+            #region Define reference values
+            double minWL = storyTable.MinWL(elevation);
+            double maxWL = storyTable.MaxWL(elevation);
+            double minCoord;
+            double maxCoord;
+
+            if (direction == "X")
+            {
+                minCoord = storyTable.MinY(elevation);
+                maxCoord = storyTable.MaxY(elevation);
+            }
+            else if (direction == "Y")
+            {
+                minCoord = storyTable.MinX(elevation);
+                maxCoord = storyTable.MaxX(elevation);
+            }
+            else { throw new Exception($"Direction {direction} is invalid."); }
+            #endregion
+
+
+            #region Create local Array
+            List<double> validCoordList = new List<double>();
+            List<int> validIndexsList = new List<int>();
+            foreach (int index in jointIndexes)
+            {
+                if (direction == "Y")
+                {
+                    if (xs[index] < minCoord) { status[index] = "No WL, position is smaller than min X value"; continue; }
+                    if (xs[index] > maxCoord) { status[index] = "No WL, position is greater than max X value"; continue; }
+                    validCoordList.Add(xs[index]);
+                }
+                else if (direction == "X")
+                {
+                    if (ys[index] < minCoord) { status[index] = "No WL, position is smaller than min X value"; continue; }
+                    if (ys[index] > maxCoord) { status[index] = "No WL, position is greater than max X value"; continue; }
+                    validCoordList.Add(ys[index]);
+                }
+                
+                validIndexsList.Add(index);
+            }
+            double[] validCoords = validCoordList.ToArray();
+            int[] validIndexes = validIndexsList.ToArray();
+            #endregion
+
+            #region Gatekeep if only 1 joint provided
+            if (validCoords.Length == 1)
+            {
+                int globalIndex = validIndexes[0];
+                globalStartCoord[globalIndex] = minCoord;
+                globalEndCoord[globalIndex] = maxCoord;
+                globalEffWidth[globalIndex] = maxCoord - minCoord;
+                globalStartWL[globalIndex] = minWL;
+                globalEndWL[globalIndex] = maxWL;
+                globalWindLoad[globalIndex] = Math.Round(((minWL + maxWL) / 2) * globalEffWidth[globalIndex] , 2);
+                return;
+            }
+            
+            #endregion
+
+            #region Calculate Coordinates
+            double[] localStartCoords = new double[validCoords.Length];
+            double[] localEndCoords = new double[validCoords.Length];
+
+            // Deal with first entry
+            localStartCoords[0] = minCoord;
+            localEndCoords[0] = (validCoords[1] + validCoords[0])/ 2;
+
+            // Deal with typical entry
+            for (int i = 1; i < validCoords.Length - 1; i++)
+            {
+                localStartCoords[i] = localEndCoords[i - 1];
+                localEndCoords[i] = (validCoords[i] + validCoords[i + 1]) / 2;
+            }
+
+            // Deal with final entry
+            localStartCoords[validCoords.Length - 1] = localEndCoords[validCoords.Length - 2];
+            localEndCoords[validCoords.Length - 1] = maxCoord;
+            #endregion
+
+            #region Calculate WL
+            double[] localEffWidth = new double[validCoords.Length];
+            double[] localStartWL = new double[validCoords.Length];
+            double[] localEndWL = new double[validCoords.Length];
+            double[] localWL = new double[validCoords.Length];
+            Func<double, double> windLoadEquation;
+            if (direction == "X")
+            {
+                windLoadEquation = storyTable.WindLoadInX(elevation);
+            }
+            else if (direction == "Y")
+            {
+                windLoadEquation = storyTable.WindLoadInY(elevation);
+            }
+            else { throw new Exception($"Direction {direction} is invalid."); }
+            
+            for (int i = 0; i < validCoords.Length; i++)
+            {
+                localEffWidth[i] = localEndCoords[i] - localStartCoords[i];
+                localStartWL[i] = windLoadEquation(localStartCoords[i]);
+                localEndWL[i] = windLoadEquation(localEndCoords[i]);
+                double avgWL = (localStartWL[i] + localEndWL[i]) / 2;
+                localWL[i] = localEffWidth[i] * avgWL;
+            }
+            #endregion
+
+            #region Map to global arrays
+            for (int i = 0; i < validCoords.Length; i++)
+            {
+                int globalIndex = validIndexes[i];
+                globalStartCoord[globalIndex] = localStartCoords[i];
+                globalEndCoord[globalIndex] = localEndCoords[i];
+                globalEffWidth[globalIndex] = localEffWidth[i];
+                globalStartWL[globalIndex] = Math.Round(localStartWL[i],2);
+                globalEndWL[globalIndex] = Math.Round(localEndWL[i],2);
+                globalWindLoad[globalIndex] = Math.Round(localWL[i],2);
+            }
+            #endregion
         }
         #endregion
 
@@ -174,9 +492,9 @@ namespace ExcelAddIn2
                     sapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
                 }
             }
-            catch //(Exception ex)
+            catch (Exception ex)
             {
-                throw new Exception("Unable to attach to ETABS");
+                throw new Exception($"Unable to attach to ETABS\n{ex.Message}");
             }
         }
 
@@ -206,12 +524,13 @@ namespace ExcelAddIn2
                 double z = 0;
                 ret = sapModel.PointObj.GetCoordCartesian(objectName[i], ref x, ref y, ref z);
                 if (ret != 0) { throw new Exception($"Error getting coordinate for joint {objectName[i]}"); }
-                Xs.Add(x);
-                Ys.Add(y);
-                Zs.Add(z);
+                Xs.Add(Math.Round(x,4));
+                Ys.Add(Math.Round(y, 4));
+                Zs.Add(Math.Round(z, 4));
             }
             #endregion
 
+            if (selectedJoints.Count == 0) { throw new Exception($"No joints selected in ETABS"); }
             return (selectedJoints, Xs, Ys, Zs);
         }
 
@@ -226,26 +545,43 @@ namespace ExcelAddIn2
             return (selectedJoints, Xs, Ys, Zs);
         }
 
-        private (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) GetSortedJoints(ETABSv1.cSapModel sapModel)
+        private (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) GetSortedJoints(ETABSv1.cSapModel sapModel, string sortType = "Z, X, Y")
         {
             (List<string> selectedJoints, List<double> Xs, List<double> Ys, List<double> Zs) = GetSelectedJointsAsList(sapModel);
             var jointObject = selectedJoints.Select((selectedJoint, i) => new { name = selectedJoint, x = Xs[i], y = Ys[i], z = Zs[i] });
-            var sortedJoints = jointObject
+
+            IEnumerable<(string name, double x, double y, double z)> sortedJoints;
+            if (sortType == "Z, X, Y")
+            {
+                sortedJoints = jointObject
                 .OrderBy(item => item.z)
                 .ThenBy(item => item.x)
-                .ThenBy(item => item.y);
+                .ThenBy(item => item.y)
+                .Select(item => (item.name, item.x, item.y, item.z));
+            }
+            else if (sortType == "Z, Y, X")
+            {
+                sortedJoints = jointObject
+                .OrderBy(item => item.z)
+                .ThenBy(item => item.y)
+                .ThenBy(item => item.x)
+                .Select(item => (item.name, item.x, item.y, item.z));
+            }
+            else { throw new NotImplementedException($"Sort type \"{sortType}\" not implemented"); }
 
-            string[] sortedJointArray = sortedJoints.Select(item => item.name).ToArray();
+
+            string[] sortedJointArray = (string[])sortedJoints.Select(item => item.name).ToArray();
             double[] sortedXs = sortedJoints.Select(item => item.x).ToArray();
             double[] sortedYs = sortedJoints.Select(item => item.y).ToArray();
             double[] sortedZs = sortedJoints.Select(item => item.z).ToArray();
 
             return (sortedJointArray, sortedXs, sortedYs, sortedZs);
         }
-        #endregion
+
 
         #endregion
 
+        #endregion
 
         #region Old
         //#region Unit Duplicator
@@ -1967,38 +2303,184 @@ namespace ExcelAddIn2
 
         #endregion
 
+        private void assignWL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                Range sourceRange = ((RangeTextBox)attributeDic["jointDataRange_AWL"]).GetRangeFromFullAddress();
+                CheckRangeSize(sourceRange, 0, 13, "Joint Data Range");
+                
+                string[] UN = GetContentsAsStringArray(sourceRange.Columns[1], false);
+                double[] WL = GetContentsAsDoubleArray(sourceRange.Columns[10]);
+                string[] direction = GetContentsAsStringArray(sourceRange.Columns[11], false);
+                string[] loadPatternName = GetContentsAsStringArray(sourceRange.Columns[12], false);
+                string[] status = new string[UN.Length];
+                #endregion
 
+                #region Assign in ETABS
+                InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel, true);
+                for (int i = 0; i < UN.Length; i++)
+                {
+                    double[] forces = new double[6];
+                    if (direction[i] == "X") { forces[0] = WL[i]; }
+                    else if (direction[i] == "Y") { forces[1] = WL[i]; }
+                    else { throw new Exception($"Direction {direction[i]} for UN {UN[i]}is invalid."); }
+                    int ret = sapModel.PointObj.SetLoadForce(UN[i], loadPatternName[i], ref forces, replaceLoadCheck.Checked);
+                    if (ret != 0) { status[i] = $"Error: Unable to set forces for joint"; }
+                }
+                #endregion
+                WriteToExcelRangeAsCol(sourceRange, 0, 14, false, status);
+                MessageBox.Show("Completed", "Completed");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
     }
 
-    #region Storey Table
-    class StoreyTable
+    #region story Table
+    class StoryTable
     {
+        object[,] contents;
 
-        string storyName;
-        double minimumWLValue;
-        double maximumWLValue;
-        double minXValue;
-        double maxXValue;
-        double minYValue;
-        double maxYValue;
-        public StoreyTable(Range tableRange) 
+        Dictionary<string,int> storyElevationToIndex = new Dictionary<string,int>();
+        public StoryTable(Range tableRange) 
         {
-            MapTable();
+            MapTable(tableRange);
         }
-        public void MapTable() 
+        public void MapTable(Range tableRange) 
         {
-            //object[,] contents = GetContentsAsDoubleArray
-            
-            
-            //    minimumWLValue;
-            //maximumWLValue;
-            //minXValue;
-            //maxXValue;
-            //minYValue;
-            //maxYValue;
+            contents = GetContentsAsObject2DArray(tableRange);
+            CheckForDoubles(tableRange);
 
+            for (int rowNum = 0; rowNum < contents.GetLength(0); rowNum++) 
+            {
+                double elevationDouble;
+                try
+                {
+                    elevationDouble = double.Parse(contents[rowNum, 1].ToString());
+                }
+                catch { throw new Exception($"Unable to parse \"{contents[rowNum, 1]}\" into number"); }
+
+
+                string elevationString = elevationDouble.ToString("#.####");
+                if (elevationString == "") { elevationString = "0"; }
+                if (storyElevationToIndex.ContainsKey(elevationString)) { throw new Exception($"Duplicate elevation \"{elevationString}\" found in story table"); }
+                storyElevationToIndex.Add(elevationString, rowNum);
+            }
+            //"Story Name", 0
+            //    "Story Elevation [m]", 1
+            //    "Effective Height [m]", 2
+            //    "Minimum WL", 3
+            //    "Maximum WL", 4
+            //    "Min X", 5 
+            //    "Max X", 6 
+            //    "Min Y", 7 
+            //    "Max Y" 8
 
         }
+
+        #region Check Doubles
+        public void CheckForDoubles(Range sourceRange)
+        {
+            Range firstCell = sourceRange.Cells[1, 1];
+            // Only check from 2nd column onwards
+            for (int i = 0; i < contents.GetLength(0); i++)
+            {
+                for (int j = 1; j < contents.GetLength(1); j++)
+                {
+                    object cellValue = contents[i, j];
+
+                    if (!(cellValue is double))
+                    {
+                        throw new Exception($"Error: Value '{cellValue}' in cell {firstCell.Offset[i, j].Address[false,false]} is not a number.");
+                    }
+                }
+            }
+        }
+
+    #endregion
+
+        #region Get Values
+        private int GetIndexFromElevation(double elevation)
+        {
+            string elevationString = elevation.ToString("#.####");
+            if (elevationString == "") { elevationString = "0"; }
+            if (!storyElevationToIndex.ContainsKey(elevationString)) { throw new Exception($"Story elevation \"{elevationString}\" not found in story table"); }
+            return storyElevationToIndex[elevationString];
+        }
+
+        public double EffHeight(double elevation)
+        {
+            int rowNum = GetIndexFromElevation(elevation);
+            return (double)contents[rowNum, 2];
+        }
+        public double MinWL(double elevation)
+        {
+            int rowNum = GetIndexFromElevation(elevation);
+            return (double)contents[rowNum, 3];
+        }
+
+        public double MaxWL(double elevation)
+        {
+            int rowNum = GetIndexFromElevation(elevation);
+            return (double)contents[rowNum, 4];
+        }
+
+        public double MinX(double elevation)
+        {
+            int rowNum = GetIndexFromElevation(elevation);
+            return (double)contents[rowNum, 5];
+        }
+
+        public double MaxX(double elevation)
+        {
+            int rowNum = GetIndexFromElevation(elevation);
+            return (double)contents[rowNum, 6];
+        }
+
+        public double MinY(double elevation)
+        {
+            int rowNum = GetIndexFromElevation(elevation);
+            return (double)contents[rowNum, 7];
+        }
+
+        public double MaxY(double elevation)
+        {
+            int rowNum = GetIndexFromElevation(elevation);
+            return (double)contents[rowNum, 8];
+        }
+
+        #endregion
+
+        #region Wind Load Equations
+        public Func<double,double> WindLoadInY(double elevation)
+        {
+            double x1 = MinX(elevation);
+            double x2 = MaxX(elevation);
+            double y1 = MinWL(elevation);
+            double y2 = MaxWL(elevation);
+            // y = mx + c
+            double m = (y2 - y1) / (x2 - x1);
+            double c = y1 - m * x1; // c = y - mx
+
+            Func<double, double> windLoadEquation = x => ( m*x + c);
+            return windLoadEquation;
+        }
+
+        public Func<double, double> WindLoadInX(double elevation)
+        {
+            double x1 = MinY(elevation);
+            double x2 = MaxY(elevation);
+            double y1 = MinWL(elevation);
+            double y2 = MaxWL(elevation);
+            // y = mx + c
+            double m = (y2 - y1) / (x2 - x1);
+            double c = y1 - m * x1; // c = y - mx
+
+            Func<double, double> windLoadEquation = x => (m * x + c);
+            return windLoadEquation;
+        }
+        #endregion
     }
     #endregion
 }

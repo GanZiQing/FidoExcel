@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.importToPpt = new System.Windows.Forms.Button();
             this.setImportRange = new System.Windows.Forms.Button();
@@ -75,7 +76,6 @@
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.launchScreenshotApp = new System.Windows.Forms.Button();
-            this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
             this.tabPage1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -102,12 +102,20 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Report Gen";
             // 
+            // directoryUserControl1
+            // 
+            this.directoryUserControl1.Location = new System.Drawing.Point(15, 9);
+            this.directoryUserControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.directoryUserControl1.Name = "directoryUserControl1";
+            this.directoryUserControl1.Size = new System.Drawing.Size(502, 431);
+            this.directoryUserControl1.TabIndex = 9;
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.importToPpt);
             this.groupBox4.Controls.Add(this.setImportRange);
             this.groupBox4.Controls.Add(this.dispImportRange);
-            this.groupBox4.Location = new System.Drawing.Point(17, 833);
+            this.groupBox4.Location = new System.Drawing.Point(15, 833);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(6);
@@ -162,7 +170,7 @@
             this.groupBox2.Controls.Add(this.dispInsertY);
             this.groupBox2.Controls.Add(this.dispInsertX);
             this.groupBox2.Controls.Add(this.textBox3);
-            this.groupBox2.Location = new System.Drawing.Point(17, 602);
+            this.groupBox2.Location = new System.Drawing.Point(15, 602);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
@@ -298,7 +306,7 @@
             this.groupBox1.Controls.Add(this.openPpt);
             this.groupBox1.Controls.Add(this.setPptFile);
             this.groupBox1.Controls.Add(this.dispPptFile);
-            this.groupBox1.Location = new System.Drawing.Point(12, 450);
+            this.groupBox1.Location = new System.Drawing.Point(15, 450);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
@@ -686,14 +694,6 @@
             this.launchScreenshotApp.Text = "Launch Screenshot App";
             this.launchScreenshotApp.UseVisualStyleBackColor = true;
             this.launchScreenshotApp.Click += new System.EventHandler(this.launchScreenshotApp_Click);
-            // 
-            // directoryUserControl1
-            // 
-            this.directoryUserControl1.Location = new System.Drawing.Point(9, 9);
-            this.directoryUserControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.directoryUserControl1.Name = "directoryUserControl1";
-            this.directoryUserControl1.Size = new System.Drawing.Size(502, 431);
-            this.directoryUserControl1.TabIndex = 9;
             // 
             // ReportPane
             // 

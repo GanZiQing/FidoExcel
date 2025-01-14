@@ -421,8 +421,6 @@ namespace ExcelAddIn2
             }
         }
         
-        private void insertRenameHeader_Click(object sender, EventArgs e) { }
-        
         private string renameOneFile(string sourcePath, string newPath)
         {
 

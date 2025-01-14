@@ -935,6 +935,7 @@ namespace ExcelAddIn2
             // Output location is the first cell of the provided range, offset by rowOff and colOff
 
             // Find number of rows and columns
+            if (startRange == null) { startRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection; }
             int numRow = arrays.Length;
             int numCol = 0;
             foreach (Array array in arrays)
@@ -995,6 +996,7 @@ namespace ExcelAddIn2
             // Output location is the first cell of the provided range, offset by rowOff and colOff
 
             // Find number of rows and columns
+            if (startRange == null) { startRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection; }
             int numCol = arrays.Length;
             int numRow = 0;
             

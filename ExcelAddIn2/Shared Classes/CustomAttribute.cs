@@ -123,6 +123,7 @@ namespace ExcelAddIn2
     public class ComboBoxAttribute : CustomAttribute
     {
         public ComboBox comboBox;
+        
         bool isInitialisation = true;
         public ComboBoxAttribute(string AttName, ComboBox comboBox,string defaultValue = null) : base(AttName, defaultValue)
         {
@@ -179,6 +180,11 @@ namespace ExcelAddIn2
                     //SetComboValue();
                 }
             }
+        }
+
+        public string value
+        {
+            get { return comboBox.Text; }
         }
 
         #region Import export

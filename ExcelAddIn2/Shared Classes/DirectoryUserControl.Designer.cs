@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.getDirectoryInfoGroup = new System.Windows.Forms.GroupBox();
+            this.importSpecificFileNames = new System.Windows.Forms.Button();
             this.importFolderName = new System.Windows.Forms.Button();
             this.importFileName = new System.Windows.Forms.Button();
             this.addExtensionCheck = new System.Windows.Forms.CheckBox();
-            this.mergeFolders = new System.Windows.Forms.Button();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.renameFiles = new System.Windows.Forms.Button();
             this.importSpecificFile = new System.Windows.Forms.Button();
@@ -47,7 +47,6 @@
             this.dispDirectory = new System.Windows.Forms.TextBox();
             this.importFilePath = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.importSpecificFileNames = new System.Windows.Forms.Button();
             this.getDirectoryInfoGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,7 +56,6 @@
             this.getDirectoryInfoGroup.Controls.Add(this.importFolderName);
             this.getDirectoryInfoGroup.Controls.Add(this.importFileName);
             this.getDirectoryInfoGroup.Controls.Add(this.addExtensionCheck);
-            this.getDirectoryInfoGroup.Controls.Add(this.mergeFolders);
             this.getDirectoryInfoGroup.Controls.Add(this.textBox7);
             this.getDirectoryInfoGroup.Controls.Add(this.renameFiles);
             this.getDirectoryInfoGroup.Controls.Add(this.importSpecificFile);
@@ -78,6 +76,19 @@
             this.getDirectoryInfoGroup.TabIndex = 5;
             this.getDirectoryInfoGroup.TabStop = false;
             this.getDirectoryInfoGroup.Text = "Get Directory Info";
+            // 
+            // importSpecificFileNames
+            // 
+            this.importSpecificFileNames.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.importSpecificFileNames.Location = new System.Drawing.Point(261, 375);
+            this.importSpecificFileNames.Margin = new System.Windows.Forms.Padding(6);
+            this.importSpecificFileNames.Name = "importSpecificFileNames";
+            this.importSpecificFileNames.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.importSpecificFileNames.Size = new System.Drawing.Size(229, 46);
+            this.importSpecificFileNames.TabIndex = 12;
+            this.importSpecificFileNames.Text = "Get File Names w Type";
+            this.importSpecificFileNames.UseVisualStyleBackColor = true;
+            this.importSpecificFileNames.Click += new System.EventHandler(this.importSpecificFileNames_Click);
             // 
             // importFolderName
             // 
@@ -117,19 +128,6 @@
             this.addExtensionCheck.TabIndex = 5;
             this.addExtensionCheck.Text = "Include Extension";
             this.addExtensionCheck.UseVisualStyleBackColor = true;
-            // 
-            // mergeFolders
-            // 
-            this.mergeFolders.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.mergeFolders.Location = new System.Drawing.Point(260, 460);
-            this.mergeFolders.Margin = new System.Windows.Forms.Padding(6);
-            this.mergeFolders.Name = "mergeFolders";
-            this.mergeFolders.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.mergeFolders.Size = new System.Drawing.Size(229, 46);
-            this.mergeFolders.TabIndex = 13;
-            this.mergeFolders.Text = "Merge Folders WIP";
-            this.mergeFolders.UseVisualStyleBackColor = true;
-            this.mergeFolders.Click += new System.EventHandler(this.insertRenameHeader_Click);
             // 
             // textBox7
             // 
@@ -279,19 +277,6 @@
             this.importFilePath.UseVisualStyleBackColor = true;
             this.importFilePath.Click += new System.EventHandler(this.importFilePath_Click);
             // 
-            // importSpecificFileNames
-            // 
-            this.importSpecificFileNames.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.importSpecificFileNames.Location = new System.Drawing.Point(261, 375);
-            this.importSpecificFileNames.Margin = new System.Windows.Forms.Padding(6);
-            this.importSpecificFileNames.Name = "importSpecificFileNames";
-            this.importSpecificFileNames.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.importSpecificFileNames.Size = new System.Drawing.Size(229, 46);
-            this.importSpecificFileNames.TabIndex = 12;
-            this.importSpecificFileNames.Text = "Get File Names w Type";
-            this.importSpecificFileNames.UseVisualStyleBackColor = true;
-            this.importSpecificFileNames.Click += new System.EventHandler(this.importSpecificFileNames_Click);
-            // 
             // DirectoryUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -310,7 +295,6 @@
 
         private System.Windows.Forms.GroupBox getDirectoryInfoGroup;
         private System.Windows.Forms.CheckBox addExtensionCheck;
-        private System.Windows.Forms.Button mergeFolders;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.Button renameFiles;
         private System.Windows.Forms.Button importSpecificFile;
