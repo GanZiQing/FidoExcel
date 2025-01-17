@@ -48,6 +48,7 @@
             this.setStoryRange = new System.Windows.Forms.Button();
             this.dispStoryRange = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.refreshViewCheck = new System.Windows.Forms.CheckBox();
             this.EtabsTabGroup.SuspendLayout();
             this.windLoadPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -67,6 +68,7 @@
             // windLoadPage
             // 
             this.windLoadPage.BackColor = System.Drawing.SystemColors.Control;
+            this.windLoadPage.Controls.Add(this.refreshViewCheck);
             this.windLoadPage.Controls.Add(this.groupBox1);
             this.windLoadPage.Controls.Add(this.groupBox3);
             this.windLoadPage.Location = new System.Drawing.Point(4, 33);
@@ -268,6 +270,16 @@
             this.dispStoryRange.TabIndex = 28;
             this.dispStoryRange.WordWrap = false;
             // 
+            // refreshView
+            // 
+            this.refreshViewCheck.AutoSize = true;
+            this.refreshViewCheck.Location = new System.Drawing.Point(24, 536);
+            this.refreshViewCheck.Name = "refreshView";
+            this.refreshViewCheck.Size = new System.Drawing.Size(141, 28);
+            this.refreshViewCheck.TabIndex = 40;
+            this.refreshViewCheck.Text = "Refresh View";
+            this.refreshViewCheck.UseVisualStyleBackColor = true;
+            // 
             // ETABSTaskPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -278,6 +290,7 @@
             this.Size = new System.Drawing.Size(550, 1500);
             this.EtabsTabGroup.ResumeLayout(false);
             this.windLoadPage.ResumeLayout(false);
+            this.windLoadPage.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
@@ -305,5 +318,6 @@
         private System.Windows.Forms.Button setJointDataRange;
         private System.Windows.Forms.TextBox dispJointDataRange;
         private System.Windows.Forms.CheckBox replaceLoadCheck;
+        private System.Windows.Forms.CheckBox refreshViewCheck;
     }
 }

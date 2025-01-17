@@ -54,6 +54,9 @@ namespace ExcelAddIn2
 
             thisAtt = new CheckBoxAttribute("replaceLoad_AWL", replaceLoadCheck, true);
             attributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new CheckBoxAttribute("refreshView_AWL", refreshViewCheck, true);
+            attributeDic.Add(thisAtt.attName, thisAtt);
         }
 
         private void AddHeaders()
@@ -157,6 +160,11 @@ namespace ExcelAddIn2
                 "  Status\n"
                 );
 
+            toolTip1.SetToolTip(replaceLoadCheck,
+                "If checked, this will replace the entire load pattern (including other directions) with current loading.\n" +
+                "If unchecked, current loading will be added to existing loading\n" +
+                "Does not affect other load patterns"
+                );
         }
         #endregion
 
@@ -186,11 +194,22 @@ namespace ExcelAddIn2
 
                 #region Calculate Effective Height
                 double[] effHeight = new double[storyNames.Length];
+                // Calculate for first value
+                if (storyElevations[0] <= 0) { effHeight[0] = 0; }
+                else
+                {
+                    int i = 0;
+                    effHeight[i] = storyHeights[i] / 2 + storyHeights[i + 1] / 2;
+                }
+                
+                // Calculate for mid
                 for (int i = 1; i < storyElevations.Length - 1; i++)
                 {
                     if (storyElevations[i] <= 0) { effHeight[i] = 0; continue; }
                     effHeight[i] = storyHeights[i]/ 2 + storyHeights[i + 1]/ 2;
                 }
+
+                // Calculate for last value
                 effHeight[storyNames.Length - 1] = storyHeights[storyNames.Length - 1] / 2;
                 #endregion
 
@@ -329,10 +348,28 @@ namespace ExcelAddIn2
             for (int i = 0; i < selectedJoints.Length; i++) { directionArray[i] = direction; }
             #endregion
 
+            #region Check Overlap
+            // Check Overlapping joint
+            double[] refCoord;
+            if (direction == "X") { refCoord = Ys; }
+            else { refCoord = Xs; }
+            for (int i = 0; i < refCoord.Length - 1; i++)
+            {
+                if (refCoord[i] == refCoord[i + 1])
+                {
+                    if (status[i + 1] != null) { status[i] += " "; }
+                    status[i + 1] += "Warning, overlapping joints";
+                    windLoad[i + 1] = 0;
+                }
+            }
+            #endregion
+
             #region Write to Excel
             WriteToExcelRangeAsCol(null, 0, 0, true, selectedJoints, Xs, Ys, Zs, startCoord, endCoord, effWidth, startWL, endWL, windLoad, directionArray);
             WriteToExcelRangeAsCol(null, 0, 12, false, status);
             #endregion
+
+            sapModel.View.RefreshView();
         }
 
         private void CalculateAWLForOneStory(StoryTable storyTable, string direction, string elevationString, List<int> jointIndexes, 
@@ -397,7 +434,8 @@ namespace ExcelAddIn2
             #endregion
 
             #region Gatekeep if only 1 joint provided
-            if (validCoords.Length == 1)
+            if (validCoords.Length == 0) { throw new Exception($"Error: No valid joints"); }
+            else if (validCoords.Length == 1)
             {
                 int globalIndex = validIndexes[0];
                 globalStartCoord[globalIndex] = minCoord;
@@ -2309,7 +2347,7 @@ namespace ExcelAddIn2
             {
                 #region Get Excel Info
                 Range sourceRange = ((RangeTextBox)attributeDic["jointDataRange_AWL"]).GetRangeFromFullAddress();
-                CheckRangeSize(sourceRange, 0, 13, "Joint Data Range");
+                CheckRangeSize(sourceRange, 0, 13, "Joint Data Range", true);
                 
                 string[] UN = GetContentsAsStringArray(sourceRange.Columns[1], false);
                 double[] WL = GetContentsAsDoubleArray(sourceRange.Columns[10]);
@@ -2323,21 +2361,41 @@ namespace ExcelAddIn2
                 for (int i = 0; i < UN.Length; i++)
                 {
                     double[] forces = new double[6];
-                    if (direction[i] == "X") { forces[0] = WL[i]; }
-                    else if (direction[i] == "Y") { forces[1] = WL[i]; }
+                    // Check Direction
+                    double wlValue = 0;
+
+                    if (direction[i] == "X") { forces[0] = WL[i]; wlValue = WL[i]; }
+                    else if (direction[i] == "Y") { forces[1] = WL[i]; wlValue = WL[i]; }
                     else { throw new Exception($"Direction {direction[i]} for UN {UN[i]}is invalid."); }
-                    int ret = sapModel.PointObj.SetLoadForce(UN[i], loadPatternName[i], ref forces, replaceLoadCheck.Checked);
-                    if (ret != 0) { status[i] = $"Error: Unable to set forces for joint"; }
+
+                    if (wlValue == 0 ) 
+                    {
+                        if (replaceLoadCheck.Checked)
+                        {
+                            int ret = sapModel.PointObj.DeleteLoadForce(UN[i], loadPatternName[i]);
+                            if (ret != 0) { status[i] = $"Error: Unable to delete joint forces"; }
+                            else { status[i] = $"Joint forces deleted for {loadPatternName[i]}"; }
+                        }
+                        else { } // skip if load is 0
+                    }
+                    else
+                    {
+                        int ret = sapModel.PointObj.SetLoadForce(UN[i], loadPatternName[i], ref forces, replaceLoadCheck.Checked);
+                        if (ret != 0) { status[i] = $"Error: Unable to set forces for joint"; }
+                    }
                 }
                 #endregion
-                WriteToExcelRangeAsCol(sourceRange, 0, 14, false, status);
+
+                WriteToExcelRangeAsCol(sourceRange, 0, 12, false, status);
+
+                if (refreshViewCheck.Checked ) { sapModel.View.RefreshView(); }
                 MessageBox.Show("Completed", "Completed");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
     }
 
-    #region story Table
+    #region Story Table
     class StoryTable
     {
         object[,] contents;

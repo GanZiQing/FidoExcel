@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.PrintPage = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.insertPrintWorkbookHeader = new System.Windows.Forms.Button();
             this.setDestFolder = new System.Windows.Forms.Button();
             this.openDestFolder = new System.Windows.Forms.Button();
             this.dispDestFolder = new System.Windows.Forms.TextBox();
@@ -108,6 +107,25 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.advanceMerge = new System.Windows.Forms.Button();
             this.basicMergePDF = new System.Windows.Forms.Button();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textBox19 = new System.Windows.Forms.TextBox();
+            this.dispTotalDwgNum = new System.Windows.Forms.TextBox();
+            this.textBox18 = new System.Windows.Forms.TextBox();
+            this.dispFontSizeSheetNum = new System.Windows.Forms.TextBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.textBox15 = new System.Windows.Forms.TextBox();
+            this.dispTotalSheetX = new System.Windows.Forms.TextBox();
+            this.dispThisSheetY = new System.Windows.Forms.TextBox();
+            this.dispTotalSheetY = new System.Windows.Forms.TextBox();
+            this.dispThisSheetX = new System.Windows.Forms.TextBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.textBox17 = new System.Windows.Forms.TextBox();
+            this.textBox16 = new System.Windows.Forms.TextBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.editFilesSheetNum = new System.Windows.Forms.Button();
+            this.renameFilesCheck = new System.Windows.Forms.CheckBox();
+            this.addSheetNumberCheck = new System.Windows.Forms.CheckBox();
+            this.getFileInfo = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.PrintPage.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -124,6 +142,9 @@
             this.groupBox2.SuspendLayout();
             this.mergePdfGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // PrintPage
@@ -133,48 +154,34 @@
             this.PrintPage.Controls.Add(this.PrintSingleGroup);
             this.PrintPage.Controls.Add(this.PrintSettingsGroup);
             this.PrintPage.Location = new System.Drawing.Point(4, 33);
-            this.PrintPage.Margin = new System.Windows.Forms.Padding(6);
+            this.PrintPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintPage.Name = "PrintPage";
-            this.PrintPage.Padding = new System.Windows.Forms.Padding(6);
+            this.PrintPage.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintPage.Size = new System.Drawing.Size(531, 1484);
             this.PrintPage.TabIndex = 1;
             this.PrintPage.Text = "Excel To PDF";
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.insertPrintWorkbookHeader);
             this.groupBox4.Controls.Add(this.setDestFolder);
             this.groupBox4.Controls.Add(this.openDestFolder);
             this.groupBox4.Controls.Add(this.dispDestFolder);
             this.groupBox4.Controls.Add(this.printWorkbooks);
             this.groupBox4.Controls.Add(this.overwritePrintPath);
             this.groupBox4.Location = new System.Drawing.Point(15, 567);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox4.Size = new System.Drawing.Size(502, 232);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox4.Size = new System.Drawing.Size(502, 233);
             this.groupBox4.TabIndex = 12;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Print Workbooks";
-            // 
-            // insertPrintWorkbookHeader
-            // 
-            this.insertPrintWorkbookHeader.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.insertPrintWorkbookHeader.Location = new System.Drawing.Point(255, 174);
-            this.insertPrintWorkbookHeader.Margin = new System.Windows.Forms.Padding(6);
-            this.insertPrintWorkbookHeader.Name = "insertPrintWorkbookHeader";
-            this.insertPrintWorkbookHeader.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.insertPrintWorkbookHeader.Size = new System.Drawing.Size(229, 46);
-            this.insertPrintWorkbookHeader.TabIndex = 103;
-            this.insertPrintWorkbookHeader.Text = "Insert Header";
-            this.insertPrintWorkbookHeader.UseVisualStyleBackColor = true;
-            this.insertPrintWorkbookHeader.Click += new System.EventHandler(this.insertPrintWorkbookHeader_Click);
             // 
             // setDestFolder
             // 
             this.setDestFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setDestFolder.Location = new System.Drawing.Point(15, 33);
-            this.setDestFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.setDestFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.setDestFolder.Name = "setDestFolder";
             this.setDestFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.setDestFolder.Size = new System.Drawing.Size(229, 46);
@@ -186,7 +193,7 @@
             // 
             this.openDestFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.openDestFolder.Location = new System.Drawing.Point(262, 33);
-            this.openDestFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.openDestFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.openDestFolder.Name = "openDestFolder";
             this.openDestFolder.Size = new System.Drawing.Size(229, 46);
             this.openDestFolder.TabIndex = 105;
@@ -197,7 +204,7 @@
             // 
             this.dispDestFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispDestFolder.Location = new System.Drawing.Point(15, 90);
-            this.dispDestFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.dispDestFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispDestFolder.MaxLength = 1000;
             this.dispDestFolder.Name = "dispDestFolder";
             this.dispDestFolder.Size = new System.Drawing.Size(475, 29);
@@ -208,7 +215,7 @@
             // 
             this.printWorkbooks.ForeColor = System.Drawing.SystemColors.WindowText;
             this.printWorkbooks.Location = new System.Drawing.Point(13, 175);
-            this.printWorkbooks.Margin = new System.Windows.Forms.Padding(6);
+            this.printWorkbooks.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.printWorkbooks.Name = "printWorkbooks";
             this.printWorkbooks.Size = new System.Drawing.Size(229, 46);
             this.printWorkbooks.TabIndex = 45;
@@ -222,7 +229,7 @@
             this.overwritePrintPath.CheckState = System.Windows.Forms.CheckState.Checked;
             this.overwritePrintPath.ForeColor = System.Drawing.SystemColors.WindowText;
             this.overwritePrintPath.Location = new System.Drawing.Point(15, 133);
-            this.overwritePrintPath.Margin = new System.Windows.Forms.Padding(6);
+            this.overwritePrintPath.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.overwritePrintPath.Name = "overwritePrintPath";
             this.overwritePrintPath.Size = new System.Drawing.Size(240, 31);
             this.overwritePrintPath.TabIndex = 107;
@@ -234,10 +241,10 @@
             this.PrintMultipleGroup.Controls.Add(this.PrintSelSheets);
             this.PrintMultipleGroup.Controls.Add(this.SetSheetsToPrint);
             this.PrintMultipleGroup.Location = new System.Drawing.Point(15, 462);
-            this.PrintMultipleGroup.Margin = new System.Windows.Forms.Padding(6);
+            this.PrintMultipleGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintMultipleGroup.Name = "PrintMultipleGroup";
-            this.PrintMultipleGroup.Padding = new System.Windows.Forms.Padding(6);
-            this.PrintMultipleGroup.Size = new System.Drawing.Size(502, 93);
+            this.PrintMultipleGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.PrintMultipleGroup.Size = new System.Drawing.Size(502, 92);
             this.PrintMultipleGroup.TabIndex = 3;
             this.PrintMultipleGroup.TabStop = false;
             this.PrintMultipleGroup.Text = "Print Multiple Sheet";
@@ -246,8 +253,8 @@
             // 
             this.PrintSelSheets.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PrintSelSheets.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.PrintSelSheets.Location = new System.Drawing.Point(259, 34);
-            this.PrintSelSheets.Margin = new System.Windows.Forms.Padding(6);
+            this.PrintSelSheets.Location = new System.Drawing.Point(258, 33);
+            this.PrintSelSheets.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintSelSheets.Name = "PrintSelSheets";
             this.PrintSelSheets.Size = new System.Drawing.Size(229, 46);
             this.PrintSelSheets.TabIndex = 8;
@@ -258,8 +265,8 @@
             // SetSheetsToPrint
             // 
             this.SetSheetsToPrint.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.SetSheetsToPrint.Location = new System.Drawing.Point(15, 34);
-            this.SetSheetsToPrint.Margin = new System.Windows.Forms.Padding(6);
+            this.SetSheetsToPrint.Location = new System.Drawing.Point(15, 33);
+            this.SetSheetsToPrint.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.SetSheetsToPrint.Name = "SetSheetsToPrint";
             this.SetSheetsToPrint.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.SetSheetsToPrint.Size = new System.Drawing.Size(229, 46);
@@ -271,10 +278,10 @@
             // 
             this.PrintSingleGroup.Controls.Add(this.PrintRangeCheck);
             this.PrintSingleGroup.Controls.Add(this.PrintCurrentSheet);
-            this.PrintSingleGroup.Location = new System.Drawing.Point(15, 348);
-            this.PrintSingleGroup.Margin = new System.Windows.Forms.Padding(6);
+            this.PrintSingleGroup.Location = new System.Drawing.Point(15, 347);
+            this.PrintSingleGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintSingleGroup.Name = "PrintSingleGroup";
-            this.PrintSingleGroup.Padding = new System.Windows.Forms.Padding(6);
+            this.PrintSingleGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintSingleGroup.Size = new System.Drawing.Size(502, 102);
             this.PrintSingleGroup.TabIndex = 2;
             this.PrintSingleGroup.TabStop = false;
@@ -284,7 +291,7 @@
             // 
             this.PrintRangeCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.PrintRangeCheck.Location = new System.Drawing.Point(260, 31);
-            this.PrintRangeCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.PrintRangeCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintRangeCheck.Name = "PrintRangeCheck";
             this.PrintRangeCheck.Size = new System.Drawing.Size(218, 55);
             this.PrintRangeCheck.TabIndex = 6;
@@ -296,7 +303,7 @@
             this.PrintCurrentSheet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PrintCurrentSheet.ForeColor = System.Drawing.SystemColors.WindowText;
             this.PrintCurrentSheet.Location = new System.Drawing.Point(16, 35);
-            this.PrintCurrentSheet.Margin = new System.Windows.Forms.Padding(6);
+            this.PrintCurrentSheet.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintCurrentSheet.Name = "PrintCurrentSheet";
             this.PrintCurrentSheet.Size = new System.Drawing.Size(229, 46);
             this.PrintCurrentSheet.TabIndex = 5;
@@ -315,9 +322,9 @@
             this.PrintSettingsGroup.Controls.Add(this.label2);
             this.PrintSettingsGroup.Controls.Add(this.DispAppLeft);
             this.PrintSettingsGroup.Location = new System.Drawing.Point(15, 11);
-            this.PrintSettingsGroup.Margin = new System.Windows.Forms.Padding(6);
+            this.PrintSettingsGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintSettingsGroup.Name = "PrintSettingsGroup";
-            this.PrintSettingsGroup.Padding = new System.Windows.Forms.Padding(6);
+            this.PrintSettingsGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.PrintSettingsGroup.Size = new System.Drawing.Size(502, 325);
             this.PrintSettingsGroup.TabIndex = 1;
             this.PrintSettingsGroup.TabStop = false;
@@ -328,7 +335,7 @@
             this.textBox2.BackColor = System.Drawing.SystemColors.Control;
             this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox2.Location = new System.Drawing.Point(16, 153);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(275, 22);
             this.textBox2.TabIndex = 100;
@@ -339,7 +346,7 @@
             // 
             this.OpenPrintFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.OpenPrintFolder.Location = new System.Drawing.Point(16, 87);
-            this.OpenPrintFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.OpenPrintFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.OpenPrintFolder.Name = "OpenPrintFolder";
             this.OpenPrintFolder.Size = new System.Drawing.Size(473, 46);
             this.OpenPrintFolder.TabIndex = 2;
@@ -351,7 +358,7 @@
             // 
             this.DispPrintFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispPrintFolder.Location = new System.Drawing.Point(178, 30);
-            this.DispPrintFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.DispPrintFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DispPrintFolder.MaximumSize = new System.Drawing.Size(327, 20);
             this.DispPrintFolder.MaxLength = 100;
             this.DispPrintFolder.MinimumSize = new System.Drawing.Size(290, 20);
@@ -375,7 +382,7 @@
             // 
             this.DispAppRight.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispAppRight.Location = new System.Drawing.Point(178, 249);
-            this.DispAppRight.Margin = new System.Windows.Forms.Padding(6);
+            this.DispAppRight.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DispAppRight.MaxLength = 100;
             this.DispAppRight.Name = "DispAppRight";
             this.DispAppRight.Size = new System.Drawing.Size(308, 29);
@@ -408,7 +415,7 @@
             // 
             this.DispAppLeft.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispAppLeft.Location = new System.Drawing.Point(178, 194);
-            this.DispAppLeft.Margin = new System.Windows.Forms.Padding(6);
+            this.DispAppLeft.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DispAppLeft.MaxLength = 100;
             this.DispAppLeft.Name = "DispAppLeft";
             this.DispAppLeft.Size = new System.Drawing.Size(308, 29);
@@ -420,9 +427,10 @@
             this.ExcelTabControl.Controls.Add(this.dirPage);
             this.ExcelTabControl.Controls.Add(this.pdfPage);
             this.ExcelTabControl.Controls.Add(this.PrintPage);
+            this.ExcelTabControl.Controls.Add(this.tabPage1);
             this.ExcelTabControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.ExcelTabControl.Location = new System.Drawing.Point(6, 6);
-            this.ExcelTabControl.Margin = new System.Windows.Forms.Padding(6);
+            this.ExcelTabControl.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.ExcelTabControl.Name = "ExcelTabControl";
             this.ExcelTabControl.SelectedIndex = 0;
             this.ExcelTabControl.Size = new System.Drawing.Size(539, 1521);
@@ -435,9 +443,9 @@
             this.dirPage.Controls.Add(this.openFilesGroup);
             this.dirPage.Controls.Add(this.directoryUserControl);
             this.dirPage.Location = new System.Drawing.Point(4, 33);
-            this.dirPage.Margin = new System.Windows.Forms.Padding(6);
+            this.dirPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dirPage.Name = "dirPage";
-            this.dirPage.Padding = new System.Windows.Forms.Padding(6);
+            this.dirPage.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dirPage.Size = new System.Drawing.Size(531, 1484);
             this.dirPage.TabIndex = 3;
             this.dirPage.Text = "Directory";
@@ -459,9 +467,9 @@
             this.groupBox5.Controls.Add(this.setFolder1);
             this.groupBox5.Controls.Add(this.dispFolder1);
             this.groupBox5.Location = new System.Drawing.Point(15, 705);
-            this.groupBox5.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox5.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox5.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox5.Size = new System.Drawing.Size(502, 369);
             this.groupBox5.TabIndex = 46;
             this.groupBox5.TabStop = false;
@@ -474,7 +482,7 @@
             this.reverseSubtractFiles.ForeColor = System.Drawing.SystemColors.WindowText;
             this.reverseSubtractFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.reverseSubtractFiles.Location = new System.Drawing.Point(392, 303);
-            this.reverseSubtractFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.reverseSubtractFiles.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.reverseSubtractFiles.Name = "reverseSubtractFiles";
             this.reverseSubtractFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.reverseSubtractFiles.Size = new System.Drawing.Size(50, 50);
@@ -489,7 +497,7 @@
             this.subtractFiles.ForeColor = System.Drawing.SystemColors.WindowText;
             this.subtractFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.subtractFiles.Location = new System.Drawing.Point(304, 303);
-            this.subtractFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.subtractFiles.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.subtractFiles.Name = "subtractFiles";
             this.subtractFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.subtractFiles.Size = new System.Drawing.Size(50, 50);
@@ -504,7 +512,7 @@
             this.unionFiles.ForeColor = System.Drawing.SystemColors.WindowText;
             this.unionFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.unionFiles.Location = new System.Drawing.Point(44, 303);
-            this.unionFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.unionFiles.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.unionFiles.Name = "unionFiles";
             this.unionFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.unionFiles.Size = new System.Drawing.Size(50, 50);
@@ -516,7 +524,7 @@
             // 
             this.dispExtension.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispExtension.Location = new System.Drawing.Point(236, 262);
-            this.dispExtension.Margin = new System.Windows.Forms.Padding(6);
+            this.dispExtension.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispExtension.MaxLength = 100;
             this.dispExtension.Name = "dispExtension";
             this.dispExtension.Size = new System.Drawing.Size(250, 29);
@@ -529,7 +537,7 @@
             this.searchSubFoldersCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.searchSubFoldersCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.searchSubFoldersCheck.Location = new System.Drawing.Point(15, 229);
-            this.searchSubFoldersCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.searchSubFoldersCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.searchSubFoldersCheck.Name = "searchSubFoldersCheck";
             this.searchSubFoldersCheck.Size = new System.Drawing.Size(240, 31);
             this.searchSubFoldersCheck.TabIndex = 109;
@@ -540,7 +548,7 @@
             // 
             this.specifyExtensionCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.specifyExtensionCheck.Location = new System.Drawing.Point(15, 262);
-            this.specifyExtensionCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.specifyExtensionCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.specifyExtensionCheck.Name = "specifyExtensionCheck";
             this.specifyExtensionCheck.Size = new System.Drawing.Size(240, 31);
             this.specifyExtensionCheck.TabIndex = 108;
@@ -554,7 +562,7 @@
             this.intersectFiles.ForeColor = System.Drawing.SystemColors.WindowText;
             this.intersectFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.intersectFiles.Location = new System.Drawing.Point(218, 303);
-            this.intersectFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.intersectFiles.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.intersectFiles.Name = "intersectFiles";
             this.intersectFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.intersectFiles.Size = new System.Drawing.Size(50, 50);
@@ -566,7 +574,7 @@
             // 
             this.openFolder2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.openFolder2.Location = new System.Drawing.Point(260, 129);
-            this.openFolder2.Margin = new System.Windows.Forms.Padding(6);
+            this.openFolder2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.openFolder2.Name = "openFolder2";
             this.openFolder2.Size = new System.Drawing.Size(229, 46);
             this.openFolder2.TabIndex = 8;
@@ -577,7 +585,7 @@
             // 
             this.setFolder2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setFolder2.Location = new System.Drawing.Point(13, 129);
-            this.setFolder2.Margin = new System.Windows.Forms.Padding(6);
+            this.setFolder2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.setFolder2.Name = "setFolder2";
             this.setFolder2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.setFolder2.Size = new System.Drawing.Size(229, 46);
@@ -592,7 +600,7 @@
             this.removeIntersectFiles.ForeColor = System.Drawing.SystemColors.WindowText;
             this.removeIntersectFiles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.removeIntersectFiles.Location = new System.Drawing.Point(130, 303);
-            this.removeIntersectFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.removeIntersectFiles.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.removeIntersectFiles.Name = "removeIntersectFiles";
             this.removeIntersectFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.removeIntersectFiles.Size = new System.Drawing.Size(50, 50);
@@ -604,7 +612,7 @@
             // 
             this.dispFolder2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispFolder2.Location = new System.Drawing.Point(13, 186);
-            this.dispFolder2.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFolder2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispFolder2.MaxLength = 1000;
             this.dispFolder2.Name = "dispFolder2";
             this.dispFolder2.Size = new System.Drawing.Size(475, 29);
@@ -615,7 +623,7 @@
             // 
             this.openFolder1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.openFolder1.Location = new System.Drawing.Point(260, 31);
-            this.openFolder1.Margin = new System.Windows.Forms.Padding(6);
+            this.openFolder1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.openFolder1.Name = "openFolder1";
             this.openFolder1.Size = new System.Drawing.Size(229, 46);
             this.openFolder1.TabIndex = 5;
@@ -626,7 +634,7 @@
             // 
             this.setFolder1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setFolder1.Location = new System.Drawing.Point(13, 31);
-            this.setFolder1.Margin = new System.Windows.Forms.Padding(6);
+            this.setFolder1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.setFolder1.Name = "setFolder1";
             this.setFolder1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.setFolder1.Size = new System.Drawing.Size(229, 46);
@@ -638,7 +646,7 @@
             // 
             this.dispFolder1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispFolder1.Location = new System.Drawing.Point(13, 89);
-            this.dispFolder1.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFolder1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispFolder1.MaxLength = 1000;
             this.dispFolder1.Name = "dispFolder1";
             this.dispFolder1.Size = new System.Drawing.Size(475, 29);
@@ -651,9 +659,9 @@
             this.openFilesGroup.Controls.Add(this.textBox13);
             this.openFilesGroup.Controls.Add(this.openFilesInOrder);
             this.openFilesGroup.Location = new System.Drawing.Point(15, 543);
-            this.openFilesGroup.Margin = new System.Windows.Forms.Padding(6);
+            this.openFilesGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.openFilesGroup.Name = "openFilesGroup";
-            this.openFilesGroup.Padding = new System.Windows.Forms.Padding(6);
+            this.openFilesGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.openFilesGroup.Size = new System.Drawing.Size(502, 150);
             this.openFilesGroup.TabIndex = 6;
             this.openFilesGroup.TabStop = false;
@@ -663,7 +671,7 @@
             // 
             this.dispOpenDelay.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispOpenDelay.Location = new System.Drawing.Point(204, 35);
-            this.dispOpenDelay.Margin = new System.Windows.Forms.Padding(6);
+            this.dispOpenDelay.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispOpenDelay.MaxLength = 100;
             this.dispOpenDelay.Name = "dispOpenDelay";
             this.dispOpenDelay.Size = new System.Drawing.Size(281, 29);
@@ -675,7 +683,7 @@
             this.textBox13.BackColor = System.Drawing.SystemColors.Control;
             this.textBox13.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox13.Location = new System.Drawing.Point(9, 41);
-            this.textBox13.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox13.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox13.Name = "textBox13";
             this.textBox13.ReadOnly = true;
             this.textBox13.ShortcutsEnabled = false;
@@ -688,7 +696,7 @@
             // 
             this.openFilesInOrder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.openFilesInOrder.Location = new System.Drawing.Point(18, 83);
-            this.openFilesInOrder.Margin = new System.Windows.Forms.Padding(6);
+            this.openFilesInOrder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.openFilesInOrder.Name = "openFilesInOrder";
             this.openFilesInOrder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.openFilesInOrder.Size = new System.Drawing.Size(477, 46);
@@ -700,7 +708,7 @@
             // directoryUserControl
             // 
             this.directoryUserControl.Location = new System.Drawing.Point(15, 9);
-            this.directoryUserControl.Margin = new System.Windows.Forms.Padding(2);
+            this.directoryUserControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.directoryUserControl.Name = "directoryUserControl";
             this.directoryUserControl.Size = new System.Drawing.Size(502, 526);
             this.directoryUserControl.TabIndex = 5;
@@ -713,9 +721,9 @@
             this.pdfPage.Controls.Add(this.mergePdfGroup);
             this.pdfPage.Controls.Add(this.groupBox1);
             this.pdfPage.Location = new System.Drawing.Point(4, 33);
-            this.pdfPage.Margin = new System.Windows.Forms.Padding(6);
+            this.pdfPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.pdfPage.Name = "pdfPage";
-            this.pdfPage.Padding = new System.Windows.Forms.Padding(6);
+            this.pdfPage.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.pdfPage.Size = new System.Drawing.Size(531, 1484);
             this.pdfPage.TabIndex = 2;
             this.pdfPage.Text = "PDF";
@@ -732,9 +740,9 @@
             this.addPageNumGroup.Controls.Add(this.dispFirstPageNum);
             this.addPageNumGroup.Controls.Add(this.textBox4);
             this.addPageNumGroup.Location = new System.Drawing.Point(15, 415);
-            this.addPageNumGroup.Margin = new System.Windows.Forms.Padding(6);
+            this.addPageNumGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.addPageNumGroup.Name = "addPageNumGroup";
-            this.addPageNumGroup.Padding = new System.Windows.Forms.Padding(6);
+            this.addPageNumGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.addPageNumGroup.Size = new System.Drawing.Size(502, 406);
             this.addPageNumGroup.TabIndex = 2;
             this.addPageNumGroup.TabStop = false;
@@ -750,7 +758,7 @@
             this.panel1.Controls.Add(this.dispOffsetX);
             this.panel1.Controls.Add(this.dispOffsetY);
             this.panel1.Location = new System.Drawing.Point(11, 174);
-            this.panel1.Margin = new System.Windows.Forms.Padding(6);
+            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(491, 129);
             this.panel1.TabIndex = 4;
@@ -760,7 +768,7 @@
             this.textBox3.BackColor = System.Drawing.SystemColors.Control;
             this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox3.Location = new System.Drawing.Point(0, 94);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
@@ -774,7 +782,7 @@
             // 
             this.dispFontSize.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispFontSize.Location = new System.Drawing.Point(192, 87);
-            this.dispFontSize.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFontSize.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispFontSize.MaxLength = 100;
             this.dispFontSize.Name = "dispFontSize";
             this.dispFontSize.Size = new System.Drawing.Size(283, 29);
@@ -786,7 +794,7 @@
             this.textBox12.BackColor = System.Drawing.SystemColors.Control;
             this.textBox12.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox12.Location = new System.Drawing.Point(387, 6);
-            this.textBox12.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox12.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox12.Name = "textBox12";
             this.textBox12.ReadOnly = true;
             this.textBox12.ShortcutsEnabled = false;
@@ -801,7 +809,7 @@
             this.textBox10.BackColor = System.Drawing.SystemColors.Control;
             this.textBox10.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox10.Location = new System.Drawing.Point(0, 46);
-            this.textBox10.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox10.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox10.Multiline = true;
             this.textBox10.Name = "textBox10";
             this.textBox10.ReadOnly = true;
@@ -816,7 +824,7 @@
             this.textBox11.BackColor = System.Drawing.SystemColors.Control;
             this.textBox11.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox11.Location = new System.Drawing.Point(235, 6);
-            this.textBox11.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox11.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox11.Name = "textBox11";
             this.textBox11.ReadOnly = true;
             this.textBox11.ShortcutsEnabled = false;
@@ -830,7 +838,7 @@
             // 
             this.dispOffsetX.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispOffsetX.Location = new System.Drawing.Point(192, 41);
-            this.dispOffsetX.Margin = new System.Windows.Forms.Padding(6);
+            this.dispOffsetX.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispOffsetX.MaxLength = 100;
             this.dispOffsetX.Name = "dispOffsetX";
             this.dispOffsetX.Size = new System.Drawing.Size(132, 29);
@@ -841,7 +849,7 @@
             // 
             this.dispOffsetY.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispOffsetY.Location = new System.Drawing.Point(343, 41);
-            this.dispOffsetY.Margin = new System.Windows.Forms.Padding(6);
+            this.dispOffsetY.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispOffsetY.MaxLength = 100;
             this.dispOffsetY.Name = "dispOffsetY";
             this.dispOffsetY.Size = new System.Drawing.Size(132, 29);
@@ -852,7 +860,7 @@
             // 
             this.dispAppendName.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispAppendName.Location = new System.Drawing.Point(205, 126);
-            this.dispAppendName.Margin = new System.Windows.Forms.Padding(6);
+            this.dispAppendName.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispAppendName.MaxLength = 100;
             this.dispAppendName.Name = "dispAppendName";
             this.dispAppendName.Size = new System.Drawing.Size(281, 29);
@@ -864,7 +872,7 @@
             this.textBox8.BackColor = System.Drawing.SystemColors.Control;
             this.textBox8.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox8.Location = new System.Drawing.Point(11, 131);
-            this.textBox8.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox8.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox8.Name = "textBox8";
             this.textBox8.ReadOnly = true;
             this.textBox8.ShortcutsEnabled = false;
@@ -879,7 +887,7 @@
             this.checkOpenOutput.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkOpenOutput.ForeColor = System.Drawing.SystemColors.WindowText;
             this.checkOpenOutput.Location = new System.Drawing.Point(11, 367);
-            this.checkOpenOutput.Margin = new System.Windows.Forms.Padding(6);
+            this.checkOpenOutput.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.checkOpenOutput.Name = "checkOpenOutput";
             this.checkOpenOutput.Size = new System.Drawing.Size(240, 31);
             this.checkOpenOutput.TabIndex = 6;
@@ -890,7 +898,7 @@
             // 
             this.dispSkipPage.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispSkipPage.Location = new System.Drawing.Point(205, 78);
-            this.dispSkipPage.Margin = new System.Windows.Forms.Padding(6);
+            this.dispSkipPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispSkipPage.MaxLength = 100;
             this.dispSkipPage.Name = "dispSkipPage";
             this.dispSkipPage.Size = new System.Drawing.Size(281, 29);
@@ -901,7 +909,7 @@
             // 
             this.addPageNum.ForeColor = System.Drawing.SystemColors.WindowText;
             this.addPageNum.Location = new System.Drawing.Point(11, 310);
-            this.addPageNum.Margin = new System.Windows.Forms.Padding(6);
+            this.addPageNum.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.addPageNum.Name = "addPageNum";
             this.addPageNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.addPageNum.Size = new System.Drawing.Size(477, 46);
@@ -915,7 +923,7 @@
             this.textBox6.BackColor = System.Drawing.SystemColors.Control;
             this.textBox6.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox6.Location = new System.Drawing.Point(11, 83);
-            this.textBox6.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox6.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
             this.textBox6.ShortcutsEnabled = false;
@@ -928,7 +936,7 @@
             // 
             this.dispFirstPageNum.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispFirstPageNum.Location = new System.Drawing.Point(205, 30);
-            this.dispFirstPageNum.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFirstPageNum.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispFirstPageNum.MaxLength = 100;
             this.dispFirstPageNum.Name = "dispFirstPageNum";
             this.dispFirstPageNum.Size = new System.Drawing.Size(281, 29);
@@ -940,7 +948,7 @@
             this.textBox4.BackColor = System.Drawing.SystemColors.Control;
             this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox4.Location = new System.Drawing.Point(11, 35);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.ShortcutsEnabled = false;
@@ -955,9 +963,9 @@
             this.groupBox2.Controls.Add(this.dispTitleFontSize);
             this.groupBox2.Controls.Add(this.textBox5);
             this.groupBox2.Location = new System.Drawing.Point(15, 833);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox2.Size = new System.Drawing.Size(502, 142);
             this.groupBox2.TabIndex = 42;
             this.groupBox2.TabStop = false;
@@ -967,7 +975,7 @@
             // 
             this.generateSections.ForeColor = System.Drawing.SystemColors.WindowText;
             this.generateSections.Location = new System.Drawing.Point(9, 81);
-            this.generateSections.Margin = new System.Windows.Forms.Padding(6);
+            this.generateSections.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.generateSections.Name = "generateSections";
             this.generateSections.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.generateSections.Size = new System.Drawing.Size(478, 46);
@@ -980,7 +988,7 @@
             // 
             this.dispTitleFontSize.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispTitleFontSize.Location = new System.Drawing.Point(204, 33);
-            this.dispTitleFontSize.Margin = new System.Windows.Forms.Padding(6);
+            this.dispTitleFontSize.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispTitleFontSize.MaxLength = 100;
             this.dispTitleFontSize.Name = "dispTitleFontSize";
             this.dispTitleFontSize.Size = new System.Drawing.Size(283, 29);
@@ -992,7 +1000,7 @@
             this.textBox5.BackColor = System.Drawing.SystemColors.Control;
             this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox5.Location = new System.Drawing.Point(9, 39);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.textBox5.Multiline = true;
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
@@ -1013,9 +1021,9 @@
             this.mergePdfGroup.Controls.Add(this.dispMergeName);
             this.mergePdfGroup.Controls.Add(this.labelMergeName);
             this.mergePdfGroup.Location = new System.Drawing.Point(15, 11);
-            this.mergePdfGroup.Margin = new System.Windows.Forms.Padding(6);
+            this.mergePdfGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.mergePdfGroup.Name = "mergePdfGroup";
-            this.mergePdfGroup.Padding = new System.Windows.Forms.Padding(6);
+            this.mergePdfGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.mergePdfGroup.Size = new System.Drawing.Size(502, 284);
             this.mergePdfGroup.TabIndex = 1;
             this.mergePdfGroup.TabStop = false;
@@ -1027,7 +1035,7 @@
             this.createBookmarksCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.createBookmarksCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.createBookmarksCheck.Location = new System.Drawing.Point(16, 177);
-            this.createBookmarksCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.createBookmarksCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.createBookmarksCheck.Name = "createBookmarksCheck";
             this.createBookmarksCheck.Size = new System.Drawing.Size(240, 31);
             this.createBookmarksCheck.TabIndex = 43;
@@ -1038,7 +1046,7 @@
             // 
             this.setRefTitlePage.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setRefTitlePage.Location = new System.Drawing.Point(16, 222);
-            this.setRefTitlePage.Margin = new System.Windows.Forms.Padding(6);
+            this.setRefTitlePage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.setRefTitlePage.Name = "setRefTitlePage";
             this.setRefTitlePage.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.setRefTitlePage.Size = new System.Drawing.Size(224, 46);
@@ -1050,7 +1058,7 @@
             // 
             this.dispRefTitlePage.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispRefTitlePage.Location = new System.Drawing.Point(266, 229);
-            this.dispRefTitlePage.Margin = new System.Windows.Forms.Padding(6);
+            this.dispRefTitlePage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispRefTitlePage.MaxLength = 1000;
             this.dispRefTitlePage.Name = "dispRefTitlePage";
             this.dispRefTitlePage.Size = new System.Drawing.Size(220, 29);
@@ -1061,7 +1069,7 @@
             // 
             this.openPdfOutFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.openPdfOutFolder.Location = new System.Drawing.Point(260, 35);
-            this.openPdfOutFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.openPdfOutFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.openPdfOutFolder.Name = "openPdfOutFolder";
             this.openPdfOutFolder.Size = new System.Drawing.Size(229, 46);
             this.openPdfOutFolder.TabIndex = 2;
@@ -1072,7 +1080,7 @@
             // 
             this.setPdfOutFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setPdfOutFolder.Location = new System.Drawing.Point(11, 35);
-            this.setPdfOutFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.setPdfOutFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.setPdfOutFolder.Name = "setPdfOutFolder";
             this.setPdfOutFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.setPdfOutFolder.Size = new System.Drawing.Size(229, 46);
@@ -1084,7 +1092,7 @@
             // 
             this.dispPdfOutFolder.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispPdfOutFolder.Location = new System.Drawing.Point(11, 92);
-            this.dispPdfOutFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.dispPdfOutFolder.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispPdfOutFolder.MaxLength = 1000;
             this.dispPdfOutFolder.Name = "dispPdfOutFolder";
             this.dispPdfOutFolder.Size = new System.Drawing.Size(475, 29);
@@ -1095,7 +1103,7 @@
             // 
             this.dispMergeName.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispMergeName.Location = new System.Drawing.Point(205, 135);
-            this.dispMergeName.Margin = new System.Windows.Forms.Padding(6);
+            this.dispMergeName.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispMergeName.MaxLength = 100;
             this.dispMergeName.Name = "dispMergeName";
             this.dispMergeName.Size = new System.Drawing.Size(281, 29);
@@ -1107,7 +1115,7 @@
             this.labelMergeName.BackColor = System.Drawing.SystemColors.Control;
             this.labelMergeName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.labelMergeName.Location = new System.Drawing.Point(11, 140);
-            this.labelMergeName.Margin = new System.Windows.Forms.Padding(6);
+            this.labelMergeName.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.labelMergeName.Name = "labelMergeName";
             this.labelMergeName.ReadOnly = true;
             this.labelMergeName.ShortcutsEnabled = false;
@@ -1121,9 +1129,9 @@
             this.groupBox1.Controls.Add(this.advanceMerge);
             this.groupBox1.Controls.Add(this.basicMergePDF);
             this.groupBox1.Location = new System.Drawing.Point(15, 306);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox1.Size = new System.Drawing.Size(502, 96);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
@@ -1133,7 +1141,7 @@
             // 
             this.advanceMerge.ForeColor = System.Drawing.SystemColors.WindowText;
             this.advanceMerge.Location = new System.Drawing.Point(258, 33);
-            this.advanceMerge.Margin = new System.Windows.Forms.Padding(6);
+            this.advanceMerge.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.advanceMerge.Name = "advanceMerge";
             this.advanceMerge.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.advanceMerge.Size = new System.Drawing.Size(229, 46);
@@ -1146,7 +1154,7 @@
             // 
             this.basicMergePDF.ForeColor = System.Drawing.SystemColors.WindowText;
             this.basicMergePDF.Location = new System.Drawing.Point(9, 33);
-            this.basicMergePDF.Margin = new System.Windows.Forms.Padding(6);
+            this.basicMergePDF.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.basicMergePDF.Name = "basicMergePDF";
             this.basicMergePDF.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.basicMergePDF.Size = new System.Drawing.Size(229, 46);
@@ -1155,13 +1163,272 @@
             this.basicMergePDF.UseVisualStyleBackColor = true;
             this.basicMergePDF.Click += new System.EventHandler(this.basicMergePDF_Click);
             // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.groupBox6);
+            this.tabPage1.Controls.Add(this.groupBox3);
+            this.tabPage1.Location = new System.Drawing.Point(4, 33);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Size = new System.Drawing.Size(531, 1484);
+            this.tabPage1.TabIndex = 4;
+            this.tabPage1.Text = "Drafting";
+            // 
+            // textBox19
+            // 
+            this.textBox19.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox19.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox19.Location = new System.Drawing.Point(22, 144);
+            this.textBox19.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox19.Multiline = true;
+            this.textBox19.Name = "textBox19";
+            this.textBox19.ReadOnly = true;
+            this.textBox19.ShortcutsEnabled = false;
+            this.textBox19.Size = new System.Drawing.Size(178, 31);
+            this.textBox19.TabIndex = 120;
+            this.textBox19.TabStop = false;
+            this.textBox19.Text = "Total DWG Number";
+            // 
+            // dispTotalDwgNum
+            // 
+            this.dispTotalDwgNum.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispTotalDwgNum.Location = new System.Drawing.Point(211, 146);
+            this.dispTotalDwgNum.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispTotalDwgNum.MaxLength = 100;
+            this.dispTotalDwgNum.Name = "dispTotalDwgNum";
+            this.dispTotalDwgNum.Size = new System.Drawing.Size(132, 29);
+            this.dispTotalDwgNum.TabIndex = 119;
+            this.dispTotalDwgNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox18
+            // 
+            this.textBox18.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox18.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox18.Location = new System.Drawing.Point(22, 185);
+            this.textBox18.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox18.Multiline = true;
+            this.textBox18.Name = "textBox18";
+            this.textBox18.ReadOnly = true;
+            this.textBox18.ShortcutsEnabled = false;
+            this.textBox18.Size = new System.Drawing.Size(178, 31);
+            this.textBox18.TabIndex = 118;
+            this.textBox18.TabStop = false;
+            this.textBox18.Text = "Font Size";
+            // 
+            // dispFontSizeSheetNum
+            // 
+            this.dispFontSizeSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispFontSizeSheetNum.Location = new System.Drawing.Point(211, 187);
+            this.dispFontSizeSheetNum.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispFontSizeSheetNum.MaxLength = 100;
+            this.dispFontSizeSheetNum.Name = "dispFontSizeSheetNum";
+            this.dispFontSizeSheetNum.Size = new System.Drawing.Size(132, 29);
+            this.dispFontSizeSheetNum.TabIndex = 117;
+            this.dispFontSizeSheetNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.textBox18);
+            this.groupBox6.Controls.Add(this.textBox19);
+            this.groupBox6.Controls.Add(this.dispFontSizeSheetNum);
+            this.groupBox6.Controls.Add(this.dispTotalDwgNum);
+            this.groupBox6.Controls.Add(this.textBox15);
+            this.groupBox6.Controls.Add(this.dispTotalSheetX);
+            this.groupBox6.Controls.Add(this.dispThisSheetY);
+            this.groupBox6.Controls.Add(this.dispTotalSheetY);
+            this.groupBox6.Controls.Add(this.dispThisSheetX);
+            this.groupBox6.Controls.Add(this.textBox9);
+            this.groupBox6.Controls.Add(this.textBox17);
+            this.groupBox6.Controls.Add(this.textBox16);
+            this.groupBox6.Location = new System.Drawing.Point(15, 6);
+            this.groupBox6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox6.Size = new System.Drawing.Size(502, 233);
+            this.groupBox6.TabIndex = 47;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Settings";
+            // 
+            // textBox15
+            // 
+            this.textBox15.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox15.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox15.Location = new System.Drawing.Point(378, 31);
+            this.textBox15.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox15.Name = "textBox15";
+            this.textBox15.ReadOnly = true;
+            this.textBox15.ShortcutsEnabled = false;
+            this.textBox15.Size = new System.Drawing.Size(101, 22);
+            this.textBox15.TabIndex = 100;
+            this.textBox15.TabStop = false;
+            this.textBox15.Text = "Y Coord.";
+            this.textBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispTotalSheetX
+            // 
+            this.dispTotalSheetX.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispTotalSheetX.Location = new System.Drawing.Point(211, 105);
+            this.dispTotalSheetX.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispTotalSheetX.MaxLength = 100;
+            this.dispTotalSheetX.Name = "dispTotalSheetX";
+            this.dispTotalSheetX.Size = new System.Drawing.Size(132, 29);
+            this.dispTotalSheetX.TabIndex = 101;
+            this.dispTotalSheetX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispThisSheetY
+            // 
+            this.dispThisSheetY.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispThisSheetY.Location = new System.Drawing.Point(361, 65);
+            this.dispThisSheetY.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispThisSheetY.MaxLength = 100;
+            this.dispThisSheetY.Name = "dispThisSheetY";
+            this.dispThisSheetY.Size = new System.Drawing.Size(132, 29);
+            this.dispThisSheetY.TabIndex = 2;
+            this.dispThisSheetY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispTotalSheetY
+            // 
+            this.dispTotalSheetY.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispTotalSheetY.Location = new System.Drawing.Point(361, 105);
+            this.dispTotalSheetY.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispTotalSheetY.MaxLength = 100;
+            this.dispTotalSheetY.Name = "dispTotalSheetY";
+            this.dispTotalSheetY.Size = new System.Drawing.Size(132, 29);
+            this.dispTotalSheetY.TabIndex = 102;
+            this.dispTotalSheetY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispThisSheetX
+            // 
+            this.dispThisSheetX.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispThisSheetX.Location = new System.Drawing.Point(211, 65);
+            this.dispThisSheetX.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispThisSheetX.MaxLength = 100;
+            this.dispThisSheetX.Name = "dispThisSheetX";
+            this.dispThisSheetX.Size = new System.Drawing.Size(132, 29);
+            this.dispThisSheetX.TabIndex = 1;
+            this.dispThisSheetX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox9
+            // 
+            this.textBox9.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox9.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox9.Location = new System.Drawing.Point(20, 105);
+            this.textBox9.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox9.Multiline = true;
+            this.textBox9.Name = "textBox9";
+            this.textBox9.ReadOnly = true;
+            this.textBox9.ShortcutsEnabled = false;
+            this.textBox9.Size = new System.Drawing.Size(178, 31);
+            this.textBox9.TabIndex = 57;
+            this.textBox9.TabStop = false;
+            this.textBox9.Text = "Total Sheet No.";
+            // 
+            // textBox17
+            // 
+            this.textBox17.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox17.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox17.Location = new System.Drawing.Point(227, 31);
+            this.textBox17.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox17.Name = "textBox17";
+            this.textBox17.ReadOnly = true;
+            this.textBox17.ShortcutsEnabled = false;
+            this.textBox17.Size = new System.Drawing.Size(101, 22);
+            this.textBox17.TabIndex = 100;
+            this.textBox17.TabStop = false;
+            this.textBox17.Text = "X Coord.";
+            this.textBox17.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox16
+            // 
+            this.textBox16.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox16.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox16.Location = new System.Drawing.Point(20, 63);
+            this.textBox16.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox16.Multiline = true;
+            this.textBox16.Name = "textBox16";
+            this.textBox16.ReadOnly = true;
+            this.textBox16.ShortcutsEnabled = false;
+            this.textBox16.Size = new System.Drawing.Size(178, 31);
+            this.textBox16.TabIndex = 53;
+            this.textBox16.TabStop = false;
+            this.textBox16.Text = "This Sheet No.";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.editFilesSheetNum);
+            this.groupBox3.Controls.Add(this.renameFilesCheck);
+            this.groupBox3.Controls.Add(this.addSheetNumberCheck);
+            this.groupBox3.Controls.Add(this.getFileInfo);
+            this.groupBox3.Location = new System.Drawing.Point(15, 249);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox3.Size = new System.Drawing.Size(502, 225);
+            this.groupBox3.TabIndex = 8;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Add Sheet Numbers";
+            // 
+            // editFilesSheetNum
+            // 
+            this.editFilesSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.editFilesSheetNum.Location = new System.Drawing.Point(13, 92);
+            this.editFilesSheetNum.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.editFilesSheetNum.Name = "editFilesSheetNum";
+            this.editFilesSheetNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.editFilesSheetNum.Size = new System.Drawing.Size(477, 46);
+            this.editFilesSheetNum.TabIndex = 112;
+            this.editFilesSheetNum.Text = "Edit Files";
+            this.editFilesSheetNum.UseVisualStyleBackColor = true;
+            this.editFilesSheetNum.Click += new System.EventHandler(this.editFilesSheetNum_Click);
+            // 
+            // renameFilesCheck
+            // 
+            this.renameFilesCheck.Checked = true;
+            this.renameFilesCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.renameFilesCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.renameFilesCheck.Location = new System.Drawing.Point(20, 151);
+            this.renameFilesCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.renameFilesCheck.Name = "renameFilesCheck";
+            this.renameFilesCheck.Size = new System.Drawing.Size(240, 31);
+            this.renameFilesCheck.TabIndex = 111;
+            this.renameFilesCheck.Text = "Rename File";
+            this.renameFilesCheck.UseVisualStyleBackColor = true;
+            // 
+            // addSheetNumberCheck
+            // 
+            this.addSheetNumberCheck.Checked = true;
+            this.addSheetNumberCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.addSheetNumberCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.addSheetNumberCheck.Location = new System.Drawing.Point(20, 185);
+            this.addSheetNumberCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.addSheetNumberCheck.Name = "addSheetNumberCheck";
+            this.addSheetNumberCheck.Size = new System.Drawing.Size(301, 31);
+            this.addSheetNumberCheck.TabIndex = 110;
+            this.addSheetNumberCheck.Text = "Add Sheet Numbers to PDF";
+            this.addSheetNumberCheck.UseVisualStyleBackColor = true;
+            // 
+            // getFileInfo
+            // 
+            this.getFileInfo.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.getFileInfo.Location = new System.Drawing.Point(13, 33);
+            this.getFileInfo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.getFileInfo.Name = "getFileInfo";
+            this.getFileInfo.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.getFileInfo.Size = new System.Drawing.Size(477, 46);
+            this.getFileInfo.TabIndex = 6;
+            this.getFileInfo.Text = "Get File Information";
+            this.getFileInfo.UseVisualStyleBackColor = true;
+            this.getFileInfo.Click += new System.EventHandler(this.getFileInfo_Click);
+            // 
             // DirectoryAndPdf
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.Controls.Add(this.ExcelTabControl);
-            this.Margin = new System.Windows.Forms.Padding(6);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "DirectoryAndPdf";
             this.Size = new System.Drawing.Size(550, 1532);
             this.PrintPage.ResumeLayout(false);
@@ -1187,6 +1454,10 @@
             this.mergePdfGroup.ResumeLayout(false);
             this.mergePdfGroup.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1247,7 +1518,6 @@
         private System.Windows.Forms.TabPage dirPage;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button printWorkbooks;
-        private System.Windows.Forms.Button insertPrintWorkbookHeader;
         private System.Windows.Forms.Button openDestFolder;
         private System.Windows.Forms.CheckBox overwritePrintPath;
         private System.Windows.Forms.Button setDestFolder;
@@ -1273,5 +1543,24 @@
         private System.Windows.Forms.CheckBox searchSubFoldersCheck;
         private System.Windows.Forms.CheckBox specifyExtensionCheck;
         private System.Windows.Forms.Button reverseSubtractFiles;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button getFileInfo;
+        private System.Windows.Forms.CheckBox renameFilesCheck;
+        private System.Windows.Forms.CheckBox addSheetNumberCheck;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox textBox15;
+        private System.Windows.Forms.TextBox textBox16;
+        private System.Windows.Forms.TextBox textBox17;
+        private System.Windows.Forms.TextBox dispThisSheetX;
+        private System.Windows.Forms.TextBox dispThisSheetY;
+        private System.Windows.Forms.TextBox dispTotalSheetX;
+        private System.Windows.Forms.TextBox dispTotalSheetY;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Button editFilesSheetNum;
+        private System.Windows.Forms.TextBox textBox18;
+        private System.Windows.Forms.TextBox dispFontSizeSheetNum;
+        private System.Windows.Forms.TextBox textBox19;
+        private System.Windows.Forms.TextBox dispTotalDwgNum;
     }
 }

@@ -166,9 +166,32 @@ namespace ExcelAddIn2
             }
             #endregion
         }
-
-
         #endregion
+
+        #region Sheet Numbering Launcher (Drafter)
+
+        private void sheetNumbering_Click(object sender, RibbonControlEventArgs e)
+        {
+            int NumPanes = 1;
+            List<CustomTaskPane> thisPaneList = PrintPaneList;
+            string title = "Directory and Pdf";
+
+            #region Default Code - Replace Task Pane Type
+            List<CustomTaskPane> windowTaskPane = GetWindowPanes(ref thisPaneList);
+
+            if (windowTaskPane.Count < NumPanes) // add new panes to list 
+            {
+                AddPane<DirectoryAndPdf>(ref thisPaneList, title);
+            }
+            else // Start toggling visibility of lists
+            {
+                TogglePaneVisibility(windowTaskPane, NumPanes);
+            }
+            #endregion
+        }
+        #endregion
+
+
 
         #region Format Tools Launcher
         private List<CustomTaskPane> formatToolsList = new List<CustomTaskPane>();
@@ -310,5 +333,7 @@ namespace ExcelAddIn2
             #endregion
         }
         #endregion
+
+
     }
 }

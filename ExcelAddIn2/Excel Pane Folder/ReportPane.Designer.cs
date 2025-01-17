@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.importToPpt = new System.Windows.Forms.Button();
             this.setImportRange = new System.Windows.Forms.Button();
@@ -75,7 +74,7 @@
             this.dispScreenshotX = new System.Windows.Forms.TextBox();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
-            this.launchScreenshotApp = new System.Windows.Forms.Button();
+            this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
             this.tabPage1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -101,14 +100,6 @@
             this.tabPage1.Size = new System.Drawing.Size(531, 1484);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Report Gen";
-            // 
-            // directoryUserControl1
-            // 
-            this.directoryUserControl1.Location = new System.Drawing.Point(15, 9);
-            this.directoryUserControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.directoryUserControl1.Name = "directoryUserControl1";
-            this.directoryUserControl1.Size = new System.Drawing.Size(502, 431);
-            this.directoryUserControl1.TabIndex = 9;
             // 
             // groupBox4
             // 
@@ -366,7 +357,6 @@
             this.tabPage2.Controls.Add(this.groupBox5);
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.groupBox6);
-            this.tabPage2.Controls.Add(this.launchScreenshotApp);
             this.tabPage2.Location = new System.Drawing.Point(4, 33);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(6);
             this.tabPage2.Name = "tabPage2";
@@ -682,18 +672,13 @@
             this.textBox13.TabStop = false;
             this.textBox13.Text = "Dimensions";
             // 
-            // launchScreenshotApp
+            // directoryUserControl1
             // 
-            this.launchScreenshotApp.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.launchScreenshotApp.Location = new System.Drawing.Point(22, 731);
-            this.launchScreenshotApp.Margin = new System.Windows.Forms.Padding(6);
-            this.launchScreenshotApp.Name = "launchScreenshotApp";
-            this.launchScreenshotApp.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.launchScreenshotApp.Size = new System.Drawing.Size(477, 46);
-            this.launchScreenshotApp.TabIndex = 13;
-            this.launchScreenshotApp.Text = "Launch Screenshot App";
-            this.launchScreenshotApp.UseVisualStyleBackColor = true;
-            this.launchScreenshotApp.Click += new System.EventHandler(this.launchScreenshotApp_Click);
+            this.directoryUserControl1.Location = new System.Drawing.Point(15, 9);
+            this.directoryUserControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.directoryUserControl1.Name = "directoryUserControl1";
+            this.directoryUserControl1.Size = new System.Drawing.Size(502, 431);
+            this.directoryUserControl1.TabIndex = 9;
             // 
             // ReportPane
             // 
@@ -747,7 +732,6 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button testScreenshot;
-        private System.Windows.Forms.Button launchScreenshotApp;
         private System.Windows.Forms.Button setScreenshotBounds;
         private System.Windows.Forms.Button getScreenshotBounds;
         private System.Windows.Forms.GroupBox groupBox6;

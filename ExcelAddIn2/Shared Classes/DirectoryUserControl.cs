@@ -71,9 +71,9 @@ namespace ExcelAddIn2
                 "File Path | Folder | File Name | File Name\n" +
                 "Data in Folder and Origional File name columns are not used.");
 
-            toolTip1.SetToolTip(mergeFolders,
-                "Inserts reference headers used for \"Import Paths\" and \"Rename Files\"\n" +
-                "File Path | Folder | File Name | New File Name | Status");
+            //toolTip1.SetToolTip(mergeFolders,
+            //    "Inserts reference headers used for \"Import Paths\" and \"Rename Files\"\n" +
+            //    "File Path | Folder | File Name | New File Name | Status");
             #endregion
         }
 
@@ -88,13 +88,13 @@ namespace ExcelAddIn2
             importSpecificFile.Enabled = false;
             importSpecificFileNames.Enabled = false;
             renameFiles.Enabled = false;
-            mergeFolders.Enabled = false;
+            //mergeFolders.Enabled = false;
             this.Height = 224;
         }
         public void ShowUpToSpecifyExtension()
         {
             renameFiles.Enabled = false;
-            mergeFolders.Enabled = false;
+            //mergeFolders.Enabled = false;
             this.Height = 428;
         }
         #endregion

@@ -26,6 +26,7 @@ using System.Linq.Expressions;
 using System.Xml.Linq;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
+using System.Runtime.InteropServices;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -62,8 +63,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             };
             AddHeaderMenuToButton(advanceMerge, headers);
 
-            headers = new List<string> { "File Path" };
-
+            headers = new List<string> { "Output File Name - leave blank for default", "Sheet Name - leave blank to print all", "File Path" };
+            AddHeaderMenuToButton(printWorkbooks, headers);
         }
 
         private void CreateAttributes()
@@ -178,6 +179,43 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             OffsetY.type = "double";
             OffsetY.SetDefaultValue("20");
             AttributeTextBoxDic.Add("OffsetY", OffsetY);
+            #endregion
+
+            #region Drafting Sheet Number
+            thisAtt = new AttributeTextBox("thisSheetX_sheetRenum", dispThisSheetX);
+            thisAtt.SetDefaultValue("30");
+            thisAtt.type = "double";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new AttributeTextBox("thisSheetY_sheetRenum", dispThisSheetY);
+            thisAtt.SetDefaultValue("725");
+            thisAtt.type = "double";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new AttributeTextBox("totalSheetX_sheetRenum", dispTotalSheetX);
+            thisAtt.SetDefaultValue("30");
+            thisAtt.type = "double";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new AttributeTextBox("totalSheetY_sheetRenum", dispTotalSheetY);
+            thisAtt.SetDefaultValue("750");
+            thisAtt.type = "double";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new AttributeTextBox("totalSheetNum_sheetRenum", dispTotalSheetY); // Need to sort this out
+            thisAtt.type = "int";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new AttributeTextBox("fontSize_sheetRenum", dispFontSizeSheetNum);
+            thisAtt.SetDefaultValue("12"); 
+            thisAtt.type = "int";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisCustomAtt = new CheckBoxAttribute("renameFile_sheetRenum", renameFilesCheck, true);
+            CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
+
+            thisCustomAtt = new CheckBoxAttribute("addSheetNum_sheetRenum", addSheetNumberCheck, true);
+            CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
             #endregion
         }
 
@@ -934,11 +972,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             }
 
             return finalFileNames;
-        }
-        private void insertPrintWorkbookHeader_Click(object sender, EventArgs e)
-        {
-            List<string> headers = new List<string> { "Output File Name - leave blank for default", "Sheet Name - leave blank to print all", "File Path" };
-            InsertHeadersAtSelection(headers, "cols");
         }
         #endregion
 
@@ -1856,6 +1889,342 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
 
         #endregion
+
+        #region Renumber Sheets
+        private void getFileInfo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get files
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Multiselect = true;
+                openFileDialog.Filter = "PDF (*.pdf)|*.pdf";
+                DialogResult res = openFileDialog.ShowDialog();
+                if (res != DialogResult.OK) { return; }
+                string[] filePaths = openFileDialog.FileNames;
+                #endregion
+
+                #region Number Files
+                string[] number = new string[filePaths.Length];
+                string[] fileNames = new string[filePaths.Length];
+                for (int i = 0; i < filePaths.Length; i++)
+                {
+                    fileNames[i] = Path.GetFileNameWithoutExtension(filePaths[i]);
+                    number[i] = (i + 1).ToString("000");
+                }
+                #endregion
+
+                #region Update Print Range Format
+                {
+                    Range currentSelection = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                    Range startRange = currentSelection.Offset[0, 2];
+                    Range endRange = startRange.Offset[fileNames.Length - 1, 0];
+                    Range numberRange = currentSelection.Worksheet.Range[startRange, endRange];
+                    numberRange.NumberFormat = "@";
+                }
+                #endregion
+                
+                WriteToExcelRangeAsCol(null, 0, 0, true, filePaths, fileNames, number);
+                dispTotalDwgNum.Text = filePaths.Length.ToString();
+            }
+            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+        }
+
+        private void editFilesSheetNum_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Read input data
+                Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                string[] filePaths = GetContentsAsStringArray(selectedRange.Columns[1], false);
+                string[] fileNames = GetContentsAsStringArray(selectedRange.Columns[2], false);
+                string[] fileNum = GetContentsAsStringArray(selectedRange.Columns[3], false);
+
+                int fontSize = Convert.ToInt32(dispFontSizeSheetNum.Text);
+                double xSheetNum = double.Parse(dispThisSheetX.Text) * 72 / 25.4;
+                double ySheetNum = double.Parse(dispThisSheetY.Text) * 72 / 25.4;
+                double xTotalSheetNum = double.Parse(dispTotalSheetX.Text) * 72 / 25.4;
+                double yTotalSheetNum = double.Parse(dispTotalSheetY.Text) * 72 / 25.4;
+
+                #endregion
+
+                #region Create and Empty Destination
+                string workbookPath = Path.GetDirectoryName(Globals.ThisAddIn.Application.ActiveWorkbook.FullName);
+                string printPath = Path.Combine(workbookPath, "Updated Dwg");
+                CreateDestinationFolder(printPath);
+                bool overwriteExisting = ClearFolder(printPath);
+                #endregion
+
+                #region Copy files over
+                string[] finalFilePaths = new string[filePaths.Length];
+                for (int i = 0; i < filePaths.Length; i++)
+                {
+                    string filePath = filePaths[i];
+                    string fileName = Path.GetFileName(filePath);
+
+                    string finalFileName;
+                    if (renameFilesCheck.Checked)
+                    {
+                        finalFileName = fileNum[i] + "_" + fileName;
+                    }
+                    else
+                    {
+                        finalFileName = fileName;
+                    }
+
+                    string destinationPath = Path.Combine(printPath, finalFileName);
+
+                    File.Copy(filePath, destinationPath, overwriteExisting);
+                    finalFilePaths[i] = destinationPath;
+                }
+                #endregion
+
+                #region Add Sheet number
+                if (addSheetNumberCheck.Checked)
+                {
+                    for (int i =0; i < finalFilePaths.Length; i++)
+                    {
+                        AddSheetNumberToOne(finalFilePaths[i], fileNum[i], dispTotalDwgNum.Text,
+                                            fontSize, xSheetNum, ySheetNum, xTotalSheetNum, yTotalSheetNum);
+                    } 
+                }
+                #endregion
+                MessageBox.Show("Completed", "Completed");
+            }
+            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+        }
+
+        private void AddSheetNumberToOne(string filePath, string sheetNum, string totalSheetNum,
+                            int fontSize, double xSheetNum, double ySheetNum, double xTotalSheetNum, double yTotalSheetNum)
+        {
+            #region Check if file exist
+            if (!File.Exists(filePath))
+            {
+                throw new Exception($"File does not exist at {filePath}");
+            }
+            #endregion
+
+            #region Open File
+            PdfDocument inputDocument = PdfReader.Open(filePath, PdfDocumentOpenMode.Modify);
+            PdfPage page = inputDocument.Pages[0];
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            string fontName = "Arial";
+            XFont fontType = new XFont(fontName, fontSize);
+
+            // Testing values
+            double width = page.Width.Value;
+            double height = page.Height.Value;
+            // End test
+
+            int rotation = page.Rotate;
+            XPoint bottomLeftPoint;
+            switch (rotation)
+            {
+                case 90:
+                    gfx.RotateTransform(-90);
+                    bottomLeftPoint = new XPoint(-xSheetNum, page.Width.Value - ySheetNum);
+                    break;
+                case 180:
+                    gfx.RotateTransform(-180);
+                    bottomLeftPoint = new XPoint(-xSheetNum, -ySheetNum);
+                    break;
+                case 270:
+                    gfx.RotateTransform(-270);
+                    bottomLeftPoint = new XPoint(page.Height.Value - xSheetNum, -ySheetNum);
+                    break;
+                default:
+                    bottomLeftPoint = new XPoint(xSheetNum, ySheetNum);
+                    break;
+            }
+
+            string textContents = sheetNum;
+            XSize textSize = gfx.MeasureString(textContents, fontType);
+            XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+            XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+            //gfx.DrawRectangle(XBrushes.White, rect);
+            gfx.DrawRectangle(XBrushes.LightBlue, rect);
+            //gfx.DrawString(textContents, fontType, XBrushes.Black, rect, XStringFormats.BottomRight);
+            gfx.DrawString(textContents, fontType, XBrushes.Blue, rect, XStringFormats.BottomRight);
+
+
+            bottomLeftPoint = new XPoint(xTotalSheetNum, yTotalSheetNum);
+            textContents = totalSheetNum;
+            textSize = gfx.MeasureString(textContents, fontType);
+            topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - textSize.Height);
+            rect = new XRect(topRightPoint, bottomLeftPoint);
+            gfx.DrawRectangle(XBrushes.LightPink, rect);
+            #endregion
+
+            inputDocument.Save(filePath);
+        }
+
+        private void AddPageNumToOneRef(string inputPath, BackgroundWorker worker, ProgressTracker progressTrackerLocal)
+        {
+            #region Check if file exist
+            progressTrackerLocal.UpdateStatus($"Checking inputs for {Path.GetFileName(inputPath)}");
+            if (!File.Exists(inputPath))
+            {
+                throw new Exception($"File does not exist at {inputPath}");
+            }
+            #endregion
+
+            #region Get Input and Output Paths
+            string baseDirectory = Path.GetDirectoryName(inputPath);
+            string inputFileName = Path.GetFileNameWithoutExtension(inputPath);
+            string outputFileName = inputFileName + $"{dispAppendName.Text}.pdf";
+            string outputPath = Path.Combine(baseDirectory, outputFileName);
+
+            if (!CheckAndDeleteFile(outputPath))
+            {
+                MessageBox.Show("Process terminated by user", "Terminated");
+                return;
+            }
+            #endregion
+
+            #region Get Page Number Parameters and Check Appended File Name
+            // First Page Number
+            if (dispFirstPageNum.Text == "")
+            {
+                dispFirstPageNum.Text = "1";
+            }
+
+            int firstPageNum;
+            try
+            {
+                firstPageNum = Convert.ToInt32(dispFirstPageNum.Text);
+            }
+            catch
+            {
+                MessageBox.Show($"Error, unable to convert \"{dispFirstPageNum.Text}\" to integer for First Page Number", "Error");
+                return;
+            }
+
+            if (dispSkipPage.Text == "")
+            {
+                dispSkipPage.Text = "0";
+            }
+            // Ignore First N Pages
+            int skipPages;
+            try
+            {
+                skipPages = Convert.ToInt32(dispSkipPage.Text);
+            }
+            catch
+            {
+                MessageBox.Show($"Error, unable to convert \"{dispSkipPage.Text}\" to integer for Ignore First N Pages", "Error");
+                return;
+            }
+            // Append File Name
+            if (dispAppendName.Text == "")
+            {
+                dispAppendName.Text = "_withPgNum";
+            }
+            #endregion
+
+            #region Add Page Number
+            progressTrackerLocal.UpdateStatus($"Adding page number to {Path.GetFileName(inputPath)}");
+            PdfDocument inputDocument = PdfReader.Open(inputPath, PdfDocumentOpenMode.Modify);
+
+            //PdfDocument outputDocument = new PdfDocument();
+            //foreach (PdfPage page in inputDocument.Pages)
+            //{
+            //    outputDocument.AddPage(page);
+            //}
+
+            int currentPageNum = firstPageNum;
+            //for (int pageNum = skipPages; pageNum < outputDocument.PageCount; pageNum++)
+            for (int pageNum = skipPages; pageNum < inputDocument.PageCount; pageNum++)
+            {
+                #region User Params
+                int fontSize = Convert.ToInt32(dispFontSize.Text);
+                double xOffset = double.Parse(dispOffsetX.Text);
+                double yOffset = double.Parse(dispOffsetY.Text);
+                #endregion
+
+                //PdfPage page = outputDocument.Pages[pageNum];
+                PdfPage page = inputDocument.Pages[pageNum];
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+                string fontName = "Arial";
+
+                XFont fontType = new XFont(fontName, fontSize);
+
+                int rotation = page.Rotate;
+                XPoint bottomLeftPoint;
+                switch (rotation)
+                {
+                    case 90:
+                        gfx.RotateTransform(-90);
+                        bottomLeftPoint = new XPoint(-xOffset, page.Width.Value - yOffset);
+                        break;
+                    case 180:
+                        gfx.RotateTransform(-180);
+                        bottomLeftPoint = new XPoint(-xOffset, -yOffset);
+                        break;
+                    case 270:
+                        gfx.RotateTransform(-270);
+                        bottomLeftPoint = new XPoint(page.Height.Value - xOffset, -yOffset);
+                        break;
+                    default:
+                        bottomLeftPoint = new XPoint(page.Width.Value - xOffset, page.Height.Value - yOffset);
+                        break;
+                }
+
+                string textContents = $"{currentPageNum}";
+                XSize textSize = gfx.MeasureString(textContents, fontType);
+                XPoint topRightPoint = new XPoint(bottomLeftPoint.X - textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+                XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+                gfx.DrawRectangle(XBrushes.White, rect);
+                gfx.DrawString(textContents, fontType, XBrushes.Black, rect, XStringFormats.BottomRight);
+
+
+                #region Report Progress
+                worker.ReportProgress(ConvertToProgress(pageNum, inputDocument.PageCount));
+                if (worker.CancellationPending)
+                {
+                    return;
+                }
+                #endregion
+
+                currentPageNum++;
+            }
+            #endregion
+            inputDocument.Save(outputPath);
+        }
+
+        private bool ClearFolder(string printPath)
+        {
+            if (!Directory.Exists(printPath)) { throw new Exception($"Path does not exist {printPath}"); }
+
+            string[] files = Directory.GetFiles(printPath);
+            if (files.Length == 0) { return false; }
+
+            DialogResult res = MessageBox.Show($"Delete all files in folder {printPath}?", "Warning", MessageBoxButtons.YesNoCancel);
+            if (res == DialogResult.Cancel) { throw new Exception($"Terminated by user"); }
+            else if (res == DialogResult.Yes)
+            {
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+                return false;
+            }
+            else 
+            {
+                DialogResult res2 = MessageBox.Show($"Overwrite existing files?", "Warning", MessageBoxButtons.YesNoCancel);
+                if (res2 == DialogResult.Cancel) { throw new Exception($"Terminated by user"); }
+                else if (res2 == DialogResult.Yes)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        #endregion
+
+
     }
 }
 

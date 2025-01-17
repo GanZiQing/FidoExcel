@@ -522,10 +522,21 @@ namespace ExcelAddIn2
             return true;
         }
 
-        public static void CheckRangeSize(Range selectedRange, int numRows, int numCols, string attName = "")
+        public static void CheckRangeSize(Range selectedRange, int numRows, int numCols, string attName = "", bool ignoreLargerSize = false)
         {
             // Checks that range meets the desired size. Set numRows/numCols = 0 to skip check
-            if (numRows > 0 && numRows != selectedRange.Rows.Count)
+            #region Check Rows
+            if (numRows == 0) { } // skip check
+            else if (ignoreLargerSize && numRows < selectedRange.Rows.Count)
+            {
+                string msg = $"Number of rows expected is at least {numRows}\nNumber of rows selected is {selectedRange.Rows.Count}";
+                if (attName != "")
+                {
+                    msg = $"Attribute Name: {attName}\n" + msg;
+                }
+                throw new Exception(msg);
+            }
+            else if (!ignoreLargerSize && numRows != selectedRange.Rows.Count)
             {
                 string msg = $"Number of rows expected is {numRows}\nNumber of rows selected is {selectedRange.Rows.Count}";
                 if (attName != "")
@@ -534,8 +545,20 @@ namespace ExcelAddIn2
                 }
                 throw new Exception(msg);
             }
+            #endregion
 
-            if (numCols > 0 && numCols != selectedRange.Columns.Count)
+            #region Check Columns
+            if (numCols == 0) { } // skip check
+            else if (ignoreLargerSize && numCols < selectedRange.Columns.Count)
+            {
+                string msg = $"Number of columns expected is at least {numRows}\nNumber of columns selected is {selectedRange.Rows.Count}";
+                if (attName != "")
+                {
+                    msg = $"Attribute Name: {attName}\n" + msg;
+                }
+                throw new Exception(msg);
+            }
+            else if (!ignoreLargerSize && numCols != selectedRange.Columns.Count)
             {
                 string msg = $"Number of columns expected is {numCols}\nNumber of columns selected is {selectedRange.Columns.Count}";
                 if (attName != "")
@@ -544,6 +567,16 @@ namespace ExcelAddIn2
                 }
                 throw new Exception(msg);
             }
+            #endregion
+            //if (numCols > 0 && numCols != selectedRange.Columns.Count)
+            //{
+            //    string msg = $"Number of columns expected is {numCols}\nNumber of columns selected is {selectedRange.Columns.Count}";
+            //    if (attName != "")
+            //    {
+            //        msg = $"Attribute Name: {attName}\n" + msg;
+            //    }
+            //    throw new Exception(msg);
+            //}
         }
 
         public static (bool passCheck, List<Range> failedRanges) AssertStandardRangeSize(Range[] ranges, string type = null, bool throwError = true)
