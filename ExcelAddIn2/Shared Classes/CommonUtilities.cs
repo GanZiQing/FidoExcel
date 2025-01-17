@@ -1388,6 +1388,31 @@ namespace ExcelAddIn2
             };
             return excelExtensions;
         }
+
+        public static void CreateDestinationFolder(string folderPath)
+        {
+            //Check if path exist
+            if (!Directory.Exists(folderPath))
+            {
+                DialogResult result = MessageBox.Show("Folder does not currently exist. Create new folder?", "Error Opening Folder", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    catch
+                    {
+                        MessageBox.Show($"Unable to create folder at {folderPath}");
+                        return;
+                    }
+                }
+                else
+                {
+                    throw new Exception("Terminated by user");
+                }
+            }
+        }
         #endregion
     }
 

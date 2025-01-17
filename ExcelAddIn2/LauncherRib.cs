@@ -169,19 +169,19 @@ namespace ExcelAddIn2
         #endregion
 
         #region Sheet Numbering Launcher (Drafter)
-
-        private void sheetNumbering_Click(object sender, RibbonControlEventArgs e)
+        private List<CustomTaskPane> DraftingPaneList = new List<CustomTaskPane>();
+        private void draftingPaneButton_Click(object sender, RibbonControlEventArgs e)
         {
             int NumPanes = 1;
-            List<CustomTaskPane> thisPaneList = PrintPaneList;
-            string title = "Directory and Pdf";
+            List<CustomTaskPane> thisPaneList = DraftingPaneList;
+            string title = "Drafting Tools";
 
             #region Default Code - Replace Task Pane Type
             List<CustomTaskPane> windowTaskPane = GetWindowPanes(ref thisPaneList);
 
             if (windowTaskPane.Count < NumPanes) // add new panes to list 
             {
-                AddPane<DirectoryAndPdf>(ref thisPaneList, title);
+                AddPane<DraftingPane>(ref thisPaneList, title);
             }
             else // Start toggling visibility of lists
             {
@@ -332,6 +332,7 @@ namespace ExcelAddIn2
             }
             #endregion
         }
+
         #endregion
 
 

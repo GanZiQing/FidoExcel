@@ -50,6 +50,7 @@
             this.group1 = this.Factory.CreateRibbonGroup();
             this.wallDesign = this.Factory.CreateRibbonButton();
             this.tab1 = this.Factory.CreateRibbonTab();
+            this.draftingPaneButton = this.Factory.CreateRibbonButton();
             this.FidoRibbon.SuspendLayout();
             this.AutomationToolsGroup.SuspendLayout();
             this.group2.SuspendLayout();
@@ -133,6 +134,7 @@
             // forSharing
             // 
             this.forSharing.Items.Add(this.DirectoryAndPdfButton);
+            this.forSharing.Items.Add(this.draftingPaneButton);
             this.forSharing.Label = "Directories and PDF";
             this.forSharing.Name = "forSharing";
             // 
@@ -191,6 +193,15 @@
             this.tab1.Label = "TabAddIns";
             this.tab1.Name = "tab1";
             // 
+            // draftingPaneButton
+            // 
+            this.draftingPaneButton.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.draftingPaneButton.Image = global::ExcelAddIn2.Properties.Resources.excel;
+            this.draftingPaneButton.Label = "Drafting";
+            this.draftingPaneButton.Name = "draftingPaneButton";
+            this.draftingPaneButton.ShowImage = true;
+            this.draftingPaneButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.draftingPaneButton_Click);
+            // 
             // LauncherRib
             // 
             this.Name = "LauncherRib";
@@ -232,6 +243,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group2;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton wallDesign;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton draftingPaneButton;
     }
 
     partial class ThisRibbonCollection

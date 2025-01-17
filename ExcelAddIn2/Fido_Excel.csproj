@@ -267,16 +267,22 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Excel Pane Folder\DirectoryPanes\DraftingPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Excel Pane Folder\DirectoryPanes\DraftingPane.Designer.cs">
+      <DependentUpon>DraftingPane.cs</DependentUpon>
+    </Compile>
     <Compile Include="Excel Pane Folder\HDB Design\WallCheckPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Excel Pane Folder\HDB Design\WallCheckPane.Designer.cs">
       <DependentUpon>WallCheckPane.cs</DependentUpon>
     </Compile>
-    <Compile Include="Excel Pane Folder\WallDesign.cs">
+    <Compile Include="Excel Pane Folder\HDB Design\WallDesign.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Excel Pane Folder\WallDesign.Designer.cs">
+    <Compile Include="Excel Pane Folder\HDB Design\WallDesign.Designer.cs">
       <DependentUpon>WallDesign.cs</DependentUpon>
     </Compile>
     <Compile Include="Shared Classes\DirectoryUserControl.cs">
@@ -306,10 +312,10 @@
     <Compile Include="Excel Pane Folder\GraphToolsPane.Designer.cs">
       <DependentUpon>GraphToolsPane.cs</DependentUpon>
     </Compile>
-    <Compile Include="Excel Pane Folder\DirectoryAndPdf.cs">
+    <Compile Include="Excel Pane Folder\DirectoryPanes\DirectoryAndPdf.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Excel Pane Folder\DirectoryAndPdf.Designer.cs">
+    <Compile Include="Excel Pane Folder\DirectoryPanes\DirectoryAndPdf.Designer.cs">
       <DependentUpon>DirectoryAndPdf.cs</DependentUpon>
     </Compile>
     <Compile Include="Excel Pane Folder\ReportPane.cs">
@@ -400,10 +406,13 @@
     <Compile Include="Shared Classes\ScreenshotApp\SettingsForm.designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Excel Pane Folder\DirectoryPanes\DraftingPane.resx">
+      <DependentUpon>DraftingPane.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\HDB Design\WallCheckPane.resx">
       <DependentUpon>WallCheckPane.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Excel Pane Folder\WallDesign.resx">
+    <EmbeddedResource Include="Excel Pane Folder\HDB Design\WallDesign.resx">
       <DependentUpon>WallDesign.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Shared Classes\DirectoryUserControl.resx">
@@ -424,7 +433,7 @@
     <EmbeddedResource Include="Excel Pane Folder\GraphToolsPane.resx">
       <DependentUpon>GraphToolsPane.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Excel Pane Folder\DirectoryAndPdf.resx">
+    <EmbeddedResource Include="Excel Pane Folder\DirectoryPanes\DirectoryAndPdf.resx">
       <DependentUpon>DirectoryAndPdf.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\ReportPane.resx">
