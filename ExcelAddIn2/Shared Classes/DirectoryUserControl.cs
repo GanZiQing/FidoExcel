@@ -64,12 +64,18 @@ namespace ExcelAddIn2
             #region Directory
             toolTip1.SetToolTip(importFilePath,
                 "For each file in selected folder, return:\n" +
-                "Full Directory | Folder Name | Filename");
+                "  Full Directory | Folder Name | Filename");
 
             toolTip1.SetToolTip(renameFiles,
                 "Rename files assuming the selected range (4 columns) of the following format:" +
-                "File Path | Folder | File Name | File Name\n" +
-                "Data in Folder and Origional File name columns are not used.");
+                "  File Path | Folder | File Name | File Name\n" +
+                "  Data in Folder and Origional File name columns are not used.");
+
+            toolTip1.SetToolTip(dispExtension,
+                "Provide extension of the file type to limit search to. Extension should start with \".\"\n" +
+                "  Case sensitive (aka .cbd =/= .CBD)\n" +
+                "  Use comma to define multiple file types (e.g \".pdf, .xlsx\")\n" +
+                "  Use \".excel\" to filter for .xlsx, .xlsm, .xlsb, .xls, .csv");
 
             //toolTip1.SetToolTip(mergeFolders,
             //    "Inserts reference headers used for \"Import Paths\" and \"Rename Files\"\n" +
@@ -218,15 +224,7 @@ namespace ExcelAddIn2
                 List<string> files = new List<string>();
                 if (isFile)
                 {
-                    if (specifiedExtension == "")
-                    {
-                        getFiles(directoryPath, ref files, checkNestedFolders.Checked);
-                    }
-                    else
-                    {
-                        getFiles(directoryPath, ref files, checkNestedFolders.Checked, specifiedExtension);
-                    }
-
+                    getFiles(directoryPath, ref files, checkNestedFolders.Checked, specifiedExtension);
                 }
                 else { getFolders(directoryPath, ref files, checkNestedFolders.Checked); }
 

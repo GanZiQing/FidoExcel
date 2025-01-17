@@ -1280,14 +1280,18 @@ namespace ExcelAddIn2
             string[] subDirectoryList = Directory.GetDirectories(directory);
             string[] fileList = Directory.GetFiles(directory);
 
+
+            #region Create Hashset of Extension Types
+            HashSet<string> validExtensions = CreateExtensionHashset(extensionType);
+            #endregion
+
             //Add current files to global list
             if (extensionType == "") { globalFileList.AddRange(fileList); }
             else
             {
                 foreach (string file in fileList)
                 {
-                    Path.GetExtension(file);
-                    if (Path.GetExtension(file) == extensionType)
+                    if (validExtensions.Contains(Path.GetExtension(file)))
                     {
                         globalFileList.Add(file);
                     }
@@ -1301,6 +1305,30 @@ namespace ExcelAddIn2
             {
                 getFiles(subDir, ref globalFileList, checkNest, extensionType);
             }
+        }
+
+        public static HashSet<string> CreateExtensionHashset(string allExtensions)
+        {
+            string[] parts = allExtensions.Split(',');
+            HashSet<string> extensionHash = new HashSet<string>();
+            for (int i = 0; i < parts.Length; i++)
+            {
+                string extensionCleaned = parts[i].Trim();
+                if (extensionCleaned[0] != '.') { throw new Exception($"Invalid extension {extensionCleaned} provided"); }
+                if (extensionCleaned == ".excel")
+                {
+                    HashSet<string> excelExtension = GetExcelExtensions();
+                    foreach (string extension in excelExtension)
+                    {
+                        if (!extensionHash.Contains(extension)) { extensionHash.Add(extension); }
+                    }
+                }
+                else
+                {
+                    if (!extensionHash.Contains(extensionCleaned)) { extensionHash.Add(extensionCleaned); }
+                }
+            }
+            return extensionHash;
         }
         public static void getFolders(string directory, ref List<string> globalDirectoryList, bool checkNest = true)
         {
@@ -1347,6 +1375,19 @@ namespace ExcelAddIn2
         //        }
         //    }
         //}
+        
+        public static HashSet<string> GetExcelExtensions()
+        {
+            HashSet<string> excelExtensions = new HashSet<string> 
+            { 
+                ".xlsx",
+                ".xlsm",
+                ".xlsb",
+                ".xls",
+                ".csv",
+            };
+            return excelExtensions;
+        }
         #endregion
     }
 
