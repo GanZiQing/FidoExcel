@@ -132,7 +132,7 @@ namespace ExcelAddIn2
             #endregion
 
             #region Single Cell Iteration 
-            RangeTextBox CriteriaSource2 = new RangeTextBox("CriteriaSource2", dispCriteriaSource2, setCriteriaSource2, "column", false);
+            RangeTextBox CriteriaSource2 = new RangeTextBox("CriteriaSource2", dispCriteriaSource2, setCriteriaSource2, "cell", false);
             RangeAttributeDic.Add("CriteriaSource2", CriteriaSource2);
             ComboBoxAttribute LogicSymbol2 = new ComboBoxAttribute("LogicSymbol2", dispLogicSymbol2, "<=");
             OtherAttributeDic.Add("LogicSymbol2", LogicSymbol2);
@@ -164,6 +164,13 @@ namespace ExcelAddIn2
             toolTip1.SetToolTip(GetMultiIteration,
                 "Used when there are multiple items to be iterated witthin one sheet.\n" +
                 "Run values are defined in excel table");
+            #endregion
+
+            #region Others
+            toolTip1.SetToolTip(increaseVal,
+                "Increase the value of current cell by increment until target criteria is achived or maximumn number of loops completed");
+            toolTip1.SetToolTip(increaseVal,
+                "Decrease the value of current cell by increment until target criteria is achived or maximumn number of loops completed");
             #endregion
         }
         #endregion

@@ -76,8 +76,6 @@
             this.checkSlowOptimisation = new System.Windows.Forms.CheckBox();
             this.DispCriteriaSource = new System.Windows.Forms.TextBox();
             this.SetCriteriaSource = new System.Windows.Forms.Button();
-            this.SetStatusCol = new System.Windows.Forms.Button();
-            this.DispStatusCol = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.DispLogicSymbol = new System.Windows.Forms.ComboBox();
             this.DispCriteriaValue = new System.Windows.Forms.TextBox();
@@ -120,6 +118,8 @@
             this.DispCopySheet = new System.Windows.Forms.TextBox();
             this.SetCopySheet = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.SetStatusCol = new System.Windows.Forms.Button();
+            this.DispStatusCol = new System.Windows.Forms.TextBox();
             this.ExcelTabControl.SuspendLayout();
             this.SetupPage.SuspendLayout();
             this.RunSettings.SuspendLayout();
@@ -167,7 +167,7 @@
             // 
             this.RunSettings.BackColor = System.Drawing.SystemColors.Control;
             this.RunSettings.Controls.Add(this.RunSingle);
-            this.RunSettings.Location = new System.Drawing.Point(15, 614);
+            this.RunSettings.Location = new System.Drawing.Point(15, 663);
             this.RunSettings.Margin = new System.Windows.Forms.Padding(6);
             this.RunSettings.Name = "RunSettings";
             this.RunSettings.Padding = new System.Windows.Forms.Padding(6);
@@ -190,6 +190,8 @@
             // SheetSettings
             // 
             this.SheetSettings.BackColor = System.Drawing.SystemColors.Control;
+            this.SheetSettings.Controls.Add(this.SetStatusCol);
+            this.SheetSettings.Controls.Add(this.DispStatusCol);
             this.SheetSettings.Controls.Add(this.CheckNewSheet1);
             this.SheetSettings.Controls.Add(this.SetOutSheet1);
             this.SheetSettings.Controls.Add(this.SetDupeSheet);
@@ -203,7 +205,7 @@
             this.SheetSettings.Margin = new System.Windows.Forms.Padding(6);
             this.SheetSettings.Name = "SheetSettings";
             this.SheetSettings.Padding = new System.Windows.Forms.Padding(6);
-            this.SheetSettings.Size = new System.Drawing.Size(504, 310);
+            this.SheetSettings.Size = new System.Drawing.Size(504, 359);
             this.SheetSettings.TabIndex = 21;
             this.SheetSettings.TabStop = false;
             this.SheetSettings.Text = "Calculation Settings (Universal)";
@@ -212,7 +214,7 @@
             // 
             this.CheckNewSheet1.AutoSize = true;
             this.CheckNewSheet1.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.CheckNewSheet1.Location = new System.Drawing.Point(11, 255);
+            this.CheckNewSheet1.Location = new System.Drawing.Point(12, 307);
             this.CheckNewSheet1.Margin = new System.Windows.Forms.Padding(6);
             this.CheckNewSheet1.Name = "CheckNewSheet1";
             this.CheckNewSheet1.Size = new System.Drawing.Size(222, 29);
@@ -234,7 +236,7 @@
             // SetDupeSheet
             // 
             this.SetDupeSheet.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.SetDupeSheet.Location = new System.Drawing.Point(246, 246);
+            this.SetDupeSheet.Location = new System.Drawing.Point(247, 298);
             this.SetDupeSheet.Margin = new System.Windows.Forms.Padding(6);
             this.SetDupeSheet.Name = "SetDupeSheet";
             this.SetDupeSheet.Size = new System.Drawing.Size(249, 46);
@@ -258,7 +260,7 @@
             // OverrideInputCheck
             // 
             this.OverrideInputCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.OverrideInputCheck.Location = new System.Drawing.Point(11, 212);
+            this.OverrideInputCheck.Location = new System.Drawing.Point(12, 264);
             this.OverrideInputCheck.Margin = new System.Windows.Forms.Padding(6);
             this.OverrideInputCheck.Name = "OverrideInputCheck";
             this.OverrideInputCheck.Size = new System.Drawing.Size(422, 31);
@@ -271,8 +273,6 @@
             this.DispHeadR1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispHeadR1.Location = new System.Drawing.Point(206, 43);
             this.DispHeadR1.Margin = new System.Windows.Forms.Padding(6);
-            this.DispHeadR1.MaximumSize = new System.Drawing.Size(290, 25);
-            this.DispHeadR1.MinimumSize = new System.Drawing.Size(290, 25);
             this.DispHeadR1.Name = "DispHeadR1";
             this.DispHeadR1.Size = new System.Drawing.Size(290, 29);
             this.DispHeadR1.TabIndex = 10;
@@ -323,7 +323,7 @@
             this.utilityGroup.Controls.Add(this.ExportUserInputs);
             this.utilityGroup.Controls.Add(this.ClearOutput);
             this.utilityGroup.Controls.Add(this.DelSheets);
-            this.utilityGroup.Location = new System.Drawing.Point(15, 722);
+            this.utilityGroup.Location = new System.Drawing.Point(15, 771);
             this.utilityGroup.Margin = new System.Windows.Forms.Padding(6);
             this.utilityGroup.Name = "utilityGroup";
             this.utilityGroup.Padding = new System.Windows.Forms.Padding(6);
@@ -600,8 +600,6 @@
             this.IterationGroup.Controls.Add(this.checkSlowOptimisation);
             this.IterationGroup.Controls.Add(this.DispCriteriaSource);
             this.IterationGroup.Controls.Add(this.SetCriteriaSource);
-            this.IterationGroup.Controls.Add(this.SetStatusCol);
-            this.IterationGroup.Controls.Add(this.DispStatusCol);
             this.IterationGroup.Controls.Add(this.label6);
             this.IterationGroup.Controls.Add(this.DispLogicSymbol);
             this.IterationGroup.Controls.Add(this.DispCriteriaValue);
@@ -760,29 +758,6 @@
             this.SetCriteriaSource.TabIndex = 31;
             this.SetCriteriaSource.Text = "Set Criteria Source Col";
             this.SetCriteriaSource.UseVisualStyleBackColor = true;
-            // 
-            // SetStatusCol
-            // 
-            this.SetStatusCol.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.SetStatusCol.Location = new System.Drawing.Point(6, 347);
-            this.SetStatusCol.Margin = new System.Windows.Forms.Padding(6);
-            this.SetStatusCol.Name = "SetStatusCol";
-            this.SetStatusCol.Size = new System.Drawing.Size(183, 46);
-            this.SetStatusCol.TabIndex = 29;
-            this.SetStatusCol.Text = "Set Status Col";
-            this.SetStatusCol.UseVisualStyleBackColor = true;
-            // 
-            // DispStatusCol
-            // 
-            this.DispStatusCol.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.DispStatusCol.Location = new System.Drawing.Point(200, 347);
-            this.DispStatusCol.Margin = new System.Windows.Forms.Padding(6);
-            this.DispStatusCol.MaximumSize = new System.Drawing.Size(290, 25);
-            this.DispStatusCol.MinimumSize = new System.Drawing.Size(180, 25);
-            this.DispStatusCol.Name = "DispStatusCol";
-            this.DispStatusCol.Size = new System.Drawing.Size(283, 29);
-            this.DispStatusCol.TabIndex = 30;
-            this.DispStatusCol.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label6
             // 
@@ -969,7 +944,7 @@
             this.Part2Page.Padding = new System.Windows.Forms.Padding(6);
             this.Part2Page.Size = new System.Drawing.Size(531, 1920);
             this.Part2Page.TabIndex = 1;
-            this.Part2Page.Text = "Part 2";
+            this.Part2Page.Text = "Others";
             // 
             // simpleIter
             // 
@@ -1015,7 +990,7 @@
             this.setCriteriaSource2.Name = "setCriteriaSource2";
             this.setCriteriaSource2.Size = new System.Drawing.Size(202, 66);
             this.setCriteriaSource2.TabIndex = 39;
-            this.setCriteriaSource2.Text = "Set Criteria Source Col";
+            this.setCriteriaSource2.Text = "Set Criteria Source Cell";
             this.setCriteriaSource2.UseVisualStyleBackColor = true;
             // 
             // label12
@@ -1303,6 +1278,27 @@
             this.SetCopySheet.Text = "Set Sheet";
             this.SetCopySheet.UseVisualStyleBackColor = true;
             // 
+            // SetStatusCol
+            // 
+            this.SetStatusCol.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.SetStatusCol.Location = new System.Drawing.Point(11, 206);
+            this.SetStatusCol.Margin = new System.Windows.Forms.Padding(6);
+            this.SetStatusCol.Name = "SetStatusCol";
+            this.SetStatusCol.Size = new System.Drawing.Size(183, 46);
+            this.SetStatusCol.TabIndex = 31;
+            this.SetStatusCol.Text = "Set Status Col";
+            this.SetStatusCol.UseVisualStyleBackColor = true;
+            // 
+            // DispStatusCol
+            // 
+            this.DispStatusCol.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.DispStatusCol.Location = new System.Drawing.Point(206, 214);
+            this.DispStatusCol.Margin = new System.Windows.Forms.Padding(6);
+            this.DispStatusCol.Name = "DispStatusCol";
+            this.DispStatusCol.Size = new System.Drawing.Size(290, 29);
+            this.DispStatusCol.TabIndex = 32;
+            this.DispStatusCol.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // IterationPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -1355,8 +1351,6 @@
         private System.Windows.Forms.TextBox DispCriteriaValue;
         private System.Windows.Forms.TextBox DispItSource;
         private System.Windows.Forms.Button SetItSource;
-        private System.Windows.Forms.Button SetStatusCol;
-        private System.Windows.Forms.TextBox DispStatusCol;
         private System.Windows.Forms.TextBox DispCriteriaSource;
         private System.Windows.Forms.Button SetCriteriaSource;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -1432,5 +1426,7 @@
         private System.Windows.Forms.Button SetHeadR1;
         private System.Windows.Forms.TextBox DispInputR1;
         private System.Windows.Forms.Button SetInRange1;
+        private System.Windows.Forms.Button SetStatusCol;
+        private System.Windows.Forms.TextBox DispStatusCol;
     }
 }
