@@ -50,6 +50,7 @@
             this.addSheetNumberCheck = new System.Windows.Forms.CheckBox();
             this.getFileInfo = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.openOutputFolder = new System.Windows.Forms.Button();
             this.ExcelTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -83,10 +84,8 @@
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.textBox18);
-            this.groupBox6.Controls.Add(this.textBox19);
-            this.groupBox6.Controls.Add(this.dispFontSizeSheetNum);
-            this.groupBox6.Controls.Add(this.dispTotalDwgNum);
             this.groupBox6.Controls.Add(this.textBox15);
+            this.groupBox6.Controls.Add(this.dispFontSizeSheetNum);
             this.groupBox6.Controls.Add(this.dispTotalSheetX);
             this.groupBox6.Controls.Add(this.dispThisSheetY);
             this.groupBox6.Controls.Add(this.dispTotalSheetY);
@@ -98,7 +97,7 @@
             this.groupBox6.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox6.Size = new System.Drawing.Size(502, 233);
+            this.groupBox6.Size = new System.Drawing.Size(502, 198);
             this.groupBox6.TabIndex = 47;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Settings";
@@ -107,7 +106,7 @@
             // 
             this.textBox18.BackColor = System.Drawing.SystemColors.Control;
             this.textBox18.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox18.Location = new System.Drawing.Point(22, 185);
+            this.textBox18.Location = new System.Drawing.Point(22, 144);
             this.textBox18.Margin = new System.Windows.Forms.Padding(6);
             this.textBox18.Multiline = true;
             this.textBox18.Name = "textBox18";
@@ -122,7 +121,7 @@
             // 
             this.textBox19.BackColor = System.Drawing.SystemColors.Control;
             this.textBox19.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox19.Location = new System.Drawing.Point(22, 144);
+            this.textBox19.Location = new System.Drawing.Point(22, 91);
             this.textBox19.Margin = new System.Windows.Forms.Padding(6);
             this.textBox19.Multiline = true;
             this.textBox19.Name = "textBox19";
@@ -136,7 +135,7 @@
             // dispFontSizeSheetNum
             // 
             this.dispFontSizeSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispFontSizeSheetNum.Location = new System.Drawing.Point(211, 187);
+            this.dispFontSizeSheetNum.Location = new System.Drawing.Point(211, 146);
             this.dispFontSizeSheetNum.Margin = new System.Windows.Forms.Padding(6);
             this.dispFontSizeSheetNum.MaxLength = 100;
             this.dispFontSizeSheetNum.Name = "dispFontSizeSheetNum";
@@ -147,7 +146,7 @@
             // dispTotalDwgNum
             // 
             this.dispTotalDwgNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispTotalDwgNum.Location = new System.Drawing.Point(211, 146);
+            this.dispTotalDwgNum.Location = new System.Drawing.Point(211, 93);
             this.dispTotalDwgNum.Margin = new System.Windows.Forms.Padding(6);
             this.dispTotalDwgNum.MaxLength = 100;
             this.dispTotalDwgNum.Name = "dispTotalDwgNum";
@@ -261,15 +260,18 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.openOutputFolder);
             this.groupBox3.Controls.Add(this.editFilesSheetNum);
+            this.groupBox3.Controls.Add(this.textBox19);
             this.groupBox3.Controls.Add(this.renameFilesCheck);
+            this.groupBox3.Controls.Add(this.dispTotalDwgNum);
             this.groupBox3.Controls.Add(this.addSheetNumberCheck);
             this.groupBox3.Controls.Add(this.getFileInfo);
-            this.groupBox3.Location = new System.Drawing.Point(15, 249);
+            this.groupBox3.Location = new System.Drawing.Point(15, 214);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox3.Size = new System.Drawing.Size(502, 225);
+            this.groupBox3.Size = new System.Drawing.Size(502, 330);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Add Sheet Numbers";
@@ -277,7 +279,7 @@
             // editFilesSheetNum
             // 
             this.editFilesSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.editFilesSheetNum.Location = new System.Drawing.Point(13, 92);
+            this.editFilesSheetNum.Location = new System.Drawing.Point(16, 134);
             this.editFilesSheetNum.Margin = new System.Windows.Forms.Padding(6);
             this.editFilesSheetNum.Name = "editFilesSheetNum";
             this.editFilesSheetNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -292,7 +294,7 @@
             this.renameFilesCheck.Checked = true;
             this.renameFilesCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.renameFilesCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.renameFilesCheck.Location = new System.Drawing.Point(20, 151);
+            this.renameFilesCheck.Location = new System.Drawing.Point(22, 192);
             this.renameFilesCheck.Margin = new System.Windows.Forms.Padding(6);
             this.renameFilesCheck.Name = "renameFilesCheck";
             this.renameFilesCheck.Size = new System.Drawing.Size(240, 31);
@@ -305,7 +307,7 @@
             this.addSheetNumberCheck.Checked = true;
             this.addSheetNumberCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.addSheetNumberCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.addSheetNumberCheck.Location = new System.Drawing.Point(20, 185);
+            this.addSheetNumberCheck.Location = new System.Drawing.Point(22, 226);
             this.addSheetNumberCheck.Margin = new System.Windows.Forms.Padding(6);
             this.addSheetNumberCheck.Name = "addSheetNumberCheck";
             this.addSheetNumberCheck.Size = new System.Drawing.Size(301, 31);
@@ -326,18 +328,32 @@
             this.getFileInfo.UseVisualStyleBackColor = true;
             this.getFileInfo.Click += new System.EventHandler(this.getFileInfo_Click);
             // 
-            // Drafting
+            // openOutputFolder
+            // 
+            this.openOutputFolder.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.openOutputFolder.Location = new System.Drawing.Point(16, 269);
+            this.openOutputFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.openOutputFolder.Name = "openOutputFolder";
+            this.openOutputFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.openOutputFolder.Size = new System.Drawing.Size(477, 46);
+            this.openOutputFolder.TabIndex = 121;
+            this.openOutputFolder.Text = "Open Output Folder";
+            this.openOutputFolder.UseVisualStyleBackColor = true;
+            this.openOutputFolder.Click += new System.EventHandler(this.openOutputFolder_Click);
+            // 
+            // DraftingPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ExcelTabControl);
-            this.Name = "Drafting";
+            this.Name = "DraftingPane";
             this.Size = new System.Drawing.Size(550, 1532);
             this.ExcelTabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -365,5 +381,6 @@
         private System.Windows.Forms.CheckBox addSheetNumberCheck;
         private System.Windows.Forms.Button getFileInfo;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button openOutputFolder;
     }
 }

@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
 
+
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
     public partial class DraftingPane : UserControl
@@ -44,31 +45,31 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             AttributeTextBox thisAtt;
             CustomAttribute thisCustomAtt;
             #region Drafting Sheet Number
-            thisAtt = new AttributeTextBox("thisSheetX_sheetRenum", dispThisSheetX);
-            thisAtt.SetDefaultValue("30");
-            thisAtt.type = "double";
-            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
-
-            thisAtt = new AttributeTextBox("thisSheetY_sheetRenum", dispThisSheetY);
+            thisAtt = new AttributeTextBox("thisSheetX_sheetRenum", dispThisSheetX, true);
             thisAtt.SetDefaultValue("725");
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
-            thisAtt = new AttributeTextBox("totalSheetX_sheetRenum", dispTotalSheetX);
+            thisAtt = new AttributeTextBox("thisSheetY_sheetRenum", dispThisSheetY, true);
             thisAtt.SetDefaultValue("30");
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
-            thisAtt = new AttributeTextBox("totalSheetY_sheetRenum", dispTotalSheetY);
+            thisAtt = new AttributeTextBox("totalSheetX_sheetRenum", dispTotalSheetX, true);
             thisAtt.SetDefaultValue("750");
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
-            thisAtt = new AttributeTextBox("totalSheetNum_sheetRenum", dispTotalSheetY); // Need to sort this out
+            thisAtt = new AttributeTextBox("totalSheetY_sheetRenum", dispTotalSheetY, true);
+            thisAtt.SetDefaultValue("30");
+            thisAtt.type = "double";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new AttributeTextBox("totalSheetNum_sheetRenum", dispTotalDwgNum, true); // Need to sort this out
             thisAtt.type = "int";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
-            thisAtt = new AttributeTextBox("fontSize_sheetRenum", dispFontSizeSheetNum);
+            thisAtt = new AttributeTextBox("fontSize_sheetRenum", dispFontSizeSheetNum, true);
             thisAtt.SetDefaultValue("12");
             thisAtt.type = "int";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
@@ -130,6 +131,12 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
         }
 
+        #region Fixed Params
+        int fontSize;
+        double[] thisSheetCoord;
+        double[] totalSheetCoord;
+
+        #endregion
         private void editFilesSheetNum_Click(object sender, EventArgs e)
         {
             try
@@ -140,12 +147,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 string[] fileNames = GetContentsAsStringArray(selectedRange.Columns[2], false);
                 string[] fileNum = GetContentsAsStringArray(selectedRange.Columns[3], false);
 
-                int fontSize = Convert.ToInt32(dispFontSizeSheetNum.Text);
-                double xSheetNum = double.Parse(dispThisSheetX.Text) * 72 / 25.4;
-                double ySheetNum = double.Parse(dispThisSheetY.Text) * 72 / 25.4;
-                double xTotalSheetNum = double.Parse(dispTotalSheetX.Text) * 72 / 25.4;
-                double yTotalSheetNum = double.Parse(dispTotalSheetY.Text) * 72 / 25.4;
-
+                //int fontSize = Convert.ToInt32(dispFontSizeSheetNum.Text);
+                //double xSheetNum = double.Parse(dispThisSheetX.Text) * 72 / 25.4;
+                //double ySheetNum = double.Parse(dispThisSheetY.Text) * 72 / 25.4;
+                //double xTotalSheetNum = double.Parse(dispTotalSheetX.Text) * 72 / 25.4;
+                //double yTotalSheetNum = double.Parse(dispTotalSheetY.Text) * 72 / 25.4;
                 #endregion
 
                 #region Create and Empty Destination
@@ -179,23 +185,56 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 }
                 #endregion
 
+                #region Set Fixed Params
+                fontSize = AttributeTextBoxDic["fontSize_sheetRenum"].GetIntFromTextBox();
+                //thisSheetCoord = new double[] 
+                //{ 
+                //    AttributeTextBoxDic["thisSheetX_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4,
+                //    AttributeTextBoxDic["thisSheetY_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4
+                //};
+
+                //totalSheetCoord = new double[]
+                //{
+                //    AttributeTextBoxDic["totalSheetX_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4,
+                //    AttributeTextBoxDic["totalSheetY_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4
+                //};
+
+
+
+                thisSheetCoord = new double[]
+                {
+                    AttributeTextBoxDic["thisSheetX_sheetRenum"].GetDoubleFromTextBox(),
+                    AttributeTextBoxDic["thisSheetY_sheetRenum"].GetDoubleFromTextBox()
+                };
+                totalSheetCoord = new double[]
+                {
+                    AttributeTextBoxDic["totalSheetX_sheetRenum"].GetDoubleFromTextBox(),
+                    AttributeTextBoxDic["totalSheetY_sheetRenum"].GetDoubleFromTextBox()
+                };
+                #endregion
+
                 #region Add Sheet number
                 if (addSheetNumberCheck.Checked)
                 {
                     for (int i = 0; i < finalFilePaths.Length; i++)
                     {
-                        AddSheetNumberToOne(finalFilePaths[i], fileNum[i], dispTotalDwgNum.Text,
-                                            fontSize, xSheetNum, ySheetNum, xTotalSheetNum, yTotalSheetNum);
+                        AddSheetNumberToOne(finalFilePaths[i], fileNum[i], dispTotalDwgNum.Text);
                     }
                 }
                 #endregion
+
                 MessageBox.Show("Completed", "Completed");
             }
             catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+            finally
+            {
+                fontSize = 0;
+                thisSheetCoord = null;
+                totalSheetCoord = null;
+            }
         }
 
-        private void AddSheetNumberToOne(string filePath, string sheetNum, string totalSheetNum,
-                            int fontSize, double xSheetNum, double ySheetNum, double xTotalSheetNum, double yTotalSheetNum)
+        private void AddSheetNumberToOne(string filePath, string sheetNum, string totalSheetNum)
         {
             #region Check if file exist
             if (!File.Exists(filePath))
@@ -207,52 +246,12 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #region Open File
             PdfDocument inputDocument = PdfReader.Open(filePath, PdfDocumentOpenMode.Modify);
             PdfPage page = inputDocument.Pages[0];
-            XGraphics gfx = XGraphics.FromPdfPage(page);
-            string fontName = "Arial";
-            XFont fontType = new XFont(fontName, fontSize);
-
-            // Testing values
-            double width = page.Width.Value;
-            double height = page.Height.Value;
-            // End test
-
-            int rotation = page.Rotate;
-            XPoint bottomLeftPoint;
-            switch (rotation)
-            {
-                case 90:
-                    gfx.RotateTransform(-90);
-                    bottomLeftPoint = new XPoint(-xSheetNum, page.Width.Value - ySheetNum);
-                    break;
-                case 180:
-                    gfx.RotateTransform(-180);
-                    bottomLeftPoint = new XPoint(-xSheetNum, -ySheetNum);
-                    break;
-                case 270:
-                    gfx.RotateTransform(-270);
-                    bottomLeftPoint = new XPoint(page.Height.Value - xSheetNum, -ySheetNum);
-                    break;
-                default:
-                    bottomLeftPoint = new XPoint(xSheetNum, ySheetNum);
-                    break;
-            }
-
-            string textContents = sheetNum;
-            XSize textSize = gfx.MeasureString(textContents, fontType);
-            XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
-            XRect rect = new XRect(topRightPoint, bottomLeftPoint);
-            //gfx.DrawRectangle(XBrushes.White, rect);
-            gfx.DrawRectangle(XBrushes.LightBlue, rect);
-            //gfx.DrawString(textContents, fontType, XBrushes.Black, rect, XStringFormats.BottomRight);
-            gfx.DrawString(textContents, fontType, XBrushes.Blue, rect, XStringFormats.BottomRight);
-
-
-            bottomLeftPoint = new XPoint(xTotalSheetNum, yTotalSheetNum);
-            textContents = totalSheetNum;
-            textSize = gfx.MeasureString(textContents, fontType);
-            topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - textSize.Height);
-            rect = new XRect(topRightPoint, bottomLeftPoint);
-            gfx.DrawRectangle(XBrushes.LightPink, rect);
+            
+            #endregion
+            
+            #region Print Sheet Name
+            AddTextBox(page, sheetNum, fontSize, thisSheetCoord[0], thisSheetCoord[1], "Arial", XBrushes.Red, XBrushes.LightPink);
+            AddTextBox(page, totalSheetNum, fontSize, totalSheetCoord[0], totalSheetCoord[1], "Arial", XBrushes.Blue, XBrushes.LightBlue);
             #endregion
 
             inputDocument.Save(filePath);
@@ -289,6 +288,130 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 }
             }
         }
+        
+        private void AddTextBox(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord, 
+            string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null)
+        {
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont fontType = new XFont(fontName, fontSize);
+            if (fontColor == null) { fontColor = XBrushes.Black; }
+            if (rectColor == null) { rectColor = XBrushes.White; }
+
+            // Testing values
+            double width = page.Width.Value;
+            double height = page.Height.Value;
+            // End test
+
+            int rotation = page.Rotate;
+            XPoint bottomLeftPoint;
+            switch (rotation)
+            {
+                case 90:
+                    gfx.RotateTransform(-90);
+                    break;
+                case 180:
+                    gfx.RotateTransform(-180);
+                    break;
+                case 270:
+                    gfx.RotateTransform(-270);
+                    break;
+                default:
+                    break;
+                    //case 90:
+                    //    //gfx.RotateAtTransform(90, new XPoint(page.Width.Value / 2, page.Height.Value / 2));
+                    //    //gfx.RotateTransform(-90);
+                    //    //gfx.RotateAtTransform(height-90)
+                    //    //gfx.TranslateTransform(0, -page.Height.Value);
+                    //    break;
+                    //default:
+                    //    break;
+                    //// Rotate gfx back to original orientation
+                    //// Rotation is always done about 
+                    //case 90:
+                    //    gfx.RotateTransform(-90);
+                    //    gfx.TranslateTransform(0, -page.Height.Value);
+                    //    //bottomLeftPoint = new XPoint(-xCoord, page.Width.Value - yCoord);
+                    //    break;
+                    //case 180:
+                    //    gfx.RotateTransform(-180);
+                    //    bottomLeftPoint = new XPoint(-xCoord, -yCoord);
+                    //    break;
+                    //case 270:
+                    //    gfx.RotateTransform(-270);
+                    //    bottomLeftPoint = new XPoint(page.Height.Value - xCoord, -yCoord);
+                    //    break;
+                    //default:
+                    //    bottomLeftPoint = new XPoint(xCoord, yCoord);
+                    //    break;
+                    //case 90:
+                    //    // Translate to the bottom-right corner and rotate -90°
+
+                    //    gfx.RotateTransform(-90);
+                    //    gfx.TranslateTransform(page.Width.Value, 0);
+                    //    break;
+                    //case 180:
+                    //    // Translate to the top-right corner and rotate -180°
+                    //    gfx.TranslateTransform(page.Width.Value, page.Height.Value);
+                    //    gfx.RotateTransform(-180);
+                    //    break;
+                    //case 270:
+                    //    // Translate to the top-left corner and rotate -270°
+                    //    gfx.TranslateTransform(0, page.Height).Value;
+                    //    gfx.RotateTransform(-270);
+                    //    break;
+                    //case 0:
+                    //default:
+                    //    // No transformation needed for 0°
+                    //    break;
+            }
+
+            #region For Testing only
+            for (int x = -2500; x < 2500; x += 100)
+            {
+                for (int y = -2500; y < 2500; y += 100)
+                {
+                    bottomLeftPoint = new XPoint(x, y);
+                    textContents = $"{x},{y}";
+                    XSize textSize = gfx.MeasureString(textContents, fontType);
+                    XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+                    XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+                    gfx.DrawRectangle(rectColor, rect);
+                    gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
+                }
+            }
+            #endregion
+            gfx.Dispose();
+            //bottomLeftPoint = new XPoint(xCoord, yCoord);
+
+            //XSize textSize = gfx.MeasureString(textContents, fontType);
+            //XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+            //XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+            //gfx.DrawRectangle(rectColor, rect);
+            //gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
+            //gfx.Dispose();
+
+            //bottomLeftPoint = new XPoint(xTotalSheetNum, yTotalSheetNum);
+            //textContents = totalSheetNum;
+            //textSize = gfx.MeasureString(textContents, fontType);
+            //topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - textSize.Height);
+            //rect = new XRect(topRightPoint, bottomLeftPoint);
+            //gfx.DrawRectangle(XBrushes.LightPink, rect);
+        }
         #endregion
+
+
+
+        private void openOutputFolder_Click(object sender, EventArgs e)
+        {
+            
+            try
+            {
+                string workbookPath = Path.GetDirectoryName(Globals.ThisAddIn.Application.ActiveWorkbook.FullName);
+                string path = Path.Combine(workbookPath, "Updated Dwg");
+                if (!Directory.Exists(path)) { throw new Exception($"Directory does not exist\n{path}"); }
+                System.Diagnostics.Process.Start(path);
+            }
+            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+        }
     }
 }
