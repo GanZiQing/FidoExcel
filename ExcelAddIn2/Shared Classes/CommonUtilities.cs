@@ -961,7 +961,7 @@ namespace ExcelAddIn2
             }
         }
 
-        public static void WriteToExcelRangeAsRow(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
+        public static Range WriteToExcelRangeAsRow(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
         {
             // This code takes any number of arrays (of various types) and outputs them into excel 
             // Output order depends on order of the input array
@@ -1005,24 +1005,25 @@ namespace ExcelAddIn2
             // Add section to read input data from Excel
             Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
             Worksheet workSheet = startRange.Worksheet;
-
+            Range writeRange = null;
             try
             {
                 workBook.Application.ScreenUpdating = false;
                 Range startCell = startRange.Cells[1, 1];
                 startCell = startCell.Offset[rowOff, colOff];
                 Range endCell = startCell.Offset[numRow - 1, numCol - 1];
-                Range writeRange = workSheet.Range[startCell, endCell];
+                writeRange = workSheet.Range[startCell, endCell];
                 writeRange.Value2 = dataArray;
             }
             finally
             {
                 workBook.Application.ScreenUpdating = true;
             }
+            return writeRange;
             #endregion
         }
 
-        public static void WriteToExcelRangeAsCol(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
+        public static Range WriteToExcelRangeAsCol(Range startRange, int rowOff, int colOff, bool warning, params Array[] arrays)
         {
             // This code takes any number of arrays (of various types) and outputs them into excel 
             // Output order depends on order of the input array
@@ -1067,43 +1068,45 @@ namespace ExcelAddIn2
             // Add section to read input data from Excel
             Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
             Worksheet workSheet = startRange.Worksheet;
-
+            Range writeRange = null;
             try
             {
                 workBook.Application.ScreenUpdating = false;
                 Range startCell = startRange.Cells[1, 1];
                 startCell = startCell.Offset[rowOff, colOff];
                 Range endCell = startCell.Offset[numRow - 1, numCol - 1];
-                Range writeRange = workSheet.Range[startCell, endCell];
+                writeRange = workSheet.Range[startCell, endCell];
                 writeRange.Value2 = dataArray;
             }
             finally
             {
                 workBook.Application.ScreenUpdating = true;
             }
+            return writeRange;
             #endregion
         }
         
-        public static void WriteObjectToExcelRange(Range startRange, int rowOff, int colOff, bool warning, object[,] writeObject)
+        public static Range WriteObjectToExcelRange(Range startRange, int rowOff, int colOff, bool warning, object[,] writeObject)
         {
             int numRow = writeObject.GetLength(0);
             int numCol = writeObject.GetLength(1);
             Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
             Worksheet workSheet = startRange.Worksheet;
-
+            Range writeRange = null; 
             try
             {
                 workBook.Application.ScreenUpdating = false;
                 Range startCell = startRange.Cells[1, 1];
                 startCell = startCell.Offset[rowOff, colOff];
                 Range endCell = startCell.Offset[numRow - 1, numCol - 1];
-                Range writeRange = workSheet.Range[startCell, endCell];
+                writeRange = workSheet.Range[startCell, endCell];
                 writeRange.Value2 = writeObject;
             }
             finally
             {
                 workBook.Application.ScreenUpdating = true;
             }
+            return writeRange;
         }
         
         public static void ClearRangeForPrintingObject(Range startRange, int rowOff, int colOff, object[,] writeObject)
@@ -1236,27 +1239,35 @@ namespace ExcelAddIn2
         public static void InsertHeadersAtSelection(List<string> headers, string type = "cols", bool format = true)
         {
             Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            (int startRow, int endRow, int startCol, int endCol) = GetRangeDetails(selectedRange);
-            Worksheet activeSheet = selectedRange.Worksheet;
-            int currentRow = startRow;
-            int currentCol = startCol;
-            foreach (string header in headers)
+            Range writeRange = null;
+            if (type == "cols")
             {
-                Range cell = activeSheet.Cells[startRow, startCol];
-                cell.Value2 = header;
-
-                if (type == "cols")
-                {
-                    startCol++;
-                }
-                else
-                {
-                    startRow++;
-                }
+                writeRange = WriteToExcelRangeAsRow(selectedRange,0,0,true,headers.ToArray());
             }
-            if (format)
+            else if (type == "rows")
             {
-                Range writeRange = activeSheet.Range[activeSheet.Cells[startRow, startCol], activeSheet.Cells[currentRow, currentCol]];
+                writeRange = WriteToExcelRangeAsCol(selectedRange, 0, 0, true, headers.ToArray());
+            }
+            else
+            {
+                throw new Exception($"Input type \"{type}\" is invalid");
+            }
+
+            if (format && writeRange != null)
+            {
+                writeRange.Font.Bold = true;
+                writeRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+                writeRange.VerticalAlignment = XlVAlign.xlVAlignCenter;
+            }
+        }
+
+        public static void InsertHeadersAtSelection(string[,] headers, bool format = true)
+        {
+            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+            Range writeRange = WriteObjectToExcelRange(selectedRange,0,0,true,headers);
+
+            if (format && writeRange != null)
+            {
                 writeRange.Font.Bold = true;
                 writeRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
                 writeRange.VerticalAlignment = XlVAlign.xlVAlignCenter;
@@ -1265,11 +1276,18 @@ namespace ExcelAddIn2
 
         public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, List<string> headerText, string headerOrientation = "cols")
         {
-
             button.ContextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem headerItem = new ToolStripMenuItem("Add Header");
             button.ContextMenuStrip.Items.Add(headerItem);
             headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, headerOrientation);
+        }
+
+        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, string[,] headerText)
+        {
+            button.ContextMenuStrip = new ContextMenuStrip();
+            ToolStripMenuItem headerItem = new ToolStripMenuItem("Add Header");
+            button.ContextMenuStrip.Items.Add(headerItem);
+            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText);
         }
         #endregion
 

@@ -35,6 +35,33 @@ namespace ExcelAddIn2
             AllCustProps = ThisWorkBook.CustomDocumentProperties;
             CreateAttributes();
             AddToolTips();
+            AddHeaders();
+        }
+
+        private void AddHeaders()
+        {
+            string[,] headerRange = new string[,]
+            {
+                {"Iteration Name", "Status", "Input Att", "Output Att"},
+                {"","","A1","~A2" }
+            };
+            AddHeaderMenuToButton(SetHeadR1, headerRange);
+
+            List<string> headers = new List<string>
+            {
+                "Name",
+                "Iteration Data Source",
+                "Destination Columns",
+                "Criteria Source Col",
+                "Criteria logic",
+                "Criteria Value",
+                "Status Col",
+                "Iteration Mode",
+                "Optimisation Source Column",
+                "Optimisation Mode",
+                "Optimisation Target Value (if applicable)"
+            };
+            AddHeaderMenuToButton(SetItDataTable, headers);
         }
 
         private void CreateAttributes()
@@ -1803,10 +1830,6 @@ namespace ExcelAddIn2
         #endregion
 
         #region Multiple Criteria Iteration 
-        #region Helper Functions
-
-        #endregion
-
         #region Insert Header
         private void InsertCriteriaTable_Click(object sender, EventArgs e)
         {
@@ -2832,74 +2855,6 @@ namespace ExcelAddIn2
         }
 
         #endregion
-
-        #region Copy from Magic 
-        private void importFilePath_Click(object sender, EventArgs e)
-        {
-            // Read input data from Excel
-            Workbook objBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Worksheet objSheet = objBook.ActiveSheet;
-            Worksheet sourceSheet = objBook.Sheets["Macro Input"];
-            Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-
-            // Specify the directory path you want to loop through
-            //string directoryPath = @"D:\Documents\TPY - 248002-01\05_ST Reports\ST1\ST01 Screenshot\Overall";
-            string directoryPath = sourceSheet.Range["B1"].Value2;
-
-
-            //// Code to read from property
-            //string RangeofGet = "Property that you read";
-            //Range activeRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range[RangeofGet];
-            // Function to get all file paths
-            void ListFilesAndFolders(string directory, List<string> in_directories, List<string> in_files)
-            {
-                // Get all directories and files within the specified directory
-                string[] subDirectories = Directory.GetDirectories(directory);
-                string[] fileList = Directory.GetFiles(directory);
-
-                // Add directories and files to the lists
-                in_directories.AddRange(subDirectories);
-                in_files.AddRange(fileList);
-                // Recursively call this method for each subdirectory
-                foreach (string subDir in subDirectories)
-                {
-                    ListFilesAndFolders(subDir, in_directories, in_files);
-                }
-            }
-
-
-            // Call the method to list files and folders
-            List<string> directories = new List<string>();
-            List<string> files = new List<string>();
-            ListFilesAndFolders(directoryPath, directories, files);
-
-            // Print files array
-            string[] folder_name = new string[files.Count()];
-            string[] file_name = new string[files.Count()];
-            string[] full_path = new string[files.Count()];
-            int i = 0;
-            foreach (string file in files)
-            {
-                full_path[i] = file;
-                file_name[i] = Path.GetFileName(file);
-                folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
-                i++;
-            }
-            CommonUtilities.WriteToExcelSelectionAsRow(0, 0, true, full_path, folder_name, file_name);
-        }
-
-
-
-
-
-
-
-
-
-
-        #endregion
-
-
     }
 }
 
