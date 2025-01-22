@@ -542,15 +542,15 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.MintCream;
+            this.groupBox1.BackColor = System.Drawing.Color.AliceBlue;
             this.groupBox1.Controls.Add(this.DispItDataTable);
             this.groupBox1.Controls.Add(this.SetItDataTable);
             this.groupBox1.Controls.Add(this.GetMultiIteration);
-            this.groupBox1.Location = new System.Drawing.Point(12, 1315);
+            this.groupBox1.Location = new System.Drawing.Point(12, 885);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox1.Size = new System.Drawing.Size(502, 159);
+            this.groupBox1.Size = new System.Drawing.Size(502, 167);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Multi Source Iteration Run";
@@ -582,7 +582,7 @@
             // GetMultiIteration
             // 
             this.GetMultiIteration.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.GetMultiIteration.Location = new System.Drawing.Point(122, 113);
+            this.GetMultiIteration.Location = new System.Drawing.Point(116, 113);
             this.GetMultiIteration.Margin = new System.Windows.Forms.Padding(6);
             this.GetMultiIteration.Name = "GetMultiIteration";
             this.GetMultiIteration.Size = new System.Drawing.Size(285, 41);
@@ -593,7 +593,7 @@
             // 
             // IterationGroup
             // 
-            this.IterationGroup.BackColor = System.Drawing.Color.AliceBlue;
+            this.IterationGroup.BackColor = System.Drawing.SystemColors.Control;
             this.IterationGroup.Controls.Add(this.OptimiseGroup);
             this.IterationGroup.Controls.Add(this.checkDebugMode);
             this.IterationGroup.Controls.Add(this.checkDebugIteration);
@@ -616,7 +616,7 @@
             this.IterationGroup.Controls.Add(this.label7);
             this.IterationGroup.Controls.Add(this.label9);
             this.IterationGroup.Controls.Add(this.label5);
-            this.IterationGroup.Location = new System.Drawing.Point(12, 442);
+            this.IterationGroup.Location = new System.Drawing.Point(12, 12);
             this.IterationGroup.Margin = new System.Windows.Forms.Padding(6);
             this.IterationGroup.Name = "IterationGroup";
             this.IterationGroup.Padding = new System.Windows.Forms.Padding(6);

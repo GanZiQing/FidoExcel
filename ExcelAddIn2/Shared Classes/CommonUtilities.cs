@@ -1274,20 +1274,20 @@ namespace ExcelAddIn2
             }
         }
 
-        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, List<string> headerText, string headerOrientation = "cols")
+        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, List<string> headerText, string toolStripName = "Add Header", bool format = true, string headerOrientation = "cols")
         {
-            button.ContextMenuStrip = new ContextMenuStrip();
-            ToolStripMenuItem headerItem = new ToolStripMenuItem("Add Header");
+            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem headerItem = new ToolStripMenuItem(toolStripName);
             button.ContextMenuStrip.Items.Add(headerItem);
-            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, headerOrientation);
+            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, headerOrientation, format);
         }
 
-        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, string[,] headerText)
+        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, string[,] headerText, string toolStripName = "Add Header", bool format = true)
         {
-            button.ContextMenuStrip = new ContextMenuStrip();
-            ToolStripMenuItem headerItem = new ToolStripMenuItem("Add Header");
+            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem headerItem = new ToolStripMenuItem(toolStripName);
             button.ContextMenuStrip.Items.Add(headerItem);
-            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText);
+            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, format);
         }
         #endregion
 
