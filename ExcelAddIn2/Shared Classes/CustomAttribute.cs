@@ -182,7 +182,7 @@ namespace ExcelAddIn2
             }
         }
 
-        public string value
+        public new string attValue
         {
             get { return comboBox.Text; }
         }

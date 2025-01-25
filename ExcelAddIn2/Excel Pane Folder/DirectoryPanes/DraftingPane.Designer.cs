@@ -31,12 +31,20 @@
             this.components = new System.ComponentModel.Container();
             this.ExcelTabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.testCoordinateGroup = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.dispIncrement = new System.Windows.Forms.TextBox();
+            this.testAddCoordinate = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.dispValidCustomFont = new System.Windows.Forms.TextBox();
+            this.setFontFolder = new System.Windows.Forms.Button();
+            this.dispFontPath = new System.Windows.Forms.TextBox();
+            this.dispFontName = new System.Windows.Forms.ComboBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox18 = new System.Windows.Forms.TextBox();
-            this.textBox19 = new System.Windows.Forms.TextBox();
-            this.dispFontSizeSheetNum = new System.Windows.Forms.TextBox();
-            this.dispTotalDwgNum = new System.Windows.Forms.TextBox();
             this.textBox15 = new System.Windows.Forms.TextBox();
+            this.dispFontSizeSheetNum = new System.Windows.Forms.TextBox();
             this.dispTotalSheetX = new System.Windows.Forms.TextBox();
             this.dispThisSheetY = new System.Windows.Forms.TextBox();
             this.dispTotalSheetY = new System.Windows.Forms.TextBox();
@@ -45,14 +53,17 @@
             this.textBox17 = new System.Windows.Forms.TextBox();
             this.textBox16 = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.openOutputFolder = new System.Windows.Forms.Button();
             this.editFilesSheetNum = new System.Windows.Forms.Button();
+            this.textBox19 = new System.Windows.Forms.TextBox();
             this.renameFilesCheck = new System.Windows.Forms.CheckBox();
+            this.dispTotalDwgNum = new System.Windows.Forms.TextBox();
             this.addSheetNumberCheck = new System.Windows.Forms.CheckBox();
             this.getFileInfo = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.openOutputFolder = new System.Windows.Forms.Button();
             this.ExcelTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.testCoordinateGroup.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
@@ -71,6 +82,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.testCoordinateGroup);
             this.tabPage1.Controls.Add(this.groupBox6);
             this.tabPage1.Controls.Add(this.groupBox3);
             this.tabPage1.Location = new System.Drawing.Point(4, 33);
@@ -81,8 +93,67 @@
             this.tabPage1.TabIndex = 4;
             this.tabPage1.Text = "Drafting";
             // 
+            // testCoordinateGroup
+            // 
+            this.testCoordinateGroup.Controls.Add(this.textBox1);
+            this.testCoordinateGroup.Controls.Add(this.dispIncrement);
+            this.testCoordinateGroup.Controls.Add(this.testAddCoordinate);
+            this.testCoordinateGroup.Location = new System.Drawing.Point(15, 699);
+            this.testCoordinateGroup.Margin = new System.Windows.Forms.Padding(4);
+            this.testCoordinateGroup.Name = "testCoordinateGroup";
+            this.testCoordinateGroup.Padding = new System.Windows.Forms.Padding(4);
+            this.testCoordinateGroup.Size = new System.Drawing.Size(504, 133);
+            this.testCoordinateGroup.TabIndex = 48;
+            this.testCoordinateGroup.TabStop = false;
+            this.testCoordinateGroup.Text = "Test Coordinates";
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Location = new System.Drawing.Point(22, 31);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.ShortcutsEnabled = false;
+            this.textBox1.Size = new System.Drawing.Size(191, 31);
+            this.textBox1.TabIndex = 120;
+            this.textBox1.TabStop = false;
+            this.textBox1.Text = "Coordinate Increment";
+            // 
+            // dispIncrement
+            // 
+            this.dispIncrement.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispIncrement.Location = new System.Drawing.Point(226, 33);
+            this.dispIncrement.Margin = new System.Windows.Forms.Padding(6);
+            this.dispIncrement.MaxLength = 100;
+            this.dispIncrement.Name = "dispIncrement";
+            this.dispIncrement.Size = new System.Drawing.Size(270, 29);
+            this.dispIncrement.TabIndex = 119;
+            this.dispIncrement.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // testAddCoordinate
+            // 
+            this.testAddCoordinate.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.testAddCoordinate.Location = new System.Drawing.Point(15, 74);
+            this.testAddCoordinate.Margin = new System.Windows.Forms.Padding(6);
+            this.testAddCoordinate.Name = "testAddCoordinate";
+            this.testAddCoordinate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.testAddCoordinate.Size = new System.Drawing.Size(477, 46);
+            this.testAddCoordinate.TabIndex = 113;
+            this.testAddCoordinate.Text = "Test Add Coordinate";
+            this.testAddCoordinate.UseVisualStyleBackColor = true;
+            this.testAddCoordinate.Click += new System.EventHandler(this.testAddCoordinate_Click);
+            // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.dispValidCustomFont);
+            this.groupBox6.Controls.Add(this.setFontFolder);
+            this.groupBox6.Controls.Add(this.dispFontPath);
+            this.groupBox6.Controls.Add(this.dispFontName);
+            this.groupBox6.Controls.Add(this.textBox2);
+            this.groupBox6.Controls.Add(this.textBox3);
             this.groupBox6.Controls.Add(this.textBox18);
             this.groupBox6.Controls.Add(this.textBox15);
             this.groupBox6.Controls.Add(this.dispFontSizeSheetNum);
@@ -97,16 +168,111 @@
             this.groupBox6.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox6.Size = new System.Drawing.Size(502, 198);
+            this.groupBox6.Size = new System.Drawing.Size(502, 343);
             this.groupBox6.TabIndex = 47;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Settings";
+            // 
+            // dispValidCustomFont
+            // 
+            this.dispValidCustomFont.BackColor = System.Drawing.SystemColors.Control;
+            this.dispValidCustomFont.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dispValidCustomFont.Location = new System.Drawing.Point(22, 280);
+            this.dispValidCustomFont.Margin = new System.Windows.Forms.Padding(6);
+            this.dispValidCustomFont.Multiline = true;
+            this.dispValidCustomFont.Name = "dispValidCustomFont";
+            this.dispValidCustomFont.ReadOnly = true;
+            this.dispValidCustomFont.ShortcutsEnabled = false;
+            this.dispValidCustomFont.Size = new System.Drawing.Size(474, 46);
+            this.dispValidCustomFont.TabIndex = 124;
+            this.dispValidCustomFont.TabStop = false;
+            this.dispValidCustomFont.Text = "Custom Font Path: Not set";
+            // 
+            // setFontFolder
+            // 
+            this.setFontFolder.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setFontFolder.Location = new System.Drawing.Point(15, 222);
+            this.setFontFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.setFontFolder.Name = "setFontFolder";
+            this.setFontFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.setFontFolder.Size = new System.Drawing.Size(229, 46);
+            this.setFontFolder.TabIndex = 121;
+            this.setFontFolder.Text = "Set Custom Font";
+            this.setFontFolder.UseVisualStyleBackColor = true;
+            // 
+            // dispFontPath
+            // 
+            this.dispFontPath.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispFontPath.Location = new System.Drawing.Point(256, 230);
+            this.dispFontPath.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFontPath.MaxLength = 1000;
+            this.dispFontPath.Name = "dispFontPath";
+            this.dispFontPath.Size = new System.Drawing.Size(240, 29);
+            this.dispFontPath.TabIndex = 123;
+            this.dispFontPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispFontName
+            // 
+            this.dispFontName.AutoCompleteCustomSource.AddRange(new string[] {
+            "Arial",
+            "Times New Roman",
+            "Courier New",
+            "Verdana",
+            "Lucida Console",
+            "Symbol",
+            "Custom"});
+            this.dispFontName.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.dispFontName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.dispFontName.FormattingEnabled = true;
+            this.dispFontName.Items.AddRange(new object[] {
+            "Arial",
+            "Times New Roman",
+            "Courier New",
+            "Verdana",
+            "Lucida Console",
+            "Symbol",
+            "Custom"});
+            this.dispFontName.Location = new System.Drawing.Point(358, 181);
+            this.dispFontName.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFontName.Name = "dispFontName";
+            this.dispFontName.Size = new System.Drawing.Size(136, 32);
+            this.dispFontName.TabIndex = 49;
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox2.Location = new System.Drawing.Point(378, 146);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.ShortcutsEnabled = false;
+            this.textBox2.Size = new System.Drawing.Size(101, 22);
+            this.textBox2.TabIndex = 119;
+            this.textBox2.TabStop = false;
+            this.textBox2.Text = "Name";
+            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox3.Location = new System.Drawing.Point(227, 146);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
+            this.textBox3.ShortcutsEnabled = false;
+            this.textBox3.Size = new System.Drawing.Size(101, 22);
+            this.textBox3.TabIndex = 120;
+            this.textBox3.TabStop = false;
+            this.textBox3.Text = "Size";
+            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox18
             // 
             this.textBox18.BackColor = System.Drawing.SystemColors.Control;
             this.textBox18.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox18.Location = new System.Drawing.Point(22, 144);
+            this.textBox18.Location = new System.Drawing.Point(22, 177);
             this.textBox18.Margin = new System.Windows.Forms.Padding(6);
             this.textBox18.Multiline = true;
             this.textBox18.Name = "textBox18";
@@ -115,44 +281,7 @@
             this.textBox18.Size = new System.Drawing.Size(178, 31);
             this.textBox18.TabIndex = 118;
             this.textBox18.TabStop = false;
-            this.textBox18.Text = "Font Size";
-            // 
-            // textBox19
-            // 
-            this.textBox19.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox19.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox19.Location = new System.Drawing.Point(22, 91);
-            this.textBox19.Margin = new System.Windows.Forms.Padding(6);
-            this.textBox19.Multiline = true;
-            this.textBox19.Name = "textBox19";
-            this.textBox19.ReadOnly = true;
-            this.textBox19.ShortcutsEnabled = false;
-            this.textBox19.Size = new System.Drawing.Size(178, 31);
-            this.textBox19.TabIndex = 120;
-            this.textBox19.TabStop = false;
-            this.textBox19.Text = "Total DWG Number";
-            // 
-            // dispFontSizeSheetNum
-            // 
-            this.dispFontSizeSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispFontSizeSheetNum.Location = new System.Drawing.Point(211, 146);
-            this.dispFontSizeSheetNum.Margin = new System.Windows.Forms.Padding(6);
-            this.dispFontSizeSheetNum.MaxLength = 100;
-            this.dispFontSizeSheetNum.Name = "dispFontSizeSheetNum";
-            this.dispFontSizeSheetNum.Size = new System.Drawing.Size(132, 29);
-            this.dispFontSizeSheetNum.TabIndex = 117;
-            this.dispFontSizeSheetNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // dispTotalDwgNum
-            // 
-            this.dispTotalDwgNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispTotalDwgNum.Location = new System.Drawing.Point(211, 93);
-            this.dispTotalDwgNum.Margin = new System.Windows.Forms.Padding(6);
-            this.dispTotalDwgNum.MaxLength = 100;
-            this.dispTotalDwgNum.Name = "dispTotalDwgNum";
-            this.dispTotalDwgNum.Size = new System.Drawing.Size(132, 29);
-            this.dispTotalDwgNum.TabIndex = 119;
-            this.dispTotalDwgNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox18.Text = "Font";
             // 
             // textBox15
             // 
@@ -168,6 +297,17 @@
             this.textBox15.TabStop = false;
             this.textBox15.Text = "Y Coord.";
             this.textBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispFontSizeSheetNum
+            // 
+            this.dispFontSizeSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispFontSizeSheetNum.Location = new System.Drawing.Point(211, 181);
+            this.dispFontSizeSheetNum.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFontSizeSheetNum.MaxLength = 100;
+            this.dispFontSizeSheetNum.Name = "dispFontSizeSheetNum";
+            this.dispFontSizeSheetNum.Size = new System.Drawing.Size(132, 29);
+            this.dispFontSizeSheetNum.TabIndex = 117;
+            this.dispFontSizeSheetNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // dispTotalSheetX
             // 
@@ -267,7 +407,7 @@
             this.groupBox3.Controls.Add(this.dispTotalDwgNum);
             this.groupBox3.Controls.Add(this.addSheetNumberCheck);
             this.groupBox3.Controls.Add(this.getFileInfo);
-            this.groupBox3.Location = new System.Drawing.Point(15, 214);
+            this.groupBox3.Location = new System.Drawing.Point(15, 359);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(6);
@@ -276,10 +416,23 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Add Sheet Numbers";
             // 
+            // openOutputFolder
+            // 
+            this.openOutputFolder.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.openOutputFolder.Location = new System.Drawing.Point(16, 270);
+            this.openOutputFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.openOutputFolder.Name = "openOutputFolder";
+            this.openOutputFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.openOutputFolder.Size = new System.Drawing.Size(477, 46);
+            this.openOutputFolder.TabIndex = 121;
+            this.openOutputFolder.Text = "Open Output Folder";
+            this.openOutputFolder.UseVisualStyleBackColor = true;
+            this.openOutputFolder.Click += new System.EventHandler(this.openOutputFolder_Click);
+            // 
             // editFilesSheetNum
             // 
             this.editFilesSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.editFilesSheetNum.Location = new System.Drawing.Point(16, 134);
+            this.editFilesSheetNum.Location = new System.Drawing.Point(16, 135);
             this.editFilesSheetNum.Margin = new System.Windows.Forms.Padding(6);
             this.editFilesSheetNum.Name = "editFilesSheetNum";
             this.editFilesSheetNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -288,6 +441,21 @@
             this.editFilesSheetNum.Text = "Edit Files";
             this.editFilesSheetNum.UseVisualStyleBackColor = true;
             this.editFilesSheetNum.Click += new System.EventHandler(this.editFilesSheetNum_Click);
+            // 
+            // textBox19
+            // 
+            this.textBox19.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox19.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox19.Location = new System.Drawing.Point(22, 90);
+            this.textBox19.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox19.Multiline = true;
+            this.textBox19.Name = "textBox19";
+            this.textBox19.ReadOnly = true;
+            this.textBox19.ShortcutsEnabled = false;
+            this.textBox19.Size = new System.Drawing.Size(178, 31);
+            this.textBox19.TabIndex = 120;
+            this.textBox19.TabStop = false;
+            this.textBox19.Text = "Total DWG Number";
             // 
             // renameFilesCheck
             // 
@@ -302,12 +470,23 @@
             this.renameFilesCheck.Text = "Rename File";
             this.renameFilesCheck.UseVisualStyleBackColor = true;
             // 
+            // dispTotalDwgNum
+            // 
+            this.dispTotalDwgNum.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispTotalDwgNum.Location = new System.Drawing.Point(211, 92);
+            this.dispTotalDwgNum.Margin = new System.Windows.Forms.Padding(6);
+            this.dispTotalDwgNum.MaxLength = 100;
+            this.dispTotalDwgNum.Name = "dispTotalDwgNum";
+            this.dispTotalDwgNum.Size = new System.Drawing.Size(132, 29);
+            this.dispTotalDwgNum.TabIndex = 119;
+            this.dispTotalDwgNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // addSheetNumberCheck
             // 
             this.addSheetNumberCheck.Checked = true;
             this.addSheetNumberCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.addSheetNumberCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.addSheetNumberCheck.Location = new System.Drawing.Point(22, 226);
+            this.addSheetNumberCheck.Location = new System.Drawing.Point(22, 225);
             this.addSheetNumberCheck.Margin = new System.Windows.Forms.Padding(6);
             this.addSheetNumberCheck.Name = "addSheetNumberCheck";
             this.addSheetNumberCheck.Size = new System.Drawing.Size(301, 31);
@@ -328,28 +507,18 @@
             this.getFileInfo.UseVisualStyleBackColor = true;
             this.getFileInfo.Click += new System.EventHandler(this.getFileInfo_Click);
             // 
-            // openOutputFolder
-            // 
-            this.openOutputFolder.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.openOutputFolder.Location = new System.Drawing.Point(16, 269);
-            this.openOutputFolder.Margin = new System.Windows.Forms.Padding(6);
-            this.openOutputFolder.Name = "openOutputFolder";
-            this.openOutputFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.openOutputFolder.Size = new System.Drawing.Size(477, 46);
-            this.openOutputFolder.TabIndex = 121;
-            this.openOutputFolder.Text = "Open Output Folder";
-            this.openOutputFolder.UseVisualStyleBackColor = true;
-            this.openOutputFolder.Click += new System.EventHandler(this.openOutputFolder_Click);
-            // 
             // DraftingPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ExcelTabControl);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "DraftingPane";
             this.Size = new System.Drawing.Size(550, 1532);
             this.ExcelTabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.testCoordinateGroup.ResumeLayout(false);
+            this.testCoordinateGroup.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -382,5 +551,15 @@
         private System.Windows.Forms.Button getFileInfo;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button openOutputFolder;
+        private System.Windows.Forms.GroupBox testCoordinateGroup;
+        private System.Windows.Forms.Button testAddCoordinate;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox dispIncrement;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.ComboBox dispFontName;
+        private System.Windows.Forms.Button setFontFolder;
+        private System.Windows.Forms.TextBox dispFontPath;
+        private System.Windows.Forms.TextBox dispValidCustomFont;
     }
 }

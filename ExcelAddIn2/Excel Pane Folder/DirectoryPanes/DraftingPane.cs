@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
 using System.Windows.Forms.VisualStyles;
+using PdfSharp.UniversalAccessibility.Drawing;
+using PdfSharp.Fonts;
 
 
 namespace ExcelAddIn2.Excel_Pane_Folder
@@ -45,6 +47,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         {
             AttributeTextBox thisAtt;
             CustomAttribute thisCustomAtt;
+
             #region Drafting Sheet Number
             thisAtt = new AttributeTextBox("thisSheetX_sheetRenum", dispThisSheetX, true);
             thisAtt.SetDefaultValue("725");
@@ -66,28 +69,46 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
-            thisAtt = new AttributeTextBox("totalSheetNum_sheetRenum", dispTotalDwgNum, true); // Need to sort this out
+            thisAtt = new AttributeTextBox("totalSheetNum_sheetRenum", dispTotalDwgNum, true);
             thisAtt.type = "int";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+            #endregion
+
+            #region Font Related
 
             thisAtt = new AttributeTextBox("fontSize_sheetRenum", dispFontSizeSheetNum, true);
-            thisAtt.SetDefaultValue("12");
+            thisAtt.SetDefaultValue("10");
             thisAtt.type = "int";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
+            thisCustomAtt = new ComboBoxAttribute("fontName_sheetRenum", dispFontName, "Arial");
+            CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
+
+            thisAtt = new FileTextBox("fontPath_sheetRenum", dispFontPath, setFontFolder);
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+            #endregion
+
+            #region Add sheet checks
             thisCustomAtt = new CheckBoxAttribute("renameFile_sheetRenum", renameFilesCheck, true);
             CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
 
             thisCustomAtt = new CheckBoxAttribute("addSheetNum_sheetRenum", addSheetNumberCheck, true);
             CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
             #endregion
+
+            #region Test Coordinate
+            thisAtt = new AttributeTextBox("inc_sheetRenum", dispIncrement, true);
+            thisAtt.SetDefaultValue("100");
+            thisAtt.type = "int";
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+            #endregion
         }
 
         private void AddToolTips()
         {
-            //toolTip1.SetToolTip(setRefTitlePage,
-            //    "Set reference title page (provide PDF file).\n" +
-            //    "Required for Advance Merge and Create Section Title Page");
+            toolTip1.SetToolTip(dispFontPath,
+                "Font path is set only on the first time \"Edit Files\" is run for each session.\n" +
+                "Restart excel if referenced font path is outdated.");
         }
 
         #endregion
@@ -134,16 +155,36 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
         #region Fixed Params
         int fontSize;
+        string fontName;
         double[] thisSheetCoord;
         double[] totalSheetCoord;
 
         #endregion
+        string fontPath;
         private void editFilesSheetNum_Click(object sender, EventArgs e)
         {
             try
             {
+                #region Check custom font path
+                if (!dispFontName.Text.Equals("Custom")) { } // custom font not used, skip check
+                else if (dispValidCustomFont.Text.Equals("Custom Font Path: Not set")) { } // custom font not set, skip check
+                else
+                {
+                    string path = dispValidCustomFont.Text;
+                    path = path.Substring(18);
+                    if (!path.Equals(dispFontPath.Text))
+                    {
+                        DialogResult res1 = MessageBox.Show($"Custom file path is set and not equals to what is currently provided. \n" +
+                            $"Continue with the following font type?\n" +
+                            $"{path}", "Warning", MessageBoxButtons.YesNo);
+                        if (res1 != DialogResult.Yes) { MessageBox.Show("Restart excel to reset default font"); return; }
+                    }
+                }
+                #endregion
+
                 #region Read input data
                 Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                CheckRangeSize(selectedRange, 0, 3, "Selected Range");
                 string[] filePaths = GetContentsAsStringArray(selectedRange.Columns[1], false);
                 string[] fileNames = GetContentsAsStringArray(selectedRange.Columns[2], false);
                 string[] fileNum = GetContentsAsStringArray(selectedRange.Columns[3], false);
@@ -188,20 +229,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 #region Set Fixed Params
                 fontSize = AttributeTextBoxDic["fontSize_sheetRenum"].GetIntFromTextBox();
-                //thisSheetCoord = new double[] 
-                //{ 
-                //    AttributeTextBoxDic["thisSheetX_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4,
-                //    AttributeTextBoxDic["thisSheetY_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4
-                //};
-
-                //totalSheetCoord = new double[]
-                //{
-                //    AttributeTextBoxDic["totalSheetX_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4,
-                //    AttributeTextBoxDic["totalSheetY_sheetRenum"].GetDoubleFromTextBox() * 72 / 25.4
-                //};
-
-
-
+                fontName = (string)CustomAttributeDic["fontName_sheetRenum"].attValue;
                 thisSheetCoord = new double[]
                 {
                     AttributeTextBoxDic["thisSheetX_sheetRenum"].GetDoubleFromTextBox(),
@@ -214,6 +242,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 };
                 #endregion
 
+                #region Check Font
+                fontPath = dispFontPath.Text;
+                GlobalFontSettings.FontResolver = new CustomFontResolver(ref fontPath, ref dispValidCustomFont);
+                #endregion
+
                 #region Add Sheet number
                 if (addSheetNumberCheck.Checked)
                 {
@@ -223,13 +256,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     }
                 }
                 #endregion
-
-                MessageBox.Show("Completed", "Completed");
+                DialogResult res = MessageBox.Show("Open output folder?", "Completed", MessageBoxButtons.YesNo);
+                if (res == DialogResult.Yes) { openOutputFolder_Click(sender, e); }
             }
             catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
             finally
             {
                 fontSize = 0;
+                fontName = null;
                 thisSheetCoord = null;
                 totalSheetCoord = null;
             }
@@ -251,8 +285,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #endregion
             
             #region Print Sheet Name
-            AddTextBox(page, sheetNum, fontSize, thisSheetCoord[0], thisSheetCoord[1], "Arial", XBrushes.Red, XBrushes.LightPink);
-            AddTextBox(page, totalSheetNum, fontSize, totalSheetCoord[0], totalSheetCoord[1], "Arial", XBrushes.Blue, XBrushes.LightBlue);
+            AddTextBox(page, sheetNum, fontSize, thisSheetCoord[0], thisSheetCoord[1], fontName);
+            AddTextBox(page, totalSheetNum, fontSize, totalSheetCoord[0], totalSheetCoord[1], fontName);
             #endregion
 
             inputDocument.Save(filePath);
@@ -298,105 +332,35 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             if (fontColor == null) { fontColor = XBrushes.Black; }
             if (rectColor == null) { rectColor = XBrushes.White; }
 
-            // Testing values
-            double width = page.Width.Value;
-            double height = page.Height.Value;
-            // End test
-
+            #region Rotation
             int rotation = page.Rotate;
-            XPoint bottomLeftPoint;
             switch (rotation)
             {
                 case 90:
                     gfx.RotateTransform(-90);
+                    gfx.TranslateTransform(-page.Height.Value, 0);
                     break;
                 case 180:
                     gfx.RotateTransform(-180);
+                    gfx.TranslateTransform(-page.Width.Value, -page.Height.Value);
                     break;
                 case 270:
                     gfx.RotateTransform(-270);
+                    gfx.TranslateTransform(-(page.Width.Value - page.Height.Value), -page.Height.Value);
                     break;
                 default:
                     break;
-                    //case 90:
-                    //    //gfx.RotateAtTransform(90, new XPoint(page.Width.Value / 2, page.Height.Value / 2));
-                    //    //gfx.RotateTransform(-90);
-                    //    //gfx.RotateAtTransform(height-90)
-                    //    //gfx.TranslateTransform(0, -page.Height.Value);
-                    //    break;
-                    //default:
-                    //    break;
-                    //// Rotate gfx back to original orientation
-                    //// Rotation is always done about 
-                    //case 90:
-                    //    gfx.RotateTransform(-90);
-                    //    gfx.TranslateTransform(0, -page.Height.Value);
-                    //    //bottomLeftPoint = new XPoint(-xCoord, page.Width.Value - yCoord);
-                    //    break;
-                    //case 180:
-                    //    gfx.RotateTransform(-180);
-                    //    bottomLeftPoint = new XPoint(-xCoord, -yCoord);
-                    //    break;
-                    //case 270:
-                    //    gfx.RotateTransform(-270);
-                    //    bottomLeftPoint = new XPoint(page.Height.Value - xCoord, -yCoord);
-                    //    break;
-                    //default:
-                    //    bottomLeftPoint = new XPoint(xCoord, yCoord);
-                    //    break;
-                    //case 90:
-                    //    // Translate to the bottom-right corner and rotate -90°
-
-                    //    gfx.RotateTransform(-90);
-                    //    gfx.TranslateTransform(page.Width.Value, 0);
-                    //    break;
-                    //case 180:
-                    //    // Translate to the top-right corner and rotate -180°
-                    //    gfx.TranslateTransform(page.Width.Value, page.Height.Value);
-                    //    gfx.RotateTransform(-180);
-                    //    break;
-                    //case 270:
-                    //    // Translate to the top-left corner and rotate -270°
-                    //    gfx.TranslateTransform(0, page.Height).Value;
-                    //    gfx.RotateTransform(-270);
-                    //    break;
-                    //case 0:
-                    //default:
-                    //    // No transformation needed for 0°
-                    //    break;
-            }
-
-            #region For Testing only
-            for (int x = -2500; x < 2500; x += 100)
-            {
-                for (int y = -2500; y < 2500; y += 100)
-                {
-                    bottomLeftPoint = new XPoint(x, y);
-                    textContents = $"{x},{y}";
-                    XSize textSize = gfx.MeasureString(textContents, fontType);
-                    XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
-                    XRect rect = new XRect(topRightPoint, bottomLeftPoint);
-                    gfx.DrawRectangle(rectColor, rect);
-                    gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
-                }
             }
             #endregion
+            
+            XPoint bottomLeftPoint = new XPoint(xCoord, yCoord);
+
+            XSize textSize = gfx.MeasureString(textContents, fontType);
+            XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+            XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+            gfx.DrawRectangle(rectColor, rect);
+            gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
             gfx.Dispose();
-            //bottomLeftPoint = new XPoint(xCoord, yCoord);
-
-            //XSize textSize = gfx.MeasureString(textContents, fontType);
-            //XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
-            //XRect rect = new XRect(topRightPoint, bottomLeftPoint);
-            //gfx.DrawRectangle(rectColor, rect);
-            //gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
-            //gfx.Dispose();
-
-            //bottomLeftPoint = new XPoint(xTotalSheetNum, yTotalSheetNum);
-            //textContents = totalSheetNum;
-            //textSize = gfx.MeasureString(textContents, fontType);
-            //topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - textSize.Height);
-            //rect = new XRect(topRightPoint, bottomLeftPoint);
-            //gfx.DrawRectangle(XBrushes.LightPink, rect);
         }
         #endregion
 
@@ -404,7 +368,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
         private void openOutputFolder_Click(object sender, EventArgs e)
         {
-            
             try
             {
                 string workbookPath = Path.GetDirectoryName(Globals.ThisAddIn.Application.ActiveWorkbook.FullName);
@@ -413,6 +376,140 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 System.Diagnostics.Process.Start(path);
             }
             catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+        }
+
+        #region Add Coordinates
+        private void testAddCoordinate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get File Path
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "PDF (*.pdf)|*.pdf";
+                DialogResult res = openFileDialog.ShowDialog();
+                if (res != DialogResult.OK) { return; }
+                string filePath = openFileDialog.FileName;
+                #endregion
+
+                #region Check if file exist and set pdf file
+                if (!File.Exists(filePath)) { throw new Exception($"File does not exist at {filePath}"); }
+                PdfDocument inputDocument = PdfReader.Open(filePath, PdfDocumentOpenMode.Modify);
+                PdfPage page = inputDocument.Pages[0];
+                fontSize = AttributeTextBoxDic["fontSize_sheetRenum"].GetIntFromTextBox();
+                #endregion
+
+                #region Add Coordinates
+                AddCoordinateMatrix(page, fontSize);
+                string folder = Path.GetDirectoryName(filePath);
+                string saveFilename = Path.GetFileNameWithoutExtension(filePath) + "_withCoords.pdf";
+                string savePath = Path.Combine(folder, saveFilename);
+                inputDocument.Save(savePath);
+                #endregion
+
+                System.Diagnostics.Process.Start(savePath);
+            }
+            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+            finally
+            {
+                fontSize = 0;
+            }
+        }
+
+        private void AddCoordinateMatrix(PdfPage page, int fontSize)
+        {
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont fontType = new XFont("Arial", fontSize);
+            XSolidBrush fontColor = XBrushes.Blue;
+            XSolidBrush rectColor = XBrushes.AliceBlue;
+            #region Rotation
+            int rotation = page.Rotate;
+            switch (rotation)
+            {
+                case 90:
+                    gfx.RotateTransform(-90);
+                    gfx.TranslateTransform(-page.Height.Value, 0);
+                    break;
+                case 180:
+                    gfx.RotateTransform(-180);
+                    gfx.TranslateTransform(-page.Width.Value, -page.Height.Value);
+                    break;
+                case 270:
+                    gfx.RotateTransform(-270);
+                    gfx.TranslateTransform(-(page.Width.Value - page.Height.Value), -page.Height.Value);
+                    break;
+                default:
+                    break;
+            }
+            #endregion
+            double width = page.Width.Value;
+            double height = page.Height.Value;
+            
+            int increment = AttributeTextBoxDic["inc_sheetRenum"].GetIntFromTextBox();
+            int extent = Convert.ToInt32(Math.Ceiling(Math.Max(width, height) / increment) * increment);
+            for (int x = - extent; x < extent; x += increment)
+            {
+                for (int y = -extent; y < extent; y += increment)
+                {
+                    string textContents = $"{x},{y}";
+                    XPoint bottomLeftPoint = new XPoint(x, y);
+                    XSize textSize = gfx.MeasureString(textContents, fontType);
+                    XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+                    XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+                    gfx.DrawRectangle(rectColor, rect);
+                    gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
+
+                    {
+                        XPoint startPoint = new XPoint(x, y);
+                        XPoint endPoint = new XPoint(x, y);
+                        startPoint.Offset(fontSize / 3, 0);
+                        endPoint.Offset(-fontSize / 3, 0);
+                        gfx.DrawLine(new XPen(fontColor.Color), startPoint, endPoint);
+
+                        startPoint = new XPoint(x, y);
+                        endPoint = new XPoint(x, y);
+                        startPoint.Offset(0, fontSize / 3);
+                        endPoint.Offset(0, -fontSize / 3);
+                        gfx.DrawLine(new XPen(fontColor.Color), startPoint, endPoint);
+                    }
+                }
+            }
+            gfx.Dispose();
+        }
+
+        #endregion
+    }
+
+    public class CustomFontResolver : IFontResolver
+    {
+        string fontPath;
+        System.Windows.Forms.TextBox dispValidCustomFont;
+        public CustomFontResolver(ref string fontPath, ref System.Windows.Forms.TextBox dispValidCustomFont) 
+        { 
+            this.fontPath = fontPath;
+            this.dispValidCustomFont = dispValidCustomFont;
+        }
+
+        public byte[] GetFont(string fontName)
+        {
+            if (fontName == "Custom")
+            {
+                if (!File.Exists(fontPath)) { throw new FileNotFoundException($"Font path '{fontPath}' is invalid."); }
+                dispValidCustomFont.Text = $"Custom Font Path: {fontPath}";
+                return File.ReadAllBytes(fontPath);
+            }
+            else { throw new Exception($"Font name {fontName} undefined."); } // This should not trigger
+            
+        }
+
+        public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
+        {
+            if (familyName == "Custom") 
+            {
+                return new FontResolverInfo("Custom");
+            }
+
+            var builtInFont = PlatformFontResolver.ResolveTypeface(familyName, isBold, isItalic);
+            return builtInFont;
         }
     }
 }

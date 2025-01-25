@@ -568,17 +568,7 @@ namespace ExcelAddIn2
                 throw new Exception(msg);
             }
             #endregion
-            //if (numCols > 0 && numCols != selectedRange.Columns.Count)
-            //{
-            //    string msg = $"Number of columns expected is {numCols}\nNumber of columns selected is {selectedRange.Columns.Count}";
-            //    if (attName != "")
-            //    {
-            //        msg = $"Attribute Name: {attName}\n" + msg;
-            //    }
-            //    throw new Exception(msg);
-            //}
         }
-
         public static (bool passCheck, List<Range> failedRanges) AssertStandardRangeSize(Range[] ranges, string type = null, bool throwError = true)
         {
             //Checks that all ranges have the same size

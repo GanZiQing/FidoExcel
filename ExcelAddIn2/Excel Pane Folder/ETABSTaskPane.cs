@@ -214,7 +214,7 @@ namespace ExcelAddIn2
                 #endregion
 
                 #region Sort Data and Add Base Story
-                string sortType = ((ComboBoxAttribute)attributeDic["storySortOrder_AWL"]).value;
+                string sortType = ((ComboBoxAttribute)attributeDic["storySortOrder_AWL"]).attValue;
 
                 string[] storyNamesPrint = new string[storyNames.Length + 1];
                 double[] storyElevationsPrint = new double[storyNames.Length + 1];
@@ -250,7 +250,7 @@ namespace ExcelAddIn2
             {
                 InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel, true);
 
-                string sortType = ((ComboBoxAttribute)attributeDic["jointSortOrder_AWL"]).value;
+                string sortType = ((ComboBoxAttribute)attributeDic["jointSortOrder_AWL"]).attValue;
                 (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) = GetSortedJoints(sapModel, sortType);
 
                 WriteToExcelRangeAsCol(null, 0, 0, true, selectedJoints, Xs, Ys, Zs);
@@ -307,7 +307,7 @@ namespace ExcelAddIn2
         private void CalculateAWL(StoryTable storyTable)
         {
             #region Get sorted joints
-            string wlDir = ((ComboBoxAttribute)attributeDic["windLoadDir_AWL"]).value;
+            string wlDir = ((ComboBoxAttribute)attributeDic["windLoadDir_AWL"]).attValue;
             string[] selectedJoints;
             double[] Xs;
             double[] Ys;
@@ -337,7 +337,7 @@ namespace ExcelAddIn2
             double[] startWL = new double[selectedJoints.Length];
             double[] endWL = new double[selectedJoints.Length];
             double[] windLoad = new double[selectedJoints.Length];
-            string direction = ((ComboBoxAttribute)attributeDic["windLoadDir_AWL"]).value;
+            string direction = ((ComboBoxAttribute)attributeDic["windLoadDir_AWL"]).attValue;
             foreach (KeyValuePair<string, List<int>> entry in elevationToJointIndex) 
             {
                 CalculateAWLForOneStory(storyTable, direction, entry.Key, entry.Value, 
