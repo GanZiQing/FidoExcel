@@ -1288,15 +1288,11 @@ namespace ExcelAddIn2
             string[] subDirectoryList = Directory.GetDirectories(directory);
             string[] fileList = Directory.GetFiles(directory);
 
-
-            #region Create Hashset of Extension Types
-            HashSet<string> validExtensions = CreateExtensionHashset(extensionType);
-            #endregion
-
             //Add current files to global list
             if (extensionType == "") { globalFileList.AddRange(fileList); }
             else
             {
+                HashSet<string> validExtensions = CreateExtensionHashset(extensionType);
                 foreach (string file in fileList)
                 {
                     if (validExtensions.Contains(Path.GetExtension(file)))
