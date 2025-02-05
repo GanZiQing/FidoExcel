@@ -23,7 +23,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         public WallDesign()
         {
             InitializeComponent();
-            ImportTaskPane();
+            //ImportTaskPane();
             CreateAttributes();
             AddToolTips();
         }

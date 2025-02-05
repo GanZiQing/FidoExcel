@@ -127,13 +127,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 Range startCell = destinationRange.Worksheet.Range["A4"];
                 Range endCell = destinationRange.Worksheet.Cells[1048576, copyRange.Column + copyRange.Columns.Count - 1];
                 Range clearRange = destinationRange.Worksheet.Range[startCell, endCell];
-                MessageBox.Show($"Clear range address = {clearRange.Address}");
+                DialogResult res = MessageBox.Show($"Clear range: {clearRange.Worksheet.Name}!{clearRange.Address}?","Confirmation",MessageBoxButtons.YesNo);
+                if (res != DialogResult.Yes) { throw new Exception("Terminated by user"); }
                 clearRange.Clear();
                 #endregion
 
                 copyRange.Copy(destinationRange);
             }
-            catch (Exception ex) { throw new Exception("Error copying ETABS table\n" + ex.Message); }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
             finally
             {
                 if (etabsWorkbook != null && workbookOpened) { etabsWorkbook.Close(); etabsWorkbook = null; }

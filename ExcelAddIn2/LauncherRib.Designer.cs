@@ -44,13 +44,14 @@
             this.PlottingTools = this.Factory.CreateRibbonButton();
             this.forSharing = this.Factory.CreateRibbonGroup();
             this.DirectoryAndPdfButton = this.Factory.CreateRibbonButton();
+            this.draftingPaneButton = this.Factory.CreateRibbonButton();
             this.toHide = this.Factory.CreateRibbonGroup();
             this.PilingToolsButton = this.Factory.CreateRibbonButton();
             this.beamDesign = this.Factory.CreateRibbonButton();
             this.group1 = this.Factory.CreateRibbonGroup();
             this.wallDesign = this.Factory.CreateRibbonButton();
             this.tab1 = this.Factory.CreateRibbonTab();
-            this.draftingPaneButton = this.Factory.CreateRibbonButton();
+            this.wallCheck = this.Factory.CreateRibbonButton();
             this.FidoRibbon.SuspendLayout();
             this.AutomationToolsGroup.SuspendLayout();
             this.group2.SuspendLayout();
@@ -147,6 +148,15 @@
             this.DirectoryAndPdfButton.ShowImage = true;
             this.DirectoryAndPdfButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.PrintToolsButton_Click);
             // 
+            // draftingPaneButton
+            // 
+            this.draftingPaneButton.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.draftingPaneButton.Image = global::ExcelAddIn2.Properties.Resources.excel;
+            this.draftingPaneButton.Label = "Drafting";
+            this.draftingPaneButton.Name = "draftingPaneButton";
+            this.draftingPaneButton.ShowImage = true;
+            this.draftingPaneButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.draftingPaneButton_Click);
+            // 
             // toHide
             // 
             this.toHide.Items.Add(this.PilingToolsButton);
@@ -175,6 +185,7 @@
             // group1
             // 
             this.group1.Items.Add(this.wallDesign);
+            this.group1.Items.Add(this.wallCheck);
             this.group1.Label = "Wall Design";
             this.group1.Name = "group1";
             // 
@@ -193,14 +204,14 @@
             this.tab1.Label = "TabAddIns";
             this.tab1.Name = "tab1";
             // 
-            // draftingPaneButton
+            // wallCheck
             // 
-            this.draftingPaneButton.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.draftingPaneButton.Image = global::ExcelAddIn2.Properties.Resources.excel;
-            this.draftingPaneButton.Label = "Drafting";
-            this.draftingPaneButton.Name = "draftingPaneButton";
-            this.draftingPaneButton.ShowImage = true;
-            this.draftingPaneButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.draftingPaneButton_Click);
+            this.wallCheck.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.wallCheck.Image = global::ExcelAddIn2.Properties.Resources.excel;
+            this.wallCheck.Label = "Wall Check";
+            this.wallCheck.Name = "wallCheck";
+            this.wallCheck.ShowImage = true;
+            this.wallCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.wallCheck_Click);
             // 
             // LauncherRib
             // 
@@ -244,6 +255,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton wallDesign;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton draftingPaneButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton wallCheck;
     }
 
     partial class ThisRibbonCollection

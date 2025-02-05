@@ -1222,7 +1222,7 @@ namespace ExcelAddIn2
             }
             else if (!Path.IsPathRooted(textBox.Text) || !File.Exists(textBox.Text))
             {
-                string msg = $"Invalid file path for {attName}:\n\n{textBox.Text}";
+                string msg = $"Invalid file path for {attName}:\n{textBox.Text}";
                 if (showMsg)
                 {
                     MessageBox.Show(msg, "Error");

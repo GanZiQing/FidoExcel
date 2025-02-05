@@ -9,6 +9,7 @@ using Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using ExcelAddIn2.Excel_Pane_Folder;
 using System.Windows.Forms.Integration;
+using ExcelAddIn2.Excel_Pane_Folder.HDB_Design;
 
 namespace ExcelAddIn2
 {
@@ -332,9 +333,29 @@ namespace ExcelAddIn2
             }
             #endregion
         }
-
         #endregion
 
+        #region Wall Design
+        private List<CustomTaskPane> wallCheckList = new List<CustomTaskPane>();
+        private void wallCheck_Click(object sender, RibbonControlEventArgs e)
+        {
+            int NumPanes = 1;
+            List<CustomTaskPane> thisPaneList = wallCheckList;
+            string title = "Wall Check Tools";
 
+            #region Default Code - Replace Task Pane Type
+            List<CustomTaskPane> windowTaskPane = GetWindowPanes(ref thisPaneList);
+
+            if (windowTaskPane.Count < NumPanes) // add new panes to list 
+            {
+                AddPane<WallCheckPane>(ref thisPaneList, title);
+            }
+            else // Start toggling visibility of lists
+            {
+                TogglePaneVisibility(windowTaskPane, NumPanes);
+            }
+            #endregion
+        }
+        #endregion
     }
 }
