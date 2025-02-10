@@ -33,10 +33,10 @@
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>C:\Users\epona\Documents\VSTO\01_Excel\Publish\Disabled\</PublishUrl>
+    <PublishUrl>C:\Users\epona\Documents\VSTO\01_Excel\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.21</ApplicationVersion>
+    <ApplicationVersion>1.0.0.23</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>

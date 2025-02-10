@@ -61,19 +61,15 @@ namespace ExcelAddIn2
 
         private void AddHeaders()
         {
-            List<string> headers = new List<string>
+            List<string> headers;
+            #region Get ETABS 
+            headers = new List<string>
             {
-                "Story Name", 
+                "Story Name",
                 "Story Elevation [m]",
-                "Effective Height [m]",
-                "Minimum WL", 
-                "Maximum WL",
-                "Min X",
-                "Max X",
-                "Min Y",
-                "Max Y"
+                "Effective Height [m]"
             };
-            AddHeaderMenuToButton(setStoryRange, headers);
+            AddHeaderMenuToButton(getStoryData, headers);
 
             headers = new List<string>
             {
@@ -83,15 +79,26 @@ namespace ExcelAddIn2
                 "Z"
             };
             AddHeaderMenuToButton(getJointCoordinates, headers);
+            #endregion
 
+            #region Calculate WL
             headers = new List<string>
             {
                 "Story Name",
                 "Story Elevation [m]",
-                "Effective Height [m]"
+                "Effective Height [m]",
+                "Start WL [kN/m]",
+                "End WL [kN/m]",
+                "Min X [m]",
+                "Max X [m]",
+                "Min Y [m]",
+                "Max Y [m]"
             };
-            AddHeaderMenuToButton(getStoryData, headers);
+            AddHeaderMenuToButton(setStoryRange, headers);
 
+            #endregion
+
+            #region Assign WL
             headers = new List<string>
             {
                 "Joint UN",
@@ -105,15 +112,39 @@ namespace ExcelAddIn2
                 "End WL [kN/m]",
                 "Total WL [kN]",
                 "Direction",
-                "Load Case Name",
+                "Load Pattern Name",
                 "Status"
             };
-            AddHeaderMenuToButton(calAWL, headers);
-            AddHeaderMenuToButton(assignWL, headers);
+            AddHeaderMenuToButton(setJointDataRange, headers);
+            //AddHeaderMenuToButton(calAWL, headers);
+            //AddHeaderMenuToButton(assignWL, headers);
+            #endregion
         }
 
         private void AddToolTips()
         {
+            #region Get ETABS
+            toolTip1.SetToolTip(getStoryData,
+                "Gets selected joint info for attached instance of ETABS\n" +
+                "  Story Name\n" +
+                "  Story Elevation\n" +
+                "  Effective Height (calculated assuming 1st sty elevation = 0)\n"
+                );
+
+            toolTip1.SetToolTip(getJointCoordinates,
+                "Gets selected joint info for attached instance of ETABS, values rounded to nearest 4dp\n" +
+                "  Joint UN\n" +
+                "  X\n" +
+                "  Y\n" +
+                "  Z\n"
+                );
+
+            toolTip1.SetToolTip(getLoadPatterns,
+                "Gets all load patterns currently defined in attached instance of ETABS"
+                );
+            #endregion
+
+            #region Calculate WL
             toolTip1.SetToolTip(setStoryRange,
                 "Takes input in the following order:\n" +
                 "  Story Name\n" +
@@ -127,24 +158,16 @@ namespace ExcelAddIn2
                 "  Max Y [m]"
                 );
 
-            toolTip1.SetToolTip(getJointCoordinates,
-                "Gets selected joint info for attached instance of ETABS, values rounded to nearest 4dp\n" +
-                "  Joint UN\n" +
-                "  X\n" +
-                "  Y\n" +
-                "  Z\n"
+            toolTip1.SetToolTip(calAWL,
+                "Calculates wind load based on:\n" +
+                "  Data in Story Range\n" +
+                "  Currently selected joints in attached instance of ETABS"
                 );
+            #endregion
 
-            toolTip1.SetToolTip(getStoryData,
-                "Gets selected joint info for attached instance of ETABS\n" +
-                "  Story Name\n" +
-                "  Story Elevation\n" +
-                "  Effective Height (calculated assuming 1st sty elevation = 0)\n"
-                );
-
-            toolTip1.SetToolTip(assignWL,
-                "Assigns wind load based on the currentselected range\n" +
-                "Assumes the following order:\n" +
+            #region Assign WL
+            toolTip1.SetToolTip(setJointDataRange,
+                "Takes input in the following order:\n" +
                 "  Joint UN\n" +
                 "  X [m]\n" +
                 "  Y [m]\n" +
@@ -157,7 +180,12 @@ namespace ExcelAddIn2
                 "  Total WL [kN]\n" +
                 "  Direction\n" +
                 "  Load Pattern Name\n" +
-                "  Status\n"
+                "  Status\n" +
+                "Only Joint UN, Total WL, Direction, Load Pattern is read."
+                );
+
+            toolTip1.SetToolTip(assignWL,
+                "Assigns wind load based on the data provided in Joint Data Range"
                 );
 
             toolTip1.SetToolTip(replaceLoadCheck,
@@ -165,6 +193,8 @@ namespace ExcelAddIn2
                 "If unchecked, current loading will be added to existing loading\n" +
                 "Does not affect other load patterns"
                 );
+            #endregion
+
         }
         #endregion
 
@@ -407,7 +437,6 @@ namespace ExcelAddIn2
             }
             else { throw new Exception($"Direction {direction} is invalid."); }
             #endregion
-
 
             #region Create local Array
             List<double> validCoordList = new List<double>();
