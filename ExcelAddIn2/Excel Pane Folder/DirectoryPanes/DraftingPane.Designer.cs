@@ -53,7 +53,9 @@
             this.textBox17 = new System.Windows.Forms.TextBox();
             this.textBox16 = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.setOutputFolder = new System.Windows.Forms.Button();
             this.openOutputFolder = new System.Windows.Forms.Button();
+            this.dispOutputFolder = new System.Windows.Forms.TextBox();
             this.editFilesSheetNum = new System.Windows.Forms.Button();
             this.textBox19 = new System.Windows.Forms.TextBox();
             this.renameFilesCheck = new System.Windows.Forms.CheckBox();
@@ -98,7 +100,7 @@
             this.testCoordinateGroup.Controls.Add(this.textBox1);
             this.testCoordinateGroup.Controls.Add(this.dispIncrement);
             this.testCoordinateGroup.Controls.Add(this.testAddCoordinate);
-            this.testCoordinateGroup.Location = new System.Drawing.Point(15, 699);
+            this.testCoordinateGroup.Location = new System.Drawing.Point(15, 6);
             this.testCoordinateGroup.Margin = new System.Windows.Forms.Padding(4);
             this.testCoordinateGroup.Name = "testCoordinateGroup";
             this.testCoordinateGroup.Padding = new System.Windows.Forms.Padding(4);
@@ -164,7 +166,7 @@
             this.groupBox6.Controls.Add(this.textBox9);
             this.groupBox6.Controls.Add(this.textBox17);
             this.groupBox6.Controls.Add(this.textBox16);
-            this.groupBox6.Location = new System.Drawing.Point(15, 6);
+            this.groupBox6.Location = new System.Drawing.Point(15, 147);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(4);
@@ -400,39 +402,62 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.setOutputFolder);
             this.groupBox3.Controls.Add(this.openOutputFolder);
+            this.groupBox3.Controls.Add(this.dispOutputFolder);
             this.groupBox3.Controls.Add(this.editFilesSheetNum);
             this.groupBox3.Controls.Add(this.textBox19);
             this.groupBox3.Controls.Add(this.renameFilesCheck);
             this.groupBox3.Controls.Add(this.dispTotalDwgNum);
             this.groupBox3.Controls.Add(this.addSheetNumberCheck);
             this.groupBox3.Controls.Add(this.getFileInfo);
-            this.groupBox3.Location = new System.Drawing.Point(15, 359);
+            this.groupBox3.Location = new System.Drawing.Point(15, 500);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox3.Size = new System.Drawing.Size(502, 330);
+            this.groupBox3.Size = new System.Drawing.Size(502, 432);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Add Sheet Numbers";
+            this.groupBox3.Text = "Add Sheet Number";
+            // 
+            // setOutputFolder
+            // 
+            this.setOutputFolder.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setOutputFolder.Location = new System.Drawing.Point(15, 133);
+            this.setOutputFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.setOutputFolder.Name = "setOutputFolder";
+            this.setOutputFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.setOutputFolder.Size = new System.Drawing.Size(229, 46);
+            this.setOutputFolder.TabIndex = 122;
+            this.setOutputFolder.Text = "Set Output Folder";
+            this.setOutputFolder.UseVisualStyleBackColor = true;
             // 
             // openOutputFolder
             // 
             this.openOutputFolder.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.openOutputFolder.Location = new System.Drawing.Point(16, 270);
+            this.openOutputFolder.Location = new System.Drawing.Point(262, 133);
             this.openOutputFolder.Margin = new System.Windows.Forms.Padding(6);
             this.openOutputFolder.Name = "openOutputFolder";
-            this.openOutputFolder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.openOutputFolder.Size = new System.Drawing.Size(477, 46);
-            this.openOutputFolder.TabIndex = 121;
+            this.openOutputFolder.Size = new System.Drawing.Size(229, 46);
+            this.openOutputFolder.TabIndex = 123;
             this.openOutputFolder.Text = "Open Output Folder";
             this.openOutputFolder.UseVisualStyleBackColor = true;
-            this.openOutputFolder.Click += new System.EventHandler(this.openOutputFolder_Click);
+            // 
+            // dispOutputFolder
+            // 
+            this.dispOutputFolder.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispOutputFolder.Location = new System.Drawing.Point(15, 190);
+            this.dispOutputFolder.Margin = new System.Windows.Forms.Padding(6);
+            this.dispOutputFolder.MaxLength = 1000;
+            this.dispOutputFolder.Name = "dispOutputFolder";
+            this.dispOutputFolder.Size = new System.Drawing.Size(475, 29);
+            this.dispOutputFolder.TabIndex = 124;
+            this.dispOutputFolder.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // editFilesSheetNum
             // 
             this.editFilesSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.editFilesSheetNum.Location = new System.Drawing.Point(16, 135);
+            this.editFilesSheetNum.Location = new System.Drawing.Point(14, 231);
             this.editFilesSheetNum.Margin = new System.Windows.Forms.Padding(6);
             this.editFilesSheetNum.Name = "editFilesSheetNum";
             this.editFilesSheetNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -462,7 +487,7 @@
             this.renameFilesCheck.Checked = true;
             this.renameFilesCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.renameFilesCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.renameFilesCheck.Location = new System.Drawing.Point(22, 192);
+            this.renameFilesCheck.Location = new System.Drawing.Point(22, 289);
             this.renameFilesCheck.Margin = new System.Windows.Forms.Padding(6);
             this.renameFilesCheck.Name = "renameFilesCheck";
             this.renameFilesCheck.Size = new System.Drawing.Size(240, 31);
@@ -486,7 +511,7 @@
             this.addSheetNumberCheck.Checked = true;
             this.addSheetNumberCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.addSheetNumberCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.addSheetNumberCheck.Location = new System.Drawing.Point(22, 225);
+            this.addSheetNumberCheck.Location = new System.Drawing.Point(22, 322);
             this.addSheetNumberCheck.Margin = new System.Windows.Forms.Padding(6);
             this.addSheetNumberCheck.Name = "addSheetNumberCheck";
             this.addSheetNumberCheck.Size = new System.Drawing.Size(301, 31);
@@ -550,7 +575,6 @@
         private System.Windows.Forms.CheckBox addSheetNumberCheck;
         private System.Windows.Forms.Button getFileInfo;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Button openOutputFolder;
         private System.Windows.Forms.GroupBox testCoordinateGroup;
         private System.Windows.Forms.Button testAddCoordinate;
         private System.Windows.Forms.TextBox textBox1;
@@ -561,5 +585,8 @@
         private System.Windows.Forms.Button setFontFolder;
         private System.Windows.Forms.TextBox dispFontPath;
         private System.Windows.Forms.TextBox dispValidCustomFont;
+        private System.Windows.Forms.Button setOutputFolder;
+        private System.Windows.Forms.Button openOutputFolder;
+        private System.Windows.Forms.TextBox dispOutputFolder;
     }
 }

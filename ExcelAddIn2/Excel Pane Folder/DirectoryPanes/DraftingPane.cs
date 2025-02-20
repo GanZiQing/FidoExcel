@@ -17,7 +17,7 @@ using static ExcelAddIn2.CommonUtilities;
 using System.Windows.Forms.VisualStyles;
 using PdfSharp.UniversalAccessibility.Drawing;
 using PdfSharp.Fonts;
-
+using System.Runtime.InteropServices.ComTypes;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -89,6 +89,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #endregion
 
             #region Add sheet checks
+            thisAtt = new DirectoryTextBox("outputFolder_sheetRenum", dispOutputFolder, setOutputFolder);
+            ((DirectoryTextBox)thisAtt).AddOpenButton(openOutputFolder);
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
+
             thisCustomAtt = new CheckBoxAttribute("renameFile_sheetRenum", renameFilesCheck, true);
             CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
 
@@ -165,23 +169,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         {
             try
             {
-                #region Check custom font path
-                if (!dispFontName.Text.Equals("Custom")) { } // custom font not used, skip check
-                else if (dispValidCustomFont.Text.Equals("Custom Font Path: Not set")) { } // custom font not set, skip check
-                else
-                {
-                    string path = dispValidCustomFont.Text;
-                    path = path.Substring(18);
-                    if (!path.Equals(dispFontPath.Text))
-                    {
-                        DialogResult res1 = MessageBox.Show($"Custom file path is set and not equals to what is currently provided. \n" +
-                            $"Continue with the following font type?\n" +
-                            $"{path}", "Warning", MessageBoxButtons.YesNo);
-                        if (res1 != DialogResult.Yes) { MessageBox.Show("Restart excel to reset default font"); return; }
-                    }
-                }
-                #endregion
-
                 #region Read input data
                 Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
                 CheckRangeSize(selectedRange, 0, 3, "Selected Range");
@@ -198,9 +185,36 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 #region Create and Empty Destination
                 string workbookPath = Path.GetDirectoryName(Globals.ThisAddIn.Application.ActiveWorkbook.FullName);
-                string printPath = Path.Combine(workbookPath, "Updated Dwg");
-                CreateDestinationFolder(printPath);
+                //string printPath = Path.Combine(workbookPath, "Updated Dwg");
+                //CreateDestinationFolder(printPath);
+                string printPath;
+                try
+                {
+                    printPath = ((DirectoryTextBox)AttributeTextBoxDic["outputFolder_sheetRenum"]).CheckAndGetPath();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Unable to get output folder path\n{ex.Message}");
+                }
+
                 bool overwriteExisting = ClearFolder(printPath);
+                #endregion
+
+                #region Check custom font path
+                if (!dispFontName.Text.Equals("Custom")) { } // custom font not used, skip check
+                else if (dispValidCustomFont.Text.Equals("Custom Font Path: Not set")) { } // custom font not set, skip check
+                else
+                {
+                    string path = dispValidCustomFont.Text;
+                    path = path.Substring(18);
+                    if (!path.Equals(dispFontPath.Text))
+                    {
+                        DialogResult res1 = MessageBox.Show($"Custom file path is set and not equals to what is currently provided. \n" +
+                            $"Continue with the following font type?\n" +
+                            $"{path}", "Warning", MessageBoxButtons.YesNo);
+                        if (res1 != DialogResult.Yes) { MessageBox.Show("Restart excel to reset default font"); return; }
+                    }
+                }
                 #endregion
 
                 #region Copy files over
@@ -256,10 +270,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     }
                 }
                 #endregion
-                DialogResult res = MessageBox.Show("Open output folder?", "Completed", MessageBoxButtons.YesNo);
-                if (res == DialogResult.Yes) { openOutputFolder_Click(sender, e); }
+
+                MessageBox.Show("Operation completed", "Completed");
             }
-            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+            catch (Exception ex) { MessageBox.Show($"Error encountered\n{ex.Message}", "Error"); }
             finally
             {
                 fontSize = 0;
@@ -299,31 +313,39 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             string[] files = Directory.GetFiles(printPath);
             if (files.Length == 0) { return false; }
 
-            DialogResult res = MessageBox.Show($"Delete all files in folder {printPath}?", "Warning", MessageBoxButtons.YesNoCancel);
+            DialogResult res = MessageBox.Show($"Output folder already contains files. Overwrite existing files if file path is the same?\nFolder path: {printPath}", "Warning", MessageBoxButtons.YesNoCancel);
             if (res == DialogResult.Cancel) { throw new Exception($"Terminated by user"); }
+            //else if (res == DialogResult.Yes)
+            //{
+            //    foreach (string file in files)
+            //    {
+            //        File.Delete(file);
+            //    }
+            //    return false;
+            //}
+            //else
+            //{
+            //    //DialogResult res2 = MessageBox.Show($"Output folder is not emprOverwrite existing files?", "Warning", MessageBoxButtons.YesNoCancel);
+            //    //if (res2 == DialogResult.Cancel) { throw new Exception($"Terminated by user"); }
+            //    //else if (res2 == DialogResult.Yes)
+            //    //{
+            //    //    return true;
+            //    //}
+            //    //else
+            //    //{
+            //    //    return false;
+            //    //}
+            //}
             else if (res == DialogResult.Yes)
             {
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
-                return false;
+                return true;
             }
             else
             {
-                DialogResult res2 = MessageBox.Show($"Overwrite existing files?", "Warning", MessageBoxButtons.YesNoCancel);
-                if (res2 == DialogResult.Cancel) { throw new Exception($"Terminated by user"); }
-                else if (res2 == DialogResult.Yes)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
         }
-        
+
         private void AddTextBox(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord, 
             string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null)
         {
@@ -364,20 +386,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
         #endregion
 
-
-
-        private void openOutputFolder_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string workbookPath = Path.GetDirectoryName(Globals.ThisAddIn.Application.ActiveWorkbook.FullName);
-                string path = Path.Combine(workbookPath, "Updated Dwg");
-                if (!Directory.Exists(path)) { throw new Exception($"Directory does not exist\n{path}"); }
-                System.Diagnostics.Process.Start(path);
-            }
-            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
-        }
-
         #region Add Coordinates
         private void testAddCoordinate_Click(object sender, EventArgs e)
         {
@@ -400,15 +408,30 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 #region Add Coordinates
                 AddCoordinateMatrix(page, fontSize);
-                string folder = Path.GetDirectoryName(filePath);
-                string saveFilename = Path.GetFileNameWithoutExtension(filePath) + "_withCoords.pdf";
-                string savePath = Path.Combine(folder, saveFilename);
+                #endregion
+
+                #region Save File
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
+                saveFileDialog.RestoreDirectory = true;
+                saveFileDialog.DefaultExt = "pdf";
+                saveFileDialog.FileName = "Test Coordinate";
+                string savePath;
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    savePath = saveFileDialog.FileName;
+                }
+                else
+                {
+                    throw new Exception("No file path provided, terminated by user");
+                }
                 inputDocument.Save(savePath);
                 #endregion
 
                 System.Diagnostics.Process.Start(savePath);
             }
-            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
+            catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}","Error"); }
             finally
             {
                 fontSize = 0;
