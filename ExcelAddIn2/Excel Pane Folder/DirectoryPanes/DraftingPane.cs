@@ -202,7 +202,18 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 #region Check custom font path
                 if (!dispFontName.Text.Equals("Custom")) { } // custom font not used, skip check
-                else if (dispValidCustomFont.Text.Equals("Custom Font Path: Not set")) { } // custom font not set, skip check
+                else if (dispValidCustomFont.Text.Equals("Custom Font Path: Not set")) // custom font not set, set font resolver
+                {
+                    fontPath = dispFontPath.Text;
+                    try
+                    {
+                        GlobalFontSettings.FontResolver = new CustomFontResolver(ref fontPath, ref dispValidCustomFont);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Unable to set the font resolver, try restarting excel. \n{ex.Message}");
+                    }
+                } 
                 else
                 {
                     string path = dispValidCustomFont.Text;
@@ -215,6 +226,21 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                         if (res1 != DialogResult.Yes) { MessageBox.Show("Restart excel to reset default font"); return; }
                     }
                 }
+                #endregion
+
+                #region Set Fixed Params
+                fontSize = AttributeTextBoxDic["fontSize_sheetRenum"].GetIntFromTextBox();
+                fontName = (string)CustomAttributeDic["fontName_sheetRenum"].attValue;
+                thisSheetCoord = new double[]
+                {
+                    AttributeTextBoxDic["thisSheetX_sheetRenum"].GetDoubleFromTextBox(),
+                    AttributeTextBoxDic["thisSheetY_sheetRenum"].GetDoubleFromTextBox()
+                };
+                totalSheetCoord = new double[]
+                {
+                    AttributeTextBoxDic["totalSheetX_sheetRenum"].GetDoubleFromTextBox(),
+                    AttributeTextBoxDic["totalSheetY_sheetRenum"].GetDoubleFromTextBox()
+                };
                 #endregion
 
                 #region Copy files over
@@ -238,38 +264,23 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                     File.Copy(filePath, destinationPath, overwriteExisting);
                     finalFilePaths[i] = destinationPath;
-                }
-                #endregion
 
-                #region Set Fixed Params
-                fontSize = AttributeTextBoxDic["fontSize_sheetRenum"].GetIntFromTextBox();
-                fontName = (string)CustomAttributeDic["fontName_sheetRenum"].attValue;
-                thisSheetCoord = new double[]
-                {
-                    AttributeTextBoxDic["thisSheetX_sheetRenum"].GetDoubleFromTextBox(),
-                    AttributeTextBoxDic["thisSheetY_sheetRenum"].GetDoubleFromTextBox()
-                };
-                totalSheetCoord = new double[]
-                {
-                    AttributeTextBoxDic["totalSheetX_sheetRenum"].GetDoubleFromTextBox(),
-                    AttributeTextBoxDic["totalSheetY_sheetRenum"].GetDoubleFromTextBox()
-                };
-                #endregion
-
-                #region Check Font
-                fontPath = dispFontPath.Text;
-                GlobalFontSettings.FontResolver = new CustomFontResolver(ref fontPath, ref dispValidCustomFont);
-                #endregion
-
-                #region Add Sheet number
-                if (addSheetNumberCheck.Checked)
-                {
-                    for (int i = 0; i < finalFilePaths.Length; i++)
+                    #region Add Sheet number
+                    if (addSheetNumberCheck.Checked)
                     {
+                        //for (int i = 0; i < finalFilePaths.Length; i++)
+                        //{
+                            
+                        //}
                         AddSheetNumberToOne(finalFilePaths[i], fileNum[i], dispTotalDwgNum.Text);
                     }
+                    #endregion
                 }
                 #endregion
+
+
+
+
 
                 MessageBox.Show("Operation completed", "Completed");
             }
