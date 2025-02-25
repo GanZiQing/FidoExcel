@@ -51,22 +51,22 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             #region Drafting Sheet Number
             thisAtt = new AttributeTextBox("thisSheetX_sheetRenum", dispThisSheetX, true);
-            thisAtt.SetDefaultValue("725");
+            thisAtt.SetDefaultValue("2080");
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
             thisAtt = new AttributeTextBox("thisSheetY_sheetRenum", dispThisSheetY, true);
-            thisAtt.SetDefaultValue("30");
+            thisAtt.SetDefaultValue("60");
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
             thisAtt = new AttributeTextBox("totalSheetX_sheetRenum", dispTotalSheetX, true);
-            thisAtt.SetDefaultValue("750");
+            thisAtt.SetDefaultValue("2170");
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
             thisAtt = new AttributeTextBox("totalSheetY_sheetRenum", dispTotalSheetY, true);
-            thisAtt.SetDefaultValue("30");
+            thisAtt.SetDefaultValue("60");
             thisAtt.type = "double";
             AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
 
