@@ -18,6 +18,7 @@ using System.Windows.Forms.VisualStyles;
 using PdfSharp.UniversalAccessibility.Drawing;
 using PdfSharp.Fonts;
 using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.InteropServices;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -243,46 +244,55 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 };
                 #endregion
 
-                #region Copy files over
-                string[] finalFilePaths = new string[filePaths.Length];
-                for (int i = 0; i < filePaths.Length; i++)
+                #region Iterate over files
+
+                ProgressHelper.RunWithProgress((worker, progressTrackerLocal) => RunFunction(worker, progressTrackerLocal));
+
+                void RunFunction(BackgroundWorker worker, ProgressTracker progressTrackerLocal)
                 {
-                    string filePath = filePaths[i];
-                    string fileName = Path.GetFileName(filePath);
-
-                    string finalFileName;
-                    if (renameFilesCheck.Checked)
+                    try
                     {
-                        finalFileName = fileNum[i] + "_" + fileName;
-                    }
-                    else
-                    {
-                        finalFileName = fileName;
-                    }
+                        string[] finalFilePaths = new string[filePaths.Length];
+                        
+                        for (int i = 0; i < filePaths.Length; i++)
+                        {
+                            string filePath = filePaths[i];
+                            string fileName = Path.GetFileName(filePath);
+                            progressTrackerLocal.UpdateStatus($"Processing {fileName}");
 
-                    string destinationPath = Path.Combine(printPath, finalFileName);
+                            string finalFileName;
+                            if (renameFilesCheck.Checked)
+                            {
+                                finalFileName = fileNum[i] + "_" + fileName;
+                            }
+                            else
+                            {
+                                finalFileName = fileName;
+                            }
 
-                    File.Copy(filePath, destinationPath, overwriteExisting);
-                    finalFilePaths[i] = destinationPath;
+                            string destinationPath = Path.Combine(printPath, finalFileName);
 
-                    #region Add Sheet number
-                    if (addSheetNumberCheck.Checked)
-                    {
-                        //for (int i = 0; i < finalFilePaths.Length; i++)
-                        //{
-                            
-                        //}
-                        AddSheetNumberToOne(finalFilePaths[i], fileNum[i], dispTotalDwgNum.Text);
+                            File.Copy(filePath, destinationPath, overwriteExisting);
+                            finalFilePaths[i] = destinationPath;
+
+                            #region Add Sheet number
+                            if (addSheetNumberCheck.Checked)
+                            {
+                                AddSheetNumberToOne(finalFilePaths[i], fileNum[i], dispTotalDwgNum.Text);
+                            }
+                            #endregion
+
+                            worker.ReportProgress(ConvertToProgress(i, filePaths.Length));
+                            if (worker.CancellationPending)
+                            {
+                                return;
+                            }
+                        }
+                        MessageBox.Show("Operation completed", "Completed");
                     }
-                    #endregion
+                    catch (Exception ex) { MessageBox.Show($"Error encountered\n{ex.Message}", "Error"); }
                 }
-                #endregion
-
-
-
-
-
-                MessageBox.Show("Operation completed", "Completed");
+                #endregion                
             }
             catch (Exception ex) { MessageBox.Show($"Error encountered\n{ex.Message}", "Error"); }
             finally

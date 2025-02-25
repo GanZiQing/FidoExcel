@@ -41,6 +41,7 @@ namespace ExcelAddIn2
                 progressTracker.Close();
                 if (e.Cancelled)
                 {
+                    progressTracker.UpdateStatus($"Cancellation message box shown");
                     MessageBox.Show("Operation cancelled.");
                 }
                 else if (e.Error != null)
