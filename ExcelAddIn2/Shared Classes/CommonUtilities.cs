@@ -1452,6 +1452,11 @@ namespace ExcelAddIn2
             }
             return folderPath;
         }
+        
+        public void SetDirectory(string folderPatth)
+        {
+            dialog.InitialDirectory = folderPatth;
+        }
     }
 }
 

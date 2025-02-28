@@ -1027,6 +1027,14 @@ namespace ExcelAddIn2
         private void setButton_Click(object sender, EventArgs e)
         {
             CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+            #region Get Current Directory
+            string currentDirectory = textBox.Text;
+            if (Directory.Exists(currentDirectory)) 
+            {
+                customFolderBrowser.SetDirectory(currentDirectory);
+            }
+
+            #endregion
             if (customFolderBrowser.ShowDialog() != DialogResult.OK)
             {
                 return;
