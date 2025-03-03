@@ -47,11 +47,13 @@
             this.dispDirectory = new System.Windows.Forms.TextBox();
             this.importFilePath = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.copyFiles = new System.Windows.Forms.Button();
             this.getDirectoryInfoGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // getDirectoryInfoGroup
             // 
+            this.getDirectoryInfoGroup.Controls.Add(this.copyFiles);
             this.getDirectoryInfoGroup.Controls.Add(this.importSpecificFileNames);
             this.getDirectoryInfoGroup.Controls.Add(this.importFolderName);
             this.getDirectoryInfoGroup.Controls.Add(this.importFileName);
@@ -139,7 +141,7 @@
             this.textBox7.Size = new System.Drawing.Size(275, 22);
             this.textBox7.TabIndex = 101;
             this.textBox7.TabStop = false;
-            this.textBox7.Text = "Rename Files";
+            this.textBox7.Text = "Edit Files";
             // 
             // renameFiles
             // 
@@ -277,6 +279,19 @@
             this.importFilePath.UseVisualStyleBackColor = true;
             this.importFilePath.Click += new System.EventHandler(this.importFilePath_Click);
             // 
+            // copyFiles
+            // 
+            this.copyFiles.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.copyFiles.Location = new System.Drawing.Point(260, 460);
+            this.copyFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.copyFiles.Name = "copyFiles";
+            this.copyFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.copyFiles.Size = new System.Drawing.Size(229, 46);
+            this.copyFiles.TabIndex = 102;
+            this.copyFiles.Text = "Copy Files";
+            this.copyFiles.UseVisualStyleBackColor = true;
+            this.copyFiles.Click += new System.EventHandler(this.copyFiles_Click);
+            // 
             // DirectoryUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -311,5 +326,6 @@
         private System.Windows.Forms.Button importFolderName;
         private System.Windows.Forms.Button importFileName;
         private System.Windows.Forms.Button importSpecificFileNames;
+        private System.Windows.Forms.Button copyFiles;
     }
 }

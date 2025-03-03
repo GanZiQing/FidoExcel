@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -40,6 +41,21 @@ namespace ExcelAddIn2
 
             headers = new List<string> { "File Path", "Folder", "File Name", "New File Name", "Status" };
             AddHeaderMenuToButton(renameFiles, headers);
+
+            //Add File Details from Dialogue
+            AddContextStripEvent(importFilePath, "Get From Dialogue Box", (sender, e) => importFilePath_Click(sender, e));
+            AddContextStripEvent(importFileName, "Get From Dialogue Box", (sender, e) => importFileName_Click(sender, e));
+            AddContextStripEvent(importFolderPath, "Get From Dialogue Box", (sender, e) => importFolderPath_Click(sender, e));
+            AddContextStripEvent(importFolderName, "Get From Dialogue Box", (sender, e) => importFolderName_Click(sender, e));
+            AddContextStripEvent(importSpecificFile, "Get from Dialogue Box", (sender, e) => importSpecificFile_Click(sender, e));
+            AddContextStripEvent(importSpecificFileNames, "Get from Dialogue Box", (sender, e) => importSpecificFileNames_Click(sender, e));
+        }
+        private void AddContextStripEvent(System.Windows.Forms.Button button, string contextText, EventHandler eventHandler)
+        {
+            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem newItem = new ToolStripMenuItem(contextText);
+            button.ContextMenuStrip.Items.Add(newItem);
+            newItem.Click += eventHandler;
         }
 
         bool attributeCreated = false;
@@ -48,6 +64,7 @@ namespace ExcelAddIn2
             Dictionary<string, CustomAttribute> CustomAttributeDic)
         {
             if (attributeCreated) { return; }
+            
             #region Directory
             DirectoryTextBox FolderPath = new DirectoryTextBox("FolderPath", dispDirectory, setDirectory);
             FolderPath.AddOpenButton(dirOpenPath);
@@ -56,6 +73,7 @@ namespace ExcelAddIn2
             var thisCustomAtt = new CheckBoxAttribute("includeExtension", addExtensionCheck, true);
             CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
             #endregion
+
             attributeCreated = true;
         }
 
@@ -111,64 +129,93 @@ namespace ExcelAddIn2
         #region Buttons
         private void importFilePath_Click(object sender, EventArgs e)
         {
-            importFilesOrFolders(true, false);
+            if (sender is ToolStripMenuItem) 
+            { 
+                string destinationFolder;
+                try
+                {
+                    CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+                    customFolderBrowser.ShowDialog();
+                    destinationFolder = customFolderBrowser.GetFolderPath();
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+
+                importFilesOrFolders(true, false, overwriteDirectory: destinationFolder);
+            }
+            if (sender is System.Windows.Forms.Button) 
+            { 
+                importFilesOrFolders(true, false);
+            }
+            
         }
 
         private void importFileName_Click(object sender, EventArgs e)
         {
-            importFilesOrFolders(true, true);
+
+            if (sender is ToolStripMenuItem)
+            {
+                string destinationFolder;
+                try
+                {
+                    CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+                    customFolderBrowser.ShowDialog();
+                    destinationFolder = customFolderBrowser.GetFolderPath();
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+
+                importFilesOrFolders(true, true, overwriteDirectory: destinationFolder);
+            }
+            if (sender is System.Windows.Forms.Button)
+            {
+                importFilesOrFolders(true, true);
+            }
+
+            //importFilesOrFolders(true, true);
         }
         
         private void importFolderPath_Click(object sender, EventArgs e)
         {
-            importFilesOrFolders(false, false);
-            //CheckDirectory();
+            //importFilesOrFolders(false, false);
 
-            //#region Get Parameters
-            //string directoryPath = dispDirectory.Text;
-            //Workbook activeBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            //Worksheet activeSheet = activeBook.ActiveSheet;
-            //Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            //#endregion
+            if (sender is ToolStripMenuItem)
+            {
+                string destinationFolder;
+                try
+                {
+                    CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+                    customFolderBrowser.ShowDialog();
+                    destinationFolder = customFolderBrowser.GetFolderPath();
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
 
-            //#region Call method to get files and folders
-            //List<string> directories = new List<string>();
-            //getFolderDirectories(directoryPath, ref directories, checkNestedFolders.Checked);
-            //#endregion
-
-            //#region Print results
-            //// Print files array
-            //string[] folder_name = new string[directories.Count()];
-            //string[] full_path = new string[directories.Count()];
-            //int i = 0;
-            //foreach (string folder in directories)
-            //{
-            //    full_path[i] = folder;
-            //    //folder_name[i] = Path.GetFileName(Path.GetDirectoryName(file));
-            //    folder_name[i] = Path.GetFileName(folder);
-            //    i++;
-            //}
-            //try
-            //{
-            //    WriteToExcel(0, 0, true, full_path, folder_name);
-            //}
-            //catch (Exception ex)
-            //{
-            //    if (ex.Message == "Nothing found to print")
-            //    {
-            //        MessageBox.Show("No results found");
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show($"Error encountered\n\n{ex.Message}");
-            //    }
-            //}
-            //#endregion
+                importFilesOrFolders(false, false, overwriteDirectory: destinationFolder);
+            }
+            if (sender is System.Windows.Forms.Button)
+            {
+                importFilesOrFolders(false, false);
+            }
         }
         
         private void importFolderName_Click(object sender, EventArgs e)
         {
-            importFilesOrFolders(false, true);
+            //importFilesOrFolders(false, true);
+            if (sender is ToolStripMenuItem)
+            {
+                string destinationFolder;
+                try
+                {
+                    CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+                    customFolderBrowser.ShowDialog();
+                    destinationFolder = customFolderBrowser.GetFolderPath();
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+
+                importFilesOrFolders(false, true, overwriteDirectory: destinationFolder);
+            }
+            if (sender is System.Windows.Forms.Button)
+            {
+                importFilesOrFolders(false, true);
+            }
         }
         
         private void importSpecificFile_Click(object sender, EventArgs e)
@@ -186,7 +233,24 @@ namespace ExcelAddIn2
             }
             #endregion
 
-            importFilesOrFolders(true, false, dispExtension.Text);
+            //importFilesOrFolders(true, false, dispExtension.Text);
+            if (sender is ToolStripMenuItem)
+            {
+                string destinationFolder;
+                try
+                {
+                    CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+                    customFolderBrowser.ShowDialog();
+                    destinationFolder = customFolderBrowser.GetFolderPath();
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+
+                importFilesOrFolders(true, false, dispExtension.Text, overwriteDirectory: destinationFolder);
+            }
+            if (sender is System.Windows.Forms.Button)
+            {
+                importFilesOrFolders(true, false, dispExtension.Text);
+            }
         }
         private void importSpecificFileNames_Click(object sender, EventArgs e)
         {
@@ -203,24 +267,52 @@ namespace ExcelAddIn2
             }
             #endregion
 
-            importFilesOrFolders(true, true, dispExtension.Text);
+            //importFilesOrFolders(true, true, dispExtension.Text);
+            if (sender is ToolStripMenuItem)
+            {
+                string destinationFolder;
+                try
+                {
+                    CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+                    customFolderBrowser.ShowDialog();
+                    destinationFolder = customFolderBrowser.GetFolderPath();
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+
+                importFilesOrFolders(true, true, dispExtension.Text, overwriteDirectory: destinationFolder);
+            }
+            if (sender is System.Windows.Forms.Button)
+            {
+                importFilesOrFolders(true, true, dispExtension.Text);
+            }
         }
         #endregion
         
         #region Main File Path Function
-        private void importFilesOrFolders(bool isFile, bool nameOnly, string specifiedExtension = "")
+        private void importFilesOrFolders(bool isFile, bool nameOnly, string specifiedExtension = "", string overwriteDirectory = "")
         {
             try
             {
+                #region Set Diriectory
+                string directoryPath;
+                if (overwriteDirectory == "")
+                {
+                    CheckDirectory();
+                    directoryPath = dispDirectory.Text;
+                }
+                else
+                {
+                    directoryPath = overwriteDirectory;
+                }
+                #endregion
+
                 #region Get Parameters
-                CheckDirectory();
-                string directoryPath = dispDirectory.Text;
                 Workbook activeBook = Globals.ThisAddIn.Application.ActiveWorkbook;
                 Worksheet activeSheet = activeBook.ActiveSheet;
                 Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
                 #endregion
 
-                #region Get Directories and Files
+                #region Get Files or Folders
                 List<string> files = new List<string>();
                 if (isFile)
                 {
@@ -475,5 +567,64 @@ namespace ExcelAddIn2
         }
 
         #endregion
+
+        private void copyFiles_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Check Input Size
+                Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                try { CheckRangeSize(selectedRange, 0, 1); }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
+
+                string[] filePaths = GetContentsAsStringArray(selectedRange, true);
+                List<string> failedPaths = new List<string>();
+                foreach (string filePath in filePaths) 
+                {
+                    if (!File.Exists(filePath)) { failedPaths.Add(filePath); }
+                }
+                if (failedPaths.Count > 0)
+                {
+                    string msg = "The following file path(s) do not exist:\n";
+                    foreach (string failedPath in failedPaths)
+                    {
+                        msg += failedPath + "\n";
+                    }
+                    throw new Exception(msg);
+                }
+                #endregion
+
+                #region Get Destination
+                CustomFolderBrowser customFolderBrowser = new CustomFolderBrowser();
+                customFolderBrowser.ShowDialog();
+                string destinationFolder = customFolderBrowser.GetFolderPath();
+                #endregion
+
+                #region Copy Files
+                int filesCopied = 0;
+                foreach (string filePath in filePaths)
+                {
+                    string destinationPath = Path.Combine(destinationFolder, Path.GetFileName(filePath));
+                    if (File.Exists(destinationPath)) 
+                    {
+                        DialogResult res = MessageBox.Show($"File {Path.GetFileName(filePath)} already exist at destination, overwrite?","Warning", MessageBoxButtons.YesNoCancel);
+                        if (res == DialogResult.Cancel) { throw new Exception("Terminated by user"); }
+                        else if (res == DialogResult.Yes) { File.Copy(filePath, destinationPath, true); filesCopied++; }
+                    }
+                    else
+                    {
+                        File.Copy(filePath, destinationPath, false);
+                        filesCopied++;
+                    }
+                }
+                #endregion
+
+                MessageBox.Show($"{filesCopied}/{filePaths.Length} files copied to new directory.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
     }
 }
