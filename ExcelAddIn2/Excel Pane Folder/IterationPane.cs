@@ -78,7 +78,9 @@ namespace ExcelAddIn2
             MultipleSheetsAttribute KeepSheets = new MultipleSheetsAttribute("KeepSheets", DelSheets, true);
             OtherAttributeDic.Add("KeepSheets", KeepSheets); 
             MultipleSheetsAttribute SavedDupeSheet = new MultipleSheetsAttribute("SavedDupeSheet", SetDupeSheet);
-            OtherAttributeDic.Add("SavedDupeSheet", SavedDupeSheet); 
+            OtherAttributeDic.Add("SavedDupeSheet", SavedDupeSheet);
+            CheckBoxAttribute checkAtt = new CheckBoxAttribute("DelExistingSheets",delExistingSheetCheck, false);
+            OtherAttributeDic.Add(checkAtt.attName, checkAtt);
             #endregion
 
             #region Calculation Settings (Universal)
@@ -831,7 +833,6 @@ namespace ExcelAddIn2
         #endregion
         #endregion
 
-
         #region Run Single
 
         #region Helper Functions
@@ -960,7 +961,7 @@ namespace ExcelAddIn2
                     return false;
                 }
             }
-
+            
             // Get values
             foreach ((Range HeaderCell, string TargetAddress) in OutputHeaders)
             {
@@ -1080,6 +1081,7 @@ namespace ExcelAddIn2
             {
                 Worksheet newSheet = ThisWorkBook.Sheets[sheet];
                 string newName = newSheet.Name + " " + nameToAppend;
+                if (delExistingSheetCheck.Checked) { DelExistingSheet(newName); }
                 // Try to rename, if unable to find name, reset OG sheets and return 
                 try
                 {
@@ -1111,85 +1113,111 @@ namespace ExcelAddIn2
             }
             return true;
         }
+
+        private void DelExistingSheet(string sheetName)
+        {
+            try
+            {
+                Globals.ThisAddIn.Application.DisplayAlerts = false;
+                Workbook wb = Globals.ThisAddIn.Application.ActiveWorkbook;
+                Worksheet ws = wb.Worksheets[sheetName];
+                ws.Delete();
+            }
+            catch { }
+            finally
+            {
+                Globals.ThisAddIn.Application.DisplayAlerts = true;
+            }
+        }
         #endregion
 
         #endregion
 
         private void RunSingle_Click(object sender, EventArgs e)
         {
-            #region Get Inputs
-            Worksheet homeSheet = ThisApplication.ActiveSheet;
-            (Range headerRange, Range InputRange, Worksheet OutputSheet) = GetSingleRunInputs();
-            if (headerRange == null)
+            try
             {
-                return;
-            }
-            
-            // Convert header into list
-            (List<(Range, string)> OutputHeaders, List<(Range, string)> InputHeaders) = ConvertHeaders(headerRange);
-            if (OutputHeaders.Count == 0)
-            {
-                return;
-            }
-            
-            // Get confirmation to continue
-            DialogResult confirmation = MessageBox.Show($"Confirm to run selection for {InputRange.Rows.Count} rows?\nAny existing values in result column will be deleted.", "Confirmation", MessageBoxButtons.YesNo);
-            if (confirmation == DialogResult.No) { return; }
+                #region Get Inputs
+                Worksheet homeSheet = ThisApplication.ActiveSheet;
+                (Range headerRange, Range InputRange, Worksheet OutputSheet) = GetSingleRunInputs();
+                if (headerRange == null)
+                {
+                    throw new Exception("No input range provided");
+                }
 
-            #endregion
+                // Convert header into list
+                (List<(Range, string)> OutputHeaders, List<(Range, string)> InputHeaders) = ConvertHeaders(headerRange);
+                //if (OutputHeaders.Count == 0)
+                //{
+                //    return;
+                //}
 
-            #region Rename Base Sheets
-            List<Worksheet> OGSheets = RenameBaseSheets();
-            if (OGSheets.Count == 0) { return; }
-            #endregion
+                // Get confirmation to continue
+                DialogResult confirmation = MessageBox.Show($"Confirm to run selection for {InputRange.Rows.Count} rows?\nAny existing values in result column will be deleted.", "Confirmation", MessageBoxButtons.YesNo);
+                if (confirmation == DialogResult.No) { return; }
 
-            #region Loop through all rows
-            foreach (Range Row in InputRange.Rows)
-            {
-                #region Check for Skips
-                if (Row.Value2 == null) 
-                { 
-                    continue; 
+                #endregion
+
+                #region Rename Base Sheets
+                List<Worksheet> OGSheets = RenameBaseSheets();
+                if (OGSheets.Count == 0) { return; }
+                #endregion
+
+                #region Loop through all rows
+                foreach (Range Row in InputRange.Rows)
+                {
+                    #region Check for Skips
+                    if (Row.Value2 == null)
+                    {
+                        continue;
+                    }
+                    #endregion
+
+                    int RowstoRunRowNum = Row.Row;
+
+                    #region Set and Get Values  
+                    bool success = GetandSetTrueValues(OutputHeaders, InputHeaders, RowstoRunRowNum, OGSheets);
+                    if (!success)
+                    {
+                        return;
+                    }
+                    #endregion
+
+                    #region Rename Sheet and make new sheet if required 
+                    if (CheckNewSheet1.Checked)
+                    {
+                        // Rename Sheets To Append Name
+                        bool toContinue = RenameSheetsToSave(OGSheets, Row.Text);
+                        if (!toContinue) { return; }
+                    }
+                    else
+                    {
+                        string sheet = DispOutS1.Text;
+                        Globals.ThisAddIn.Application.DisplayAlerts = false;
+                        Globals.ThisAddIn.Application.ActiveWorkbook.Sheets[sheet].Delete();
+                        Globals.ThisAddIn.Application.DisplayAlerts = true;
+                    }
+                    // Copy new sheets for next iteration
+                    foreach (Worksheet OGWorksheet in OGSheets)
+                    {
+                        string newName = OGWorksheet.Name.Substring(0, OGWorksheet.Name.Length - 3);
+                        Worksheet newSheet = CopyNewSheet(OGWorksheet, newName);
+                    }
+                    #endregion
                 }
                 #endregion
 
-                int RowstoRunRowNum = Row.Row;
+                ResetOGSheets(OGSheets);
+                try { homeSheet.Activate(); }
+                catch { }
 
-                #region Set and Get Values  
-                bool success = GetandSetTrueValues(OutputHeaders, InputHeaders, RowstoRunRowNum, OGSheets);
-                if (!success)
-                {
-                    return;
-                }
-                #endregion
-
-                #region Rename Sheet and make new sheet if required 
-                if (CheckNewSheet1.Checked)
-                {
-                    // Rename Sheets To Append Name
-                    bool toContinue = RenameSheetsToSave(OGSheets, Row.Text);
-                    if (!toContinue) { return; }
-                }
-                else
-                {
-                    string sheet = DispOutS1.Text;
-                    Globals.ThisAddIn.Application.DisplayAlerts = false;
-                    Globals.ThisAddIn.Application.ActiveWorkbook.Sheets[sheet].Delete();
-                    Globals.ThisAddIn.Application.DisplayAlerts = true;                    
-                }
-                // Copy new sheets for next iteration
-                foreach (Worksheet OGWorksheet in OGSheets)
-                {
-                    string newName = OGWorksheet.Name.Substring(0, OGWorksheet.Name.Length - 3);
-                    Worksheet newSheet = CopyNewSheet(OGWorksheet, newName);
-                }
-                #endregion
+                MessageBox.Show("Completed run.", "Completed");
             }
-            #endregion
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error");
+            }
 
-            ResetOGSheets(OGSheets);
-            homeSheet.Activate();
-            MessageBox.Show("Completed run.", "Completed");
         }
 
         private void OverrideInputCheck_CheckedChanged(object sender, EventArgs e)
@@ -1204,9 +1232,7 @@ namespace ExcelAddIn2
                 DispInputR1.ForeColor = Color.Black;
             }
         }
-
         #endregion
-
 
         #region Run Multiple 
 
