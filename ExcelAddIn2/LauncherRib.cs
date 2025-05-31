@@ -101,7 +101,7 @@ namespace ExcelAddIn2
         private void ETABSPaneLauncher_Click(object sender, RibbonControlEventArgs e)
         {
             // User Inputs
-            int NumPanes = 2;
+            int NumPanes = 1;
             List<CustomTaskPane> thisPaneList = ETABSPaneList;
             string title = "ETABS";
 
@@ -125,7 +125,7 @@ namespace ExcelAddIn2
         private List<CustomTaskPane> IterationPaneList = new List<CustomTaskPane>();
         private void IterationTools_Click(object sender, RibbonControlEventArgs e)
         {
-            int NumPanes = 2;
+            int NumPanes = 1;
             List<CustomTaskPane> thisPaneList = IterationPaneList;
             string title = "Iteration Tools";
 

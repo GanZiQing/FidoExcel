@@ -14,18 +14,22 @@ using static ExcelAddIn2.CommonUtilities;
 using Ppt = Microsoft.Office.Interop.PowerPoint;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Windows.Controls.Primitives;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
     public partial class ReportPane : UserControl
     {
         #region Initialise
-        Dictionary<string, AttributeTextBox> TextBoxAttributeDic = new Dictionary<string, AttributeTextBox>();
-        Dictionary<string, CustomAttribute> CustomAttributeDic = new Dictionary<string, CustomAttribute>();
+        Dictionary<string, AttributeTextBox> textBoxAttributeDic = new Dictionary<string, AttributeTextBox>();
+        Dictionary<string, CustomAttribute> customAttributeDic = new Dictionary<string, CustomAttribute>();
         public ReportPane()
         {
             InitializeComponent();
             CreateAttributes();
+            AddToolTips();
+            AddHeaders();
         }
 
         private void CreateAttributes()
@@ -33,44 +37,44 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #region SC Directory
             DirectoryTextBox scFolderPath_report = new DirectoryTextBox("scFolderPath_report", dispSCFolder, setSCFolder);
             scFolderPath_report.AddOpenButton(openSCFolder);
-            TextBoxAttributeDic.Add(scFolderPath_report.attName, scFolderPath_report);
+            textBoxAttributeDic.Add(scFolderPath_report.attName, scFolderPath_report);
             #endregion
 
             #region ETABS Screenshot Boundary
             var thisAtt = new AttributeTextBox("scX_report", dispScreenshotX, true);
             thisAtt.type = "int";
             thisAtt.SetDefaultValue("30");
-            TextBoxAttributeDic.Add(thisAtt.attName, thisAtt);
+            textBoxAttributeDic.Add(thisAtt.attName, thisAtt);
 
             thisAtt = new AttributeTextBox("scY_report", dispScreenshotY, true);
             thisAtt.type = "int";
             thisAtt.SetDefaultValue("70");
-            TextBoxAttributeDic.Add(thisAtt.attName, thisAtt);
+            textBoxAttributeDic.Add(thisAtt.attName, thisAtt);
 
             thisAtt = new AttributeTextBox("scWidth_report", dispScreenshotWidth, true);
             thisAtt.type = "int";
             thisAtt.SetDefaultValue("800");
-            TextBoxAttributeDic.Add(thisAtt.attName, thisAtt);
+            textBoxAttributeDic.Add(thisAtt.attName, thisAtt);
 
             thisAtt = new AttributeTextBox("scHeight_report", dispScreenshotHeight, true);
             thisAtt.type = "int";
             thisAtt.SetDefaultValue("450");
-            TextBoxAttributeDic.Add(thisAtt.attName, thisAtt);
+            textBoxAttributeDic.Add(thisAtt.attName, thisAtt);
             #endregion
 
             #region ETABS
             RangeTextBox etabsRunRange_report = new RangeTextBox("etabsRunRange_report", dispFloorRange, setFloorRange, "range", true);
-            TextBoxAttributeDic.Add("etabsRunRange_report", etabsRunRange_report);
+            textBoxAttributeDic.Add("etabsRunRange_report", etabsRunRange_report);
 
             thisAtt = new AttributeTextBox("startDelay_report", dispStartDelay, true);
             thisAtt.SetDefaultValue("5");
             thisAtt.type = "double";
-            TextBoxAttributeDic.Add(thisAtt.attName, thisAtt);
+            textBoxAttributeDic.Add(thisAtt.attName, thisAtt);
 
             thisAtt = new AttributeTextBox("loadDelay_report", dispLoadDelay, true);
             thisAtt.SetDefaultValue("2");
             thisAtt.type = "double";
-            TextBoxAttributeDic.Add(thisAtt.attName, thisAtt);
+            textBoxAttributeDic.Add(thisAtt.attName, thisAtt);
             #endregion
 
             #region Directory
@@ -78,141 +82,423 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             //FolderPath.AddOpenButton(dirOpenPath);
             //TextBoxAttributeDic.Add("FolderPath", FolderPath);
             //AttributeTextBox ExtensionType = new AttributeTextBox("ExtensionType", dispExtension, true);
-            directoryUserControl1.CreateAttributes(ref TextBoxAttributeDic, ref CustomAttributeDic);
+            directoryUserControl1.CreateAttributes(ref textBoxAttributeDic, ref customAttributeDic);
             #endregion
 
             #region Image Boundary
             AttributeTextBox insertX_report = new AttributeTextBox("insertX_report", dispInsertX, true);
             insertX_report.SetDefaultValue("30");
-            TextBoxAttributeDic.Add("insertX_report", insertX_report);
+            textBoxAttributeDic.Add("insertX_report", insertX_report);
 
             AttributeTextBox insertY_report = new AttributeTextBox("insertY_report", dispInsertY, true);
             insertY_report.SetDefaultValue("70");
-            TextBoxAttributeDic.Add("insertY_report", insertY_report);
+            textBoxAttributeDic.Add("insertY_report", insertY_report);
 
             AttributeTextBox widthX_report = new AttributeTextBox("widthX_report", dispWidthX, true);
             widthX_report.SetDefaultValue("780");
-            TextBoxAttributeDic.Add("widthX_report", widthX_report);
+            textBoxAttributeDic.Add("widthX_report", widthX_report);
 
             AttributeTextBox heightY_report = new AttributeTextBox("heightY_report", dispHeightY, true);
             heightY_report.SetDefaultValue("500");
-            TextBoxAttributeDic.Add("heightY_report", heightY_report);
+            textBoxAttributeDic.Add("heightY_report", heightY_report);
             #endregion
 
             #region Ppt Import
             FileTextBox pptFilePath = new FileTextBox("pptFilePath", dispPptFile, setPptFile);
             pptFilePath.AddOpenButton(openPpt, ".pptx");
-            TextBoxAttributeDic.Add("pptFilePath", pptFilePath);
+            textBoxAttributeDic.Add("pptFilePath", pptFilePath);
 
-            RangeTextBox pptImportRange = new RangeTextBox("pptImportRange", dispImportRange, setImportRange, "range", true);
-            TextBoxAttributeDic.Add("pptImportRange", pptImportRange);
+            AttributeTextBox tbAtt = new RangeTextBox("pptImportRange", dispImportRange, setImportRange, "range", false);
+            textBoxAttributeDic.Add(tbAtt.attName, tbAtt);
+
+            tbAtt = new RangeTextBox("pptImportHeaderRow", dispHeaderRow, setHeaderRow, "row", false);
+            textBoxAttributeDic.Add(tbAtt.attName, tbAtt);
+
+            tbAtt = new AttributeTextBox("pptInsertLoc", dispImageLoc, "-1", true);
+            tbAtt.type = "int";
+            textBoxAttributeDic.Add(tbAtt.attName, tbAtt);
+
+            CustomAttribute customAtt = new CheckBoxAttribute("delRefCheck", deleteRefCheck, false);
+            customAttributeDic.Add(customAtt.attName, customAtt);
             #endregion
 
+        }
+        
+        private void AddToolTips()
+        {
+            ToolTip toolTip1 = new ToolTip();
+
+            #region Ppt File Def
+            toolTip1.SetToolTip(setPptFile,
+                "Defines reference ppt file, assumes that slide 1 is the template slide"
+            );
+            #endregion
+
+            #region Image Position
+            toolTip1.SetToolTip(insertImageBox,
+                "Opens reference ppt and insert box representing the bounding region of the image to be inserted"
+            );
+            toolTip1.SetToolTip(getBounds,
+                "Gets boundary from open reference ppt (from \"Insert Image Box\""
+            );
+            #endregion
+
+            #region Import to Ppt
+            toolTip1.SetToolTip(setImportRange,
+                "Takes input in the following format:\n" +
+                "  File Path\n" +
+                "  Folder Name (unused)\n" +
+                "  File Name (unused)\n" +
+                "  *ShapeName 1\n" +
+                "  *...\n" +
+                "* Text Box/Shape Name in ppt (min 1)"
+            );
+
+            toolTip1.SetToolTip(setHeaderRow,
+                "Defines header row number for import range"
+            );
+
+            toolTip1.SetToolTip(deleteRefCheck,
+                "If checked, first slide (reference slide) will be deleted"
+            );
+
+            toolTip1.SetToolTip(dispImageLoc,
+                "Int that defines where the new slide will be inserted.\n" +
+                "  -1 will insert slide at the end of the ppt\n" +
+                "  0 will insert at the start of the slide\n" +
+                "  If location > total number of slides, insert slide at the end of the ppt"
+            );
+            #endregion
+        }
+
+        private void AddHeaders()
+        {
+            List<string> headers = new List<string> { "File Path", "Folder Name", "File Name", "ShapeName 1", "ShapeName 2" };
+            AddHeaderMenuToButton(setImportRange, headers);
+
+            //headers = new List<string> { "File Path", "Folder Name" };
+            //AddHeaderMenuToButton(importFolderPath, headers);
+
+            //headers = new List<string> { "File Name" };
+            //AddHeaderMenuToButton(importFileName, headers);
+
+            //headers = new List<string> { "Folder Name" };
+            //AddHeaderMenuToButton(importFolderName, headers);
+
+            //headers = new List<string> { "File Path", "Folder", "File Name", "New File Name", "Status" };
+            //AddHeaderMenuToButton(renameFiles, headers);
+
+            ////Add File Details from Dialogue
+            //AddContextStripEvent(importFilePath, "Get From Dialogue Box", (sender, e) => importFilePath_Click(sender, e));
+            //AddContextStripEvent(importFileName, "Get From Dialogue Box", (sender, e) => importFileName_Click(sender, e));
+            //AddContextStripEvent(importFolderPath, "Get From Dialogue Box", (sender, e) => importFolderPath_Click(sender, e));
+            //AddContextStripEvent(importFolderName, "Get From Dialogue Box", (sender, e) => importFolderName_Click(sender, e));
+            //AddContextStripEvent(importSpecificFile, "Get from Dialogue Box", (sender, e) => importSpecificFile_Click(sender, e));
+            //AddContextStripEvent(importSpecificFileNames, "Get from Dialogue Box", (sender, e) => importSpecificFileNames_Click(sender, e));
         }
         #endregion
 
         #region Ppt Import
-        private void importToPpt_Click(object sender, EventArgs e)
+
+
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        public void BringExcelToFront()
         {
-            Beaver.InitializeForWorkbook(Globals.ThisAddIn.Application.ActiveWorkbook);
-            #region Read Excel
-            Range inputRange = ((RangeTextBox)TextBoxAttributeDic["pptImportRange"]).GetRangeFromFullAddress();
-            try
-            {
-                CheckRangeSize(inputRange, 0, 3);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error");
-                return;
-            }
-            
-            string[] text1 = GetContentsAsStringArray(inputRange.Columns[1].Cells, false);
-            string[] text2 = GetContentsAsStringArray(inputRange.Columns[2].Cells, false);
-            string[] imagePaths = GetContentsAsStringArray(inputRange.Columns[3].Cells, false);
-            #endregion
-
-            Ppt.Application pptApp = null;
-            Ppt.Presentation activePpt = null;
-
-            #region Open ppt
-            string pptPath = dispPptFile.Text;
-            try
-            {
-                pptApp = new Ppt.Application();
-                pptApp.Visible = MsoTriState.msoTrue;
-                activePpt = pptApp.Presentations.Open(pptPath);
-            }
-            catch (Exception ex)
-            {
-                if (activePpt != null)
-                {
-                    activePpt.Close();
-                    Marshal.ReleaseComObject(activePpt);
-                }
-                if (pptApp != null)
-                {
-                    pptApp.Quit();
-                    Marshal.ReleaseComObject(pptApp);
-                }
-
-                MessageBox.Show($"Unable to access ppt file" + ex.Message, "Error");
-                //throw new Exception($"Unable to access ppt file" + ex.Message);
-                return;
-            }
-            #endregion
-
-            #region Loop Through Excel
-            for (int rowNum = 0; rowNum < imagePaths.Length; rowNum++)
-            {
-                #region Checks and Assignments
-                string imagePath = imagePaths[rowNum];
-                if (imagePaths[rowNum] == "")
-                {
-                    continue;
-                }
-
-                // Check if image file exist
-                if (!File.Exists(imagePaths[rowNum]))
-                {
-                    Beaver.LogError($"File path not found at row {rowNum} of input range. Image not added.\n{imagePath}");
-                    continue;
-                }
-                #endregion
-
-                #region Add to ppt
-                // Add a slide to the presentation
-                Ppt.Slide active_slide = activePpt.Slides[1].Duplicate()[1];
-                active_slide.MoveTo(activePpt.Slides.Count); // Move to back 
-
-                // Add image 
-                float[] imagePosition = GetImageLocation(imagePath);
-                active_slide.Shapes.AddPicture(imagePath, MsoTriState.msoFalse, MsoTriState.msoCTrue, imagePosition[0], imagePosition[1], imagePosition[2], imagePosition[3]);
-
-                // Change Text Box
-                Ppt.Shape text_box = null;
-                try
-                {
-                    text_box = active_slide.Shapes["Description"];
-                }
-                catch (COMException ex)
-                {
-                    MessageBox.Show($"Text Box named 'Description' not found, create it in the template and name it using selection pane.\n\n" +
-                        $"{ex.Message}" +
-                        $"", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                if (text_box != null)
-                {
-                    text_box.TextFrame.TextRange.Text = $"{text1[rowNum]} \n{text2[rowNum]}"; // Change the text
-                }
-                #endregion
-            }
-            MessageBox.Show("Completed", "Completed");
-            Beaver.CheckLog();
-            #endregion
+            var hwnd = Globals.ThisAddIn.Application.Hwnd;
+            SetForegroundWindow((IntPtr)hwnd);
         }
 
+        public void BringPptToFront(Ppt.Application pptApp)
+        {
+            var hwnd = new IntPtr(pptApp.HWND);
+            SetForegroundWindow(hwnd);
+        }
+
+        private void importToPpt_Click(object sender, EventArgs e)
+        {
+            Ppt.Application pptApp = null;
+            Ppt.Presentation activePpt = null;
+            try
+            {
+                Beaver.InitializeForWorkbook(Globals.ThisAddIn.Application.ActiveWorkbook);
+
+                #region Read Excel
+                Range inputRange = ((RangeTextBox)textBoxAttributeDic["pptImportRange"]).GetRangeForCurrentSheet();
+                try
+                {
+                    CheckRangeSize(inputRange, 0, 4, "Import Range", true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error");
+                    return;
+                }
+
+                string[] imagePaths = GetContentsAsStringArray(inputRange.Columns[1].Cells, false);
+
+                #region Check and Get Shape Names
+                string[] shapeNames = null;
+                HashSet<string> shapeNamesSet = new HashSet<string>();
+                {
+                    Range headerRange = ((RangeTextBox)textBoxAttributeDic["pptImportHeaderRow"]).GetRangeForCurrentSheet();
+                    int headerRowNum = headerRange.Row;
+                    int inputRangeColNum = inputRange.Column;
+                    Range startCell = inputRange.Worksheet.Cells[headerRowNum, inputRangeColNum + 3];
+                    Range endRange = inputRange.Worksheet.Cells[headerRowNum, inputRangeColNum + inputRange.Columns.Count - 1];
+                    Range shapeNameRange = inputRange.Worksheet.Range[startCell, endRange];
+                    //MessageBox.Show($"header range address = {textBoxNameRange.Address}");
+                    shapeNames = GetContentsAsStringArray(shapeNameRange, false);
+                    foreach (string name in shapeNames) { 
+                        if (shapeNamesSet.Contains(name)) { continue; }
+                        else { shapeNamesSet.Add(name);}
+                    }
+                }
+
+                object[,] shapeContents;
+                {
+                    Range shapeContentsRange = inputRange.Offset[0, 3].Resize[inputRange.Rows.Count, inputRange.Columns.Count - 3];
+                    shapeContents = GetContentsAsObject2DArray(shapeContentsRange);
+                }
+                #endregion                
+
+                #endregion
+
+                #region Open ppt
+
+                string pptPath = dispPptFile.Text;
+                try
+                {
+                    pptApp = new Ppt.Application();
+                    pptApp.Visible = MsoTriState.msoTrue;
+                    activePpt = pptApp.Presentations.Open(pptPath);
+                }
+                catch (Exception ex)
+                {
+                    if (activePpt != null)
+                    {
+                        activePpt.Close();
+                        Marshal.ReleaseComObject(activePpt);
+                    }
+                    if (pptApp != null)
+                    {
+                        pptApp.Quit();
+                        Marshal.ReleaseComObject(pptApp);
+                    }
+
+                    MessageBox.Show($"Unable to access ppt file" + ex.Message, "Error");
+                    //throw new Exception($"Unable to access ppt file" + ex.Message);
+                    return;
+                }
+                #endregion
+
+                #region Check Shape Names Exist
+                if (activePpt.Slides.Count < 1) { throw new Exception("Number of slides in reference ppt must be greater than 1"); }
+                Ppt.Slide baseSlide = activePpt.Slides[1];
+                bool[] shapeExist = new bool[shapeNames.Length];
+
+                foreach (Ppt.Shape shape in baseSlide.Shapes) { 
+                    if (shapeNamesSet.Contains(shape.Name)) { shapeNamesSet.Remove(shape.Name); }
+                }
+
+                if (shapeNamesSet.Count > 0) {
+                    BringExcelToFront();
+                    string shapeNameConcat = "";
+                    foreach (string name in shapeNamesSet) { shapeNameConcat += $"\"{name}\", "; }
+                    throw new Exception($"Shape(s) named {shapeNameConcat.Substring(0,shapeNameConcat.Length-2)} not found, create it in the template and name it using selection pane.");
+                }
+                #endregion
+
+                #region Get Insert Location
+                int insertLoc = ((AttributeTextBox)textBoxAttributeDic["pptInsertLoc"]).GetIntFromTextBox();
+                if (insertLoc > activePpt.Slides.Count || insertLoc < -1) { insertLoc = -1; }
+                #endregion
+
+                #region Loop Through Excel
+                for (int rowNum = 0; rowNum < imagePaths.Length; rowNum++)
+                {
+                    #region Checks Image Path
+                    string imagePath = imagePaths[rowNum];
+                    if (imagePaths[rowNum] == "")
+                    {
+                        continue;
+                    }
+
+                    // Check if image file exist
+                    if (!File.Exists(imagePaths[rowNum]))
+                    {
+                        Beaver.LogError($"File path not found at row {rowNum} of input range. Image not added.\n{imagePath}");
+                        continue;
+                    }
+                    #endregion
+
+                    #region Add new slide
+                    Ppt.Slide activeSlide = activePpt.Slides[1].Duplicate()[1];
+                    if (insertLoc == -1) {
+                        activeSlide.MoveTo(activePpt.Slides.Count); // Move to back
+                    }
+                    else
+                    {
+                        activeSlide.MoveTo(insertLoc + 1); // Move to back
+                        insertLoc++;
+                    }
+
+                    #endregion
+
+
+                    #region Modify Slide
+                    // Add image 
+                    float[] imagePosition = GetImageLocation(imagePath);
+                    activeSlide.Shapes.AddPicture(imagePath, MsoTriState.msoFalse, MsoTriState.msoCTrue, imagePosition[0], imagePosition[1], imagePosition[2], imagePosition[3]);
+
+                    // Change Shape 
+                    HashSet<string> modifiedShapeNames = new HashSet<string>();
+                    for (int colIndex = 0; colIndex < shapeNames.Length; colIndex++)
+                    {
+                        string shapeName = shapeNames[colIndex];
+                        Ppt.Shape shape = null;
+                        try
+                        {
+                            shape = activeSlide.Shapes[shapeName];
+                            if (!modifiedShapeNames.Contains(shapeName)) 
+                            {
+                                // Change the text
+                                shape.TextFrame.TextRange.Text = shapeContents[rowNum, colIndex].ToString();
+                            }
+                            else 
+                            {
+                                // Concat text
+                                shape.TextFrame.TextRange.Text = shape.TextFrame.TextRange.Text + "\n" + shapeContents[rowNum, colIndex].ToString();
+                            }
+                            modifiedShapeNames.Add(shapeName);
+                        }
+                        catch (Exception ex)
+                        {
+                            Beaver.LogError($"Unable to change text in shape named {shapeName}\n ErrorMsg: {ex.Message}");
+                        }
+                    }
+                    #endregion
+                }
+                #endregion
+
+                if (deleteRefCheck.Checked) { baseSlide.Delete(); }
+                BringExcelToFront();
+                Beaver.CheckLog();
+                MessageBox.Show("Images added to ppt, please check and save ppt as required.", "Completed");
+                BringPptToFront(pptApp);                
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+            finally
+            {
+                pptApp = null;
+                activePpt = null;
+            }
+            
+        }
+
+
+        //private void importToPpt_Click(object sender, EventArgs e)
+        //{
+        //    Beaver.InitializeForWorkbook(Globals.ThisAddIn.Application.ActiveWorkbook);
+
+        //    #region Read Excel
+        //    Range inputRange = ((RangeTextBox)TextBoxAttributeDic["pptImportRange"]).GetRangeFromFullAddress();
+        //    try
+        //    {
+        //        //CheckRangeSize(inputRange, 0, 4, "Import Range", true);
+        //        CheckRangeSize(inputRange, 0, 3);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message, "Error");
+        //        return;
+        //    }
+
+        //    string[] text1 = GetContentsAsStringArray(inputRange.Columns[1].Cells, false);
+        //    string[] text2 = GetContentsAsStringArray(inputRange.Columns[2].Cells, false);
+        //    string[] imagePaths = GetContentsAsStringArray(inputRange.Columns[3].Cells, false);
+        //    #endregion
+
+        //    Ppt.Application pptApp = null;
+        //    Ppt.Presentation activePpt = null;
+
+        //    #region Open ppt
+        //    string pptPath = dispPptFile.Text;
+        //    try
+        //    {
+        //        pptApp = new Ppt.Application();
+        //        pptApp.Visible = MsoTriState.msoTrue;
+        //        activePpt = pptApp.Presentations.Open(pptPath);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (activePpt != null)
+        //        {
+        //            activePpt.Close();
+        //            Marshal.ReleaseComObject(activePpt);
+        //        }
+        //        if (pptApp != null)
+        //        {
+        //            pptApp.Quit();
+        //            Marshal.ReleaseComObject(pptApp);
+        //        }
+
+        //        MessageBox.Show($"Unable to access ppt file" + ex.Message, "Error");
+        //        //throw new Exception($"Unable to access ppt file" + ex.Message);
+        //        return;
+        //    }
+        //    #endregion
+
+        //    #region Loop Through Excel
+        //    for (int rowNum = 0; rowNum < imagePaths.Length; rowNum++)
+        //    {
+        //        #region Checks and Assignments
+        //        string imagePath = imagePaths[rowNum];
+        //        if (imagePaths[rowNum] == "")
+        //        {
+        //            continue;
+        //        }
+
+        //        // Check if image file exist
+        //        if (!File.Exists(imagePaths[rowNum]))
+        //        {
+        //            Beaver.LogError($"File path not found at row {rowNum} of input range. Image not added.\n{imagePath}");
+        //            continue;
+        //        }
+        //        #endregion
+
+        //        #region Add to ppt
+        //        // Add a slide to the presentation
+        //        Ppt.Slide active_slide = activePpt.Slides[1].Duplicate()[1];
+        //        active_slide.MoveTo(activePpt.Slides.Count); // Move to back 
+
+        //        // Add image 
+        //        float[] imagePosition = GetImageLocation(imagePath);
+        //        active_slide.Shapes.AddPicture(imagePath, MsoTriState.msoFalse, MsoTriState.msoCTrue, imagePosition[0], imagePosition[1], imagePosition[2], imagePosition[3]);
+
+        //        // Change Text Box
+        //        Ppt.Shape text_box = null;
+        //        try
+        //        {
+        //            text_box = active_slide.Shapes["Description"];
+        //        }
+        //        catch (COMException ex)
+        //        {
+        //            MessageBox.Show($"Text Box named 'Description' not found, create it in the template and name it using selection pane.\n\n" +
+        //                $"{ex.Message}" +
+        //                $"", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            return;
+        //        }
+        //        if (text_box != null)
+        //        {
+        //            text_box.TextFrame.TextRange.Text = $"{text1[rowNum]} \n{text2[rowNum]}"; // Change the text
+        //        }
+        //        #endregion
+        //    }
+        //    MessageBox.Show("Completed", "Completed");
+        //    Beaver.CheckLog();
+        //    #endregion
+        //}
         #region Image Boundary
         Ppt.Application pptApp_image = null;
         Ppt.Presentation activePpt_image = null;
@@ -257,10 +543,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             {
                 Ppt.Shape rect = activePpt_image.Slides[1].Shapes["Reference Rectangle"];
                 // Write to properties
-                TextBoxAttributeDic["insertX_report"].SetValue(Math.Ceiling(rect.Left).ToString());
-                TextBoxAttributeDic["insertY_report"].SetValue(Math.Ceiling(rect.Top).ToString());
-                TextBoxAttributeDic["widthX_report"].SetValue(Math.Ceiling(rect.Width).ToString());
-                TextBoxAttributeDic["heightY_report"].SetValue(Math.Ceiling(rect.Height).ToString());
+                textBoxAttributeDic["insertX_report"].SetValue(Math.Ceiling(rect.Left).ToString());
+                textBoxAttributeDic["insertY_report"].SetValue(Math.Ceiling(rect.Top).ToString());
+                textBoxAttributeDic["widthX_report"].SetValue(Math.Ceiling(rect.Width).ToString());
+                textBoxAttributeDic["heightY_report"].SetValue(Math.Ceiling(rect.Height).ToString());
 
                 MessageBox.Show($"Values set.", "Completed");
             }
@@ -321,7 +607,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             finally
             {
                 pptApp = null;
-            }   
+            }
         }
 
         private int[] FindImageLocation_1(string imagePath, Ppt.Slide activeSlide, double offXP = 0, double offYP = 0, double clearanceX = 0.95, double clearanceY = 0.95)
@@ -370,10 +656,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             try
             {
-                insertX = TextBoxAttributeDic["insertX_report"].GetFloatFromTextBox();
-                insertY = TextBoxAttributeDic["insertY_report"].GetFloatFromTextBox();
-                inputWidth = TextBoxAttributeDic["widthX_report"].GetFloatFromTextBox();
-                inputHeight = TextBoxAttributeDic["heightY_report"].GetFloatFromTextBox();
+                insertX = textBoxAttributeDic["insertX_report"].GetFloatFromTextBox();
+                insertY = textBoxAttributeDic["insertY_report"].GetFloatFromTextBox();
+                inputWidth = textBoxAttributeDic["widthX_report"].GetFloatFromTextBox();
+                inputHeight = textBoxAttributeDic["heightY_report"].GetFloatFromTextBox();
             }
             catch (Exception ex)
             {
@@ -404,7 +690,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #endregion
 
             #region Center image
-            float finalInsertX = insertX + inputWidth / 2 - finalWidth/2;
+            float finalInsertX = insertX + inputWidth / 2 - finalWidth / 2;
             float finalInsertY = insertY + inputHeight / 2 - finalHeight / 2;
             #endregion
 
@@ -426,10 +712,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 int startDelay;
                 try
                 {
-                    double startDelayD = TextBoxAttributeDic["startDelay_report"].GetDoubleFromTextBox();
+                    double startDelayD = textBoxAttributeDic["startDelay_report"].GetDoubleFromTextBox();
                     startDelay = Convert.ToInt32(startDelayD * 1000); // Convert from seconds
 
-                    double loadDelayD = TextBoxAttributeDic["loadDelay_report"].GetDoubleFromTextBox();
+                    double loadDelayD = textBoxAttributeDic["loadDelay_report"].GetDoubleFromTextBox();
                     loadDelay = Convert.ToInt32(loadDelayD * 1000); // Convert from seconds
                 }
                 catch (Exception ex)
@@ -443,7 +729,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 Range runRange;
                 try
                 {
-                    runRange = ((RangeTextBox)TextBoxAttributeDic["etabsRunRange_report"]).GetRangeFromFullAddress();
+                    runRange = ((RangeTextBox)textBoxAttributeDic["etabsRunRange_report"]).GetRangeFromFullAddress();
                     CheckRangeSize(runRange, 0, 2, "etabsRunRange_report");
                 }
                 catch (Exception ex)
@@ -459,9 +745,27 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 #region Get Screnshot Dimensions and Path
                 string folderPath;
                 int[] dimensions;
+
+                //if (dispSCFolder.Text == "") { 
+                //    MessageBox.Show("empty"); return; 
+                //}
+                //else
+                //{
+                //    try
+                //    {
+                //        folderPath = ((DirectoryTextBox)textBoxAttributeDic["scFolderPath_report"]).CheckAndGetPath();
+                //        dimensions = GetScreenshotBoundsFromTextBox();
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        MessageBox.Show(ex.Message, "Error");
+                //        return;
+                //    }
+                //}
+
                 try
                 {
-                    folderPath = ((DirectoryTextBox)TextBoxAttributeDic["scFolderPath_report"]).CheckAndGetPath();
+                    folderPath = ((DirectoryTextBox)textBoxAttributeDic["scFolderPath_report"]).CheckAndGetPath();
                     dimensions = GetScreenshotBoundsFromTextBox();
                 }
                 catch (Exception ex)
@@ -469,20 +773,17 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     MessageBox.Show(ex.Message, "Error");
                     return;
                 }
-
-
-                
                 #endregion
 
                 #region Check
                 progressTracker.UpdateStatus($"Warning Message");
                 DialogResult result = MessageBox.Show(
                 "WARNING: This will trigger a series of keyboard inputs, even in other softwares.\n" +
-                $"Do you want to proceed?\nYou have {startDelay/1000}s to go to the right software.",
+                $"Do you want to proceed?\nYou have {startDelay / 1000}s to go to the right software.",
                 "Warning", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.No) { return; }
-                progressTracker.UpdateStatus($"Pause for {startDelay/ 1000}s");
+                progressTracker.UpdateStatus($"Pause for {startDelay / 1000}s");
                 System.Threading.Thread.Sleep(startDelay); // Wait for 5 seconds
                 #endregion
 
@@ -493,13 +794,13 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     if (toPrint[rowNum] == "1")
                     {
                         string fileName = fileNames[rowNum];
-                        string filePath = Path.Combine(folderPath, fileName + ".png");      
+                        string filePath = Path.Combine(folderPath, fileName + ".png");
                         CaptureScreenOnce(filePath, dimensions);
                     }
                     SendKeys.SendWait("{PGUP}"); // Page Up
                     System.Threading.Thread.Sleep(loadDelay); // Wait
 
-                    worker.ReportProgress(ConvertToProgress(rowNum+1, toPrint.Length));
+                    worker.ReportProgress(ConvertToProgress(rowNum + 1, toPrint.Length));
                     if (worker.CancellationPending)
                     {
                         return;
@@ -510,7 +811,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 MessageBox.Show("Completed", "Completed");
             });
         }
-
 
         private void saveEtabsImage_Click_Og(object sender, EventArgs e)
         {
@@ -615,10 +915,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             //boundsForm.TopMost = false;
 
             int[] boundary = new int[4];
-            boundary[0] = TextBoxAttributeDic["scWidth_report"].GetIntFromTextBox();
-            boundary[1] = TextBoxAttributeDic["scHeight_report"].GetIntFromTextBox();
-            boundary[2] = TextBoxAttributeDic["scX_report"].GetIntFromTextBox();
-            boundary[3] = TextBoxAttributeDic["scY_report"].GetIntFromTextBox();
+            boundary[0] = textBoxAttributeDic["scWidth_report"].GetIntFromTextBox();
+            boundary[1] = textBoxAttributeDic["scHeight_report"].GetIntFromTextBox();
+            boundary[2] = textBoxAttributeDic["scX_report"].GetIntFromTextBox();
+            boundary[3] = textBoxAttributeDic["scY_report"].GetIntFromTextBox();
 
             boundsForm.FormClosed += BoundsForm_FormClosed;
             boundsForm.CloseButton.Text = "Cancel";
@@ -630,16 +930,16 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         {
             if (boundsForm == null)
             {
-                MessageBox.Show($"No instance of bounds application found.","Error");
+                MessageBox.Show($"No instance of bounds application found.", "Error");
                 return;
             }
 
             int[] boundary = boundsForm.GetAdjustedDimensions();
-            TextBoxAttributeDic["scWidth_report"].SetValue(boundary[0].ToString());
-            TextBoxAttributeDic["scHeight_report"].SetValue(boundary[1].ToString());
-            TextBoxAttributeDic["scX_report"].SetValue(boundary[2].ToString());
-            TextBoxAttributeDic["scY_report"].SetValue(boundary[3].ToString());
-            
+            textBoxAttributeDic["scWidth_report"].SetValue(boundary[0].ToString());
+            textBoxAttributeDic["scHeight_report"].SetValue(boundary[1].ToString());
+            textBoxAttributeDic["scX_report"].SetValue(boundary[2].ToString());
+            textBoxAttributeDic["scY_report"].SetValue(boundary[3].ToString());
+
             boundsForm.Close();
             MessageBox.Show("Boundary updated.", "Completed");
         }
@@ -655,15 +955,15 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             int[] dimensions = new int[4];
             try
             {
-                dimensions[0] = TextBoxAttributeDic["scWidth_report"].GetIntFromTextBox();
-                dimensions[1] = TextBoxAttributeDic["scHeight_report"].GetIntFromTextBox();
-                dimensions[2] = TextBoxAttributeDic["scX_report"].GetIntFromTextBox();
-                dimensions[3] = TextBoxAttributeDic["scY_report"].GetIntFromTextBox();
+                dimensions[0] = textBoxAttributeDic["scWidth_report"].GetIntFromTextBox();
+                dimensions[1] = textBoxAttributeDic["scHeight_report"].GetIntFromTextBox();
+                dimensions[2] = textBoxAttributeDic["scX_report"].GetIntFromTextBox();
+                dimensions[3] = textBoxAttributeDic["scY_report"].GetIntFromTextBox();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error getting screenshot dimesions {ex.Message}");
-                
+
             }
             return dimensions;
         }
@@ -676,14 +976,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             string folderPath;
             try
             {
-                folderPath = ((DirectoryTextBox)TextBoxAttributeDic["scFolderPath_report"]).CheckAndGetPath();
+                folderPath = ((DirectoryTextBox)textBoxAttributeDic["scFolderPath_report"]).CheckAndGetPath();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error");
                 return;
             }
-            
+
             string fileName = "Test Screenshot.png";
             string filePath = Path.Combine(folderPath, fileName);
             #endregion

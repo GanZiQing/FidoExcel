@@ -150,7 +150,7 @@
             this.resetFontColourCheckSheetCheck.Location = new System.Drawing.Point(24, 102);
             this.resetFontColourCheckSheetCheck.Margin = new System.Windows.Forms.Padding(4);
             this.resetFontColourCheckSheetCheck.Name = "resetFontColourCheckSheetCheck";
-            this.resetFontColourCheckSheetCheck.Size = new System.Drawing.Size(306, 28);
+            this.resetFontColourCheckSheetCheck.Size = new System.Drawing.Size(328, 29);
             this.resetFontColourCheckSheetCheck.TabIndex = 58;
             this.resetFontColourCheckSheetCheck.Text = "Reset Font Colour (Check Sheet)";
             this.resetFontColourCheckSheetCheck.UseVisualStyleBackColor = true;
@@ -161,7 +161,7 @@
             this.resetFontColourRebarTableCheck.Location = new System.Drawing.Point(24, 66);
             this.resetFontColourRebarTableCheck.Margin = new System.Windows.Forms.Padding(4);
             this.resetFontColourRebarTableCheck.Name = "resetFontColourRebarTableCheck";
-            this.resetFontColourRebarTableCheck.Size = new System.Drawing.Size(302, 28);
+            this.resetFontColourRebarTableCheck.Size = new System.Drawing.Size(321, 29);
             this.resetFontColourRebarTableCheck.TabIndex = 57;
             this.resetFontColourRebarTableCheck.Text = "Reset Font Colour (Rebar Table)";
             this.resetFontColourRebarTableCheck.UseVisualStyleBackColor = true;
@@ -172,7 +172,7 @@
             this.backupSheetCheck.Location = new System.Drawing.Point(24, 28);
             this.backupSheetCheck.Margin = new System.Windows.Forms.Padding(4);
             this.backupSheetCheck.Name = "backupSheetCheck";
-            this.backupSheetCheck.Size = new System.Drawing.Size(206, 28);
+            this.backupSheetCheck.Size = new System.Drawing.Size(225, 29);
             this.backupSheetCheck.TabIndex = 56;
             this.backupSheetCheck.Text = "Create Backup Sheet";
             this.backupSheetCheck.UseVisualStyleBackColor = true;
@@ -238,7 +238,7 @@
             this.overwriteRebarCheck.Location = new System.Drawing.Point(24, 174);
             this.overwriteRebarCheck.Margin = new System.Windows.Forms.Padding(4);
             this.overwriteRebarCheck.Name = "overwriteRebarCheck";
-            this.overwriteRebarCheck.Size = new System.Drawing.Size(211, 28);
+            this.overwriteRebarCheck.Size = new System.Drawing.Size(227, 29);
             this.overwriteRebarCheck.TabIndex = 54;
             this.overwriteRebarCheck.Text = "Overwrite Initial Rebar";
             this.overwriteRebarCheck.UseVisualStyleBackColor = true;
@@ -249,7 +249,7 @@
             this.unifyChangesCheck.Location = new System.Drawing.Point(24, 212);
             this.unifyChangesCheck.Margin = new System.Windows.Forms.Padding(4);
             this.unifyChangesCheck.Name = "unifyChangesCheck";
-            this.unifyChangesCheck.Size = new System.Drawing.Size(258, 28);
+            this.unifyChangesCheck.Size = new System.Drawing.Size(279, 29);
             this.unifyChangesCheck.TabIndex = 55;
             this.unifyChangesCheck.Text = "Unify Changes After Design";
             this.unifyChangesCheck.UseVisualStyleBackColor = true;
@@ -569,6 +569,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "WallDesign";

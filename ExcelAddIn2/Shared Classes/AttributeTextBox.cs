@@ -865,6 +865,33 @@ namespace ExcelAddIn2
             }
         }
 
+        public Range GetRangeForCurrentSheet()
+        {
+            #region Input Checks
+            if (withSheet)
+            {
+                throw new Exception($"Unable to get range for {attName} with specific sheet, provided input has sheet name");
+            }
+
+            string cellAddress = rangeTextBox.Text;
+            if (cellAddress == "")
+            {
+                throw new Exception($"Empty input for {attName}");
+            }
+            #endregion
+
+            try
+            {
+                Worksheet ThisWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
+                Range returnRange = ThisWorksheet.Range[cellAddress];
+                return returnRange;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error Returning Range at ${Globals.ThisAddIn.Application.ActiveSheet.Name}!${cellAddress} for {attName}\n {ex.Message}");
+            }
+        }
+
         public string GetFirstCellContent()
         {
             Range referencedCell = GetRangeFromFullAddress();

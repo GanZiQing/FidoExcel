@@ -50,13 +50,14 @@ namespace ExcelAddIn2
             AddContextStripEvent(importSpecificFile, "Get from Dialogue Box", (sender, e) => importSpecificFile_Click(sender, e));
             AddContextStripEvent(importSpecificFileNames, "Get from Dialogue Box", (sender, e) => importSpecificFileNames_Click(sender, e));
         }
-        private void AddContextStripEvent(System.Windows.Forms.Button button, string contextText, EventHandler eventHandler)
-        {
-            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
-            ToolStripMenuItem newItem = new ToolStripMenuItem(contextText);
-            button.ContextMenuStrip.Items.Add(newItem);
-            newItem.Click += eventHandler;
-        }
+        // Moved to common utilities
+        //private void AddContextStripEvent(System.Windows.Forms.Button button, string contextText, EventHandler eventHandler)
+        //{
+        //    if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+        //    ToolStripMenuItem newItem = new ToolStripMenuItem(contextText);
+        //    button.ContextMenuStrip.Items.Add(newItem);
+        //    newItem.Click += eventHandler;
+        //}
 
         bool attributeCreated = false;
         public void CreateAttributes(ref

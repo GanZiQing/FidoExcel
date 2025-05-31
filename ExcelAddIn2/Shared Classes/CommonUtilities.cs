@@ -527,7 +527,7 @@ namespace ExcelAddIn2
             // Checks that range meets the desired size. Set numRows/numCols = 0 to skip check
             #region Check Rows
             if (numRows == 0) { } // skip check
-            else if (ignoreLargerSize && numRows < selectedRange.Rows.Count)
+            else if (ignoreLargerSize && numRows > selectedRange.Rows.Count)
             {
                 string msg = $"Number of rows expected is at least {numRows}\nNumber of rows selected is {selectedRange.Rows.Count}";
                 if (attName != "")
@@ -549,9 +549,9 @@ namespace ExcelAddIn2
 
             #region Check Columns
             if (numCols == 0) { } // skip check
-            else if (ignoreLargerSize && numCols < selectedRange.Columns.Count)
+            else if (ignoreLargerSize && numCols > selectedRange.Columns.Count)
             {
-                string msg = $"Number of columns expected is at least {numRows}\nNumber of columns selected is {selectedRange.Rows.Count}";
+                string msg = $"Number of columns expected is at least {numCols}\nNumber of columns selected is {selectedRange.Columns.Count}";
                 if (attName != "")
                 {
                     msg = $"Attribute Name: {attName}\n" + msg;
@@ -1416,6 +1416,16 @@ namespace ExcelAddIn2
                     throw new Exception("Terminated by user");
                 }
             }
+        }
+        #endregion
+
+        #region Right Click Menu
+        public static void AddContextStripEvent(System.Windows.Forms.Button button, string contextText, EventHandler eventHandler)
+        {
+            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem newItem = new ToolStripMenuItem(contextText);
+            button.ContextMenuStrip.Items.Add(newItem);
+            newItem.Click += eventHandler;
         }
         #endregion
     }

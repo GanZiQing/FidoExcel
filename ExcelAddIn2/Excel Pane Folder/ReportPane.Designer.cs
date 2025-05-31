@@ -30,6 +30,9 @@
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.deleteRefCheck = new System.Windows.Forms.CheckBox();
+            this.setHeaderRow = new System.Windows.Forms.Button();
+            this.dispHeaderRow = new System.Windows.Forms.TextBox();
             this.importToPpt = new System.Windows.Forms.Button();
             this.setImportRange = new System.Windows.Forms.Button();
             this.dispImportRange = new System.Windows.Forms.TextBox();
@@ -74,6 +77,8 @@
             this.dispScreenshotX = new System.Windows.Forms.TextBox();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
+            this.dispImageLoc = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
             this.tabPage1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -99,10 +104,15 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(6);
             this.tabPage1.Size = new System.Drawing.Size(531, 1484);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Report Gen";
+            this.tabPage1.Text = "Ppt Import";
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.dispImageLoc);
+            this.groupBox4.Controls.Add(this.deleteRefCheck);
+            this.groupBox4.Controls.Add(this.textBox2);
+            this.groupBox4.Controls.Add(this.setHeaderRow);
+            this.groupBox4.Controls.Add(this.dispHeaderRow);
             this.groupBox4.Controls.Add(this.importToPpt);
             this.groupBox4.Controls.Add(this.setImportRange);
             this.groupBox4.Controls.Add(this.dispImportRange);
@@ -110,15 +120,49 @@
             this.groupBox4.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox4.Size = new System.Drawing.Size(502, 149);
+            this.groupBox4.Size = new System.Drawing.Size(502, 278);
             this.groupBox4.TabIndex = 8;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Import to Ppt";
             // 
+            // deleteRefCheck
+            // 
+            this.deleteRefCheck.AutoSize = true;
+            this.deleteRefCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.deleteRefCheck.Location = new System.Drawing.Point(16, 176);
+            this.deleteRefCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.deleteRefCheck.Name = "deleteRefCheck";
+            this.deleteRefCheck.Size = new System.Drawing.Size(237, 29);
+            this.deleteRefCheck.TabIndex = 41;
+            this.deleteRefCheck.Text = "Delete Reference Slide";
+            this.deleteRefCheck.UseVisualStyleBackColor = true;
+            // 
+            // setHeaderRow
+            // 
+            this.setHeaderRow.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setHeaderRow.Location = new System.Drawing.Point(16, 86);
+            this.setHeaderRow.Margin = new System.Windows.Forms.Padding(6);
+            this.setHeaderRow.Name = "setHeaderRow";
+            this.setHeaderRow.Size = new System.Drawing.Size(229, 46);
+            this.setHeaderRow.TabIndex = 28;
+            this.setHeaderRow.Text = "Set Header Row";
+            this.setHeaderRow.UseVisualStyleBackColor = true;
+            // 
+            // dispHeaderRow
+            // 
+            this.dispHeaderRow.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispHeaderRow.Location = new System.Drawing.Point(267, 92);
+            this.dispHeaderRow.Margin = new System.Windows.Forms.Padding(6);
+            this.dispHeaderRow.Name = "dispHeaderRow";
+            this.dispHeaderRow.Size = new System.Drawing.Size(224, 29);
+            this.dispHeaderRow.TabIndex = 29;
+            this.dispHeaderRow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.dispHeaderRow.WordWrap = false;
+            // 
             // importToPpt
             // 
             this.importToPpt.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.importToPpt.Location = new System.Drawing.Point(11, 92);
+            this.importToPpt.Location = new System.Drawing.Point(16, 215);
             this.importToPpt.Margin = new System.Windows.Forms.Padding(6);
             this.importToPpt.Name = "importToPpt";
             this.importToPpt.Size = new System.Drawing.Size(478, 46);
@@ -130,7 +174,7 @@
             // setImportRange
             // 
             this.setImportRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setImportRange.Location = new System.Drawing.Point(11, 35);
+            this.setImportRange.Location = new System.Drawing.Point(15, 28);
             this.setImportRange.Margin = new System.Windows.Forms.Padding(6);
             this.setImportRange.Name = "setImportRange";
             this.setImportRange.Size = new System.Drawing.Size(229, 46);
@@ -141,7 +185,7 @@
             // dispImportRange
             // 
             this.dispImportRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispImportRange.Location = new System.Drawing.Point(262, 41);
+            this.dispImportRange.Location = new System.Drawing.Point(266, 34);
             this.dispImportRange.Margin = new System.Windows.Forms.Padding(6);
             this.dispImportRange.Name = "dispImportRange";
             this.dispImportRange.Size = new System.Drawing.Size(224, 29);
@@ -672,6 +716,30 @@
             this.textBox13.TabStop = false;
             this.textBox13.Text = "Dimensions";
             // 
+            // dispImageLoc
+            // 
+            this.dispImageLoc.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispImageLoc.Location = new System.Drawing.Point(262, 137);
+            this.dispImageLoc.Margin = new System.Windows.Forms.Padding(6);
+            this.dispImageLoc.MaxLength = 100;
+            this.dispImageLoc.Name = "dispImageLoc";
+            this.dispImageLoc.Size = new System.Drawing.Size(229, 29);
+            this.dispImageLoc.TabIndex = 50;
+            this.dispImageLoc.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox2.Location = new System.Drawing.Point(15, 144);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(229, 22);
+            this.textBox2.TabIndex = 51;
+            this.textBox2.TabStop = false;
+            this.textBox2.Text = " Insert After Slide:";
+            // 
             // directoryUserControl1
             // 
             this.directoryUserControl1.Location = new System.Drawing.Point(15, 9);
@@ -684,6 +752,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "ReportPane";
@@ -756,5 +825,10 @@
         private System.Windows.Forms.Button setSCFolder;
         private System.Windows.Forms.TextBox dispSCFolder;
         private DirectoryUserControl directoryUserControl1;
+        private System.Windows.Forms.Button setHeaderRow;
+        private System.Windows.Forms.TextBox dispHeaderRow;
+        private System.Windows.Forms.CheckBox deleteRefCheck;
+        private System.Windows.Forms.TextBox dispImageLoc;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }

@@ -60,10 +60,11 @@
             // EtabsTabGroup
             // 
             this.EtabsTabGroup.Controls.Add(this.windLoadPage);
-            this.EtabsTabGroup.Location = new System.Drawing.Point(3, 3);
+            this.EtabsTabGroup.Location = new System.Drawing.Point(6, 6);
+            this.EtabsTabGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.EtabsTabGroup.Name = "EtabsTabGroup";
             this.EtabsTabGroup.SelectedIndex = 0;
-            this.EtabsTabGroup.Size = new System.Drawing.Size(294, 806);
+            this.EtabsTabGroup.Size = new System.Drawing.Size(539, 1488);
             this.EtabsTabGroup.TabIndex = 4;
             // 
             // windLoadPage
@@ -72,11 +73,11 @@
             this.windLoadPage.Controls.Add(this.groupBox2);
             this.windLoadPage.Controls.Add(this.groupBox1);
             this.windLoadPage.Controls.Add(this.groupBox3);
-            this.windLoadPage.Location = new System.Drawing.Point(4, 22);
-            this.windLoadPage.Margin = new System.Windows.Forms.Padding(2);
+            this.windLoadPage.Location = new System.Drawing.Point(4, 33);
+            this.windLoadPage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.windLoadPage.Name = "windLoadPage";
-            this.windLoadPage.Padding = new System.Windows.Forms.Padding(2);
-            this.windLoadPage.Size = new System.Drawing.Size(286, 780);
+            this.windLoadPage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.windLoadPage.Size = new System.Drawing.Size(531, 1451);
             this.windLoadPage.TabIndex = 1;
             this.windLoadPage.Text = "Wind Load";
             // 
@@ -87,9 +88,11 @@
             this.groupBox2.Controls.Add(this.setJointDataRange);
             this.groupBox2.Controls.Add(this.dispJointDataRange);
             this.groupBox2.Controls.Add(this.assignWL);
-            this.groupBox2.Location = new System.Drawing.Point(5, 233);
+            this.groupBox2.Location = new System.Drawing.Point(9, 430);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(273, 101);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Size = new System.Drawing.Size(500, 186);
             this.groupBox2.TabIndex = 41;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assign Wind Load";
@@ -98,10 +101,10 @@
             // 
             this.replaceLoadCheck.AutoSize = true;
             this.replaceLoadCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.replaceLoadCheck.Location = new System.Drawing.Point(133, 59);
-            this.replaceLoadCheck.Margin = new System.Windows.Forms.Padding(2);
+            this.replaceLoadCheck.Location = new System.Drawing.Point(244, 109);
+            this.replaceLoadCheck.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.replaceLoadCheck.Name = "replaceLoadCheck";
-            this.replaceLoadCheck.Size = new System.Drawing.Size(93, 17);
+            this.replaceLoadCheck.Size = new System.Drawing.Size(158, 29);
             this.replaceLoadCheck.TabIndex = 40;
             this.replaceLoadCheck.Text = "Replace Load";
             this.replaceLoadCheck.UseVisualStyleBackColor = true;
@@ -110,10 +113,10 @@
             // 
             this.refreshViewCheck.AutoSize = true;
             this.refreshViewCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.refreshViewCheck.Location = new System.Drawing.Point(133, 80);
-            this.refreshViewCheck.Margin = new System.Windows.Forms.Padding(2);
+            this.refreshViewCheck.Location = new System.Drawing.Point(244, 148);
+            this.refreshViewCheck.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.refreshViewCheck.Name = "refreshViewCheck";
-            this.refreshViewCheck.Size = new System.Drawing.Size(89, 17);
+            this.refreshViewCheck.Size = new System.Drawing.Size(153, 29);
             this.refreshViewCheck.TabIndex = 40;
             this.refreshViewCheck.Text = "Refresh View";
             this.refreshViewCheck.UseVisualStyleBackColor = true;
@@ -121,9 +124,10 @@
             // setJointDataRange
             // 
             this.setJointDataRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setJointDataRange.Location = new System.Drawing.Point(3, 22);
+            this.setJointDataRange.Location = new System.Drawing.Point(6, 41);
+            this.setJointDataRange.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.setJointDataRange.Name = "setJointDataRange";
-            this.setJointDataRange.Size = new System.Drawing.Size(125, 25);
+            this.setJointDataRange.Size = new System.Drawing.Size(229, 46);
             this.setJointDataRange.TabIndex = 42;
             this.setJointDataRange.Text = "Set Joint Data Range";
             this.setJointDataRange.UseVisualStyleBackColor = true;
@@ -131,18 +135,20 @@
             // dispJointDataRange
             // 
             this.dispJointDataRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispJointDataRange.Location = new System.Drawing.Point(133, 27);
+            this.dispJointDataRange.Location = new System.Drawing.Point(244, 50);
+            this.dispJointDataRange.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispJointDataRange.Name = "dispJointDataRange";
-            this.dispJointDataRange.Size = new System.Drawing.Size(136, 20);
+            this.dispJointDataRange.Size = new System.Drawing.Size(246, 29);
             this.dispJointDataRange.TabIndex = 43;
             this.dispJointDataRange.WordWrap = false;
             // 
             // assignWL
             // 
             this.assignWL.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.assignWL.Location = new System.Drawing.Point(3, 54);
+            this.assignWL.Location = new System.Drawing.Point(6, 100);
+            this.assignWL.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.assignWL.Name = "assignWL";
-            this.assignWL.Size = new System.Drawing.Size(125, 25);
+            this.assignWL.Size = new System.Drawing.Size(229, 46);
             this.assignWL.TabIndex = 41;
             this.assignWL.Text = "Assign WL";
             this.assignWL.UseVisualStyleBackColor = true;
@@ -155,11 +161,11 @@
             this.groupBox1.Controls.Add(this.dispJointSortOrder);
             this.groupBox1.Controls.Add(this.getJointCoordinates);
             this.groupBox1.Controls.Add(this.dispStorySortOrder);
-            this.groupBox1.Location = new System.Drawing.Point(4, 4);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox1.Location = new System.Drawing.Point(7, 7);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(274, 112);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Size = new System.Drawing.Size(502, 207);
             this.groupBox1.TabIndex = 34;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Get ETABS Info";
@@ -167,9 +173,10 @@
             // getLoadPatterns
             // 
             this.getLoadPatterns.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getLoadPatterns.Location = new System.Drawing.Point(5, 80);
+            this.getLoadPatterns.Location = new System.Drawing.Point(9, 148);
+            this.getLoadPatterns.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.getLoadPatterns.Name = "getLoadPatterns";
-            this.getLoadPatterns.Size = new System.Drawing.Size(125, 25);
+            this.getLoadPatterns.Size = new System.Drawing.Size(229, 46);
             this.getLoadPatterns.TabIndex = 34;
             this.getLoadPatterns.Text = "Get Load Patterns";
             this.getLoadPatterns.UseVisualStyleBackColor = true;
@@ -178,9 +185,10 @@
             // getStoryData
             // 
             this.getStoryData.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getStoryData.Location = new System.Drawing.Point(5, 17);
+            this.getStoryData.Location = new System.Drawing.Point(9, 31);
+            this.getStoryData.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.getStoryData.Name = "getStoryData";
-            this.getStoryData.Size = new System.Drawing.Size(125, 25);
+            this.getStoryData.Size = new System.Drawing.Size(229, 46);
             this.getStoryData.TabIndex = 30;
             this.getStoryData.Text = "Get Story Data";
             this.getStoryData.UseVisualStyleBackColor = true;
@@ -196,18 +204,19 @@
             "X, Z, Y",
             "Y, X, Z",
             "Y, Z, X"});
-            this.dispJointSortOrder.Location = new System.Drawing.Point(135, 53);
-            this.dispJointSortOrder.Margin = new System.Windows.Forms.Padding(2);
+            this.dispJointSortOrder.Location = new System.Drawing.Point(248, 98);
+            this.dispJointSortOrder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dispJointSortOrder.Name = "dispJointSortOrder";
-            this.dispJointSortOrder.Size = new System.Drawing.Size(136, 21);
+            this.dispJointSortOrder.Size = new System.Drawing.Size(246, 32);
             this.dispJointSortOrder.TabIndex = 32;
             // 
             // getJointCoordinates
             // 
             this.getJointCoordinates.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getJointCoordinates.Location = new System.Drawing.Point(5, 48);
+            this.getJointCoordinates.Location = new System.Drawing.Point(9, 89);
+            this.getJointCoordinates.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.getJointCoordinates.Name = "getJointCoordinates";
-            this.getJointCoordinates.Size = new System.Drawing.Size(125, 25);
+            this.getJointCoordinates.Size = new System.Drawing.Size(229, 46);
             this.getJointCoordinates.TabIndex = 29;
             this.getJointCoordinates.Text = "Get Joint Coordinates";
             this.getJointCoordinates.UseVisualStyleBackColor = true;
@@ -219,10 +228,10 @@
             this.dispStorySortOrder.Items.AddRange(new object[] {
             "Top to Bottom",
             "Bottom to Top"});
-            this.dispStorySortOrder.Location = new System.Drawing.Point(135, 24);
-            this.dispStorySortOrder.Margin = new System.Windows.Forms.Padding(2);
+            this.dispStorySortOrder.Location = new System.Drawing.Point(248, 44);
+            this.dispStorySortOrder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dispStorySortOrder.Name = "dispStorySortOrder";
-            this.dispStorySortOrder.Size = new System.Drawing.Size(136, 21);
+            this.dispStorySortOrder.Size = new System.Drawing.Size(246, 32);
             this.dispStorySortOrder.TabIndex = 33;
             // 
             // groupBox3
@@ -232,11 +241,11 @@
             this.groupBox3.Controls.Add(this.calAWL);
             this.groupBox3.Controls.Add(this.setStoryRange);
             this.groupBox3.Controls.Add(this.dispStoryRange);
-            this.groupBox3.Location = new System.Drawing.Point(4, 120);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Location = new System.Drawing.Point(7, 222);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox3.Size = new System.Drawing.Size(274, 108);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Size = new System.Drawing.Size(502, 199);
             this.groupBox3.TabIndex = 29;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Calculate WL";
@@ -247,18 +256,19 @@
             this.dispWindLoadDir.Items.AddRange(new object[] {
             "X",
             "Y"});
-            this.dispWindLoadDir.Location = new System.Drawing.Point(135, 53);
-            this.dispWindLoadDir.Margin = new System.Windows.Forms.Padding(2);
+            this.dispWindLoadDir.Location = new System.Drawing.Point(248, 98);
+            this.dispWindLoadDir.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dispWindLoadDir.Name = "dispWindLoadDir";
-            this.dispWindLoadDir.Size = new System.Drawing.Size(136, 21);
+            this.dispWindLoadDir.Size = new System.Drawing.Size(246, 32);
             this.dispWindLoadDir.TabIndex = 36;
             // 
             // label1
             // 
             this.label1.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label1.Location = new System.Drawing.Point(26, 51);
+            this.label1.Location = new System.Drawing.Point(48, 94);
+            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 20);
+            this.label1.Size = new System.Drawing.Size(147, 37);
             this.label1.TabIndex = 35;
             this.label1.Text = "Wind Load Dir. ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -266,9 +276,10 @@
             // calAWL
             // 
             this.calAWL.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.calAWL.Location = new System.Drawing.Point(74, 75);
+            this.calAWL.Location = new System.Drawing.Point(136, 138);
+            this.calAWL.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.calAWL.Name = "calAWL";
-            this.calAWL.Size = new System.Drawing.Size(125, 25);
+            this.calAWL.Size = new System.Drawing.Size(229, 46);
             this.calAWL.TabIndex = 31;
             this.calAWL.Text = "Calculate AWL";
             this.calAWL.UseVisualStyleBackColor = true;
@@ -277,9 +288,10 @@
             // setStoryRange
             // 
             this.setStoryRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setStoryRange.Location = new System.Drawing.Point(5, 17);
+            this.setStoryRange.Location = new System.Drawing.Point(9, 31);
+            this.setStoryRange.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.setStoryRange.Name = "setStoryRange";
-            this.setStoryRange.Size = new System.Drawing.Size(125, 25);
+            this.setStoryRange.Size = new System.Drawing.Size(229, 46);
             this.setStoryRange.TabIndex = 27;
             this.setStoryRange.Text = "Set Story Range";
             this.setStoryRange.UseVisualStyleBackColor = true;
@@ -287,19 +299,22 @@
             // dispStoryRange
             // 
             this.dispStoryRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispStoryRange.Location = new System.Drawing.Point(135, 21);
+            this.dispStoryRange.Location = new System.Drawing.Point(248, 39);
+            this.dispStoryRange.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.dispStoryRange.Name = "dispStoryRange";
-            this.dispStoryRange.Size = new System.Drawing.Size(136, 20);
+            this.dispStoryRange.Size = new System.Drawing.Size(246, 29);
             this.dispStoryRange.TabIndex = 28;
             this.dispStoryRange.WordWrap = false;
             // 
             // ETABSTaskPane
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.Controls.Add(this.EtabsTabGroup);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "ETABSTaskPane";
-            this.Size = new System.Drawing.Size(300, 812);
+            this.Size = new System.Drawing.Size(550, 1499);
             this.EtabsTabGroup.ResumeLayout(false);
             this.windLoadPage.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

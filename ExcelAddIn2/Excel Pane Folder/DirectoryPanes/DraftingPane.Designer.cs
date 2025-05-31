@@ -536,6 +536,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.Controls.Add(this.ExcelTabControl);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "DraftingPane";
