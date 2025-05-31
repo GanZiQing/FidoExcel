@@ -13,6 +13,7 @@ using System.IO;
 using System.Diagnostics;
 using static ExcelAddIn2.CommonUtilities;
 using System.Text.RegularExpressions;
+using System.Diagnostics.Eventing.Reader;
 
 namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
 {
@@ -34,8 +35,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             #region Base
             AttributeTextBox attTB = new FileTextBox("etabsOutputFile_WC", dispEtabsOutputFile, setEtabsOutputFile);
             attributeDic.Add(attTB.attName, attTB);
-            //var att = new CheckBoxAttribute("copyFromEtabs_WC", copyFromEtabsCheck);
+            
             attTB = new FileTextBox("bimOutputFile_WC", dispBimOutputFile, setBimOutputFile);
+            attributeDic.Add(attTB.attName, attTB);
+
+            attTB = new SheetTextBox("wallCheckSheet_WC", dispWallCheckSheet, setWallCheckSheet);
+            attributeDic.Add(attTB.attName, attTB);
+
+            attTB = new SheetTextBox("colCheckSheet_WC", dispColCheckSheet, setColCheckSheet);
             attributeDic.Add(attTB.attName, attTB);
             #endregion
 
@@ -60,8 +67,19 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
 
             attTB = new AttributeTextBox("labelShtNm_WC", dispLabelMapShtNm, "Label Mapping");
             attributeDic.Add(attTB.attName, attTB);
+
+            attTB = new AttributeTextBox("dispColOuputColNum_WC", dispColOuputColNum, "14");
+            attTB.type = "int";
+            attributeDic.Add(attTB.attName, attTB);
+
+            attTB = new AttributeTextBox("dispWallOuputColNum_WC", dispWallOuputColNum, "26");
+            attTB.type = "int";
+            attributeDic.Add(attTB.attName, attTB);
+
+            var att = new CheckBoxAttribute("copyFailedToClip_WC", copyFailedCheck, true);
+            attributeDic.Add(att.attName, att);
             #endregion
-            
+
         }
         private void AddToolTips()
         {
@@ -78,13 +96,16 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         #region Check Walls
         private void checkWalls_Click(object sender, EventArgs e)
         {
-            
             try
             {
                 Stopwatch totalStopwatch = Stopwatch.StartNew();
                 Globals.ThisAddIn.Application.ScreenUpdating = false;
+
+                Worksheet worksheet = ((SheetTextBox)attributeDic["wallCheckSheet_WC"]).getSheet();
+                worksheet.Activate();
+
                 ReadMapping();
-                ReadETABSInput();
+                ReadETABSInput(worksheet);
                 ReadBIMInput();
                 MatchDesignLabels(totalStopwatch);
                 //totalStopwatch.Stop();
@@ -101,6 +122,36 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             }
         }
 
+        #endregion
+
+        #region Check Cols
+        private void checkCols_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Stopwatch totalStopwatch = Stopwatch.StartNew();
+                Globals.ThisAddIn.Application.ScreenUpdating = false;
+
+                Worksheet worksheet = ((SheetTextBox)attributeDic["colCheckSheet_WC"]).getSheet();
+                worksheet.Activate();
+
+                ReadMapping();
+                ReadETABSInput(worksheet);
+                ReadBIMInput();
+                MatchColDesignLabels(totalStopwatch);
+                //totalStopwatch.Stop();
+                MessageBox.Show($"Total Execution Time: {totalStopwatch.ElapsedMilliseconds} ms", "Completed");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+            finally
+            {
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
+                storeyMap = null;
+                labelMap = null;
+                etabsRange = null;
+                wallToGroupingDic = null;
+            }
+        }
         #endregion
 
         #region Copy from ETABS
@@ -164,16 +215,17 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         }
 
         ExcelTableRange etabsRange;
-        private void ReadETABSInput()
+        private void ReadETABSInput(Worksheet worksheet)
         {
             try
             {
-                Range destinationRange = Globals.ThisAddIn.Application.ActiveWorkbook.ActiveSheet.Range["A4"];
-                etabsRange = new ExcelTableRange("etabs", destinationRange.Worksheet);
+                //Range destinationRange = worksheet.Range["A4"];
+                etabsRange = new ExcelTableRange("etabs", worksheet);
                 etabsRange.GetUsedRangeFromStart(2, 1, 2);
             }
             catch (Exception ex) { throw new Exception("Error reading ETABS Input table\n" + ex.Message); }
-        }        
+        }
+
         Dictionary<string, DesignGroupBIM> designGroupsDic;
         Dictionary<string, string> wallToGroupingDic;
         private void ReadBIMInput()
@@ -268,7 +320,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             int numRows = etabsRange.activeRange.Rows.Count;
             string[] etabsStorey = GetContentsAsStringArray(etabsRange.GetDataColumnAsRange("Story"), false);
             string[] etabsPierLabel = GetContentsAsStringArray(etabsRange.GetDataColumnAsRange("Pier Label"), false);
-            //string[] matchedStorey = new string[numRows];
+
             string[] matchedLabel = new string[numRows];
             string[] matchedDesignGroup = new string[numRows];
             
@@ -286,25 +338,44 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             #endregion
 
             #region Clear formats
-            Range verticalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 29];
-            Range horizontalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 32];
-            Range matchResultRange = etabsRange.activeRange.Columns[1].Offset[0, 35];
-            Range thicknessCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 36];
-            Range lengthCheckRange = etabsRange.activeRange.Columns[1].Offset[0, 37];
+            int outputColNum = ((AttributeTextBox)attributeDic["dispWallOuputColNum_WC"]).GetIntFromTextBox() - 1;
+            Range verticalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 4];
+            Range horizontalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 7];
+            Range matchResultRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 10];
+            Range thicknessCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 11];
+            Range lengthCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 12];
             verticalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
             horizontalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
             matchResultRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
             #endregion
 
+            #region Error Functions
             Range errorFormatRange = null;
             HashSet<string> errorPiers = new HashSet<string>();
+
+            void AddToErrorRange(Range targetRange, int rowNum)
+            {
+                if (errorFormatRange == null) { errorFormatRange = targetRange.Rows[rowNum + 1]; }
+                else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, targetRange.Rows[rowNum + 1]); }
+                if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+            }
+            #endregion
 
             for (int rowNum = 0; rowNum < numRows; rowNum++)
             {
                 #region Match to Design Values
-                //matchedStorey[rowNum] = storeyMap.GetDesignName(etabsStorey[rowNum]);
-                matchedLabel[rowNum] = labelMap.GetDesignName(etabsPierLabel[rowNum]);
-                
+                try
+                {
+                    matchedLabel[rowNum] = labelMap.GetDesignName(etabsPierLabel[rowNum]);
+                }
+                catch (Exception ex)
+                {
+                    matchedDesignGroup[rowNum] = ex.Message;
+                    AddToErrorRange(matchResultRange, rowNum);
+                    continue;
+                }
+
+
                 if (wallToGroupingDic.ContainsKey(matchedLabel[rowNum])) 
                 { 
                     matchedDesignGroup[rowNum] = wallToGroupingDic[matchedLabel[rowNum]]; 
@@ -312,9 +383,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 else 
                 { 
                     matchedDesignGroup[rowNum] = "Error finding design group";
-                    if (errorFormatRange == null) { errorFormatRange = matchResultRange.Rows[rowNum + 1]; }
-                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, matchResultRange.Rows[rowNum + 1]); }
-                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    AddToErrorRange(matchResultRange, rowNum);
                     continue; 
                 }
                 #endregion
@@ -337,9 +406,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 else
                 {
                     verticalCheck[rowNum] = "Not Ok";
-                    if (errorFormatRange == null) { errorFormatRange = verticalCheckRange.Rows[rowNum + 1]; }
-                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, verticalCheckRange.Rows[rowNum + 1]); }
-                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    AddToErrorRange(verticalCheckRange, rowNum);
                 }
 
                 if (shearRebarReq[rowNum] < (double)horizontalAsProv[rowNum])
@@ -349,30 +416,21 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 else
                 {
                     horizontalCheck[rowNum] = "Not Ok";
-                    if (errorFormatRange == null) { errorFormatRange = horizontalCheckRange.Rows[rowNum + 1]; }
-                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, horizontalCheckRange.Rows[rowNum + 1]); }
-                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    AddToErrorRange(horizontalCheckRange, rowNum);
                 }
                 #endregion
 
                 #region Check Dimension
-
-
                 double thickness = entry.Thickness;
                 if (double.IsNaN(thickness))
                 {
                     thicknessCheck[rowNum] = $"Error: Invalid thickness provided for check";
-
-                    if (errorFormatRange == null) { errorFormatRange = thicknessCheckRange.Rows[rowNum + 1]; }
-                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, thicknessCheckRange.Rows[rowNum + 1]); }
-                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    AddToErrorRange(thicknessCheckRange, rowNum);
                 }
                 else if (Math.Abs(etabsThickness[rowNum] - thickness) > 10)
                 {
                     thicknessCheck[rowNum] = $"Error: ETABS thickness differs form length in BIM data. ETABS = {etabsThickness[rowNum]}, BIM = {thickness}";
-                    if (errorFormatRange == null) { errorFormatRange = thicknessCheckRange.Rows[rowNum + 1]; }
-                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, thicknessCheckRange.Rows[rowNum + 1]); }
-                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    AddToErrorRange(thicknessCheckRange, rowNum);
                 }
                 else
                 {
@@ -383,18 +441,12 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 if (double.IsNaN(length))
                 {
                     lengthCheck[rowNum] = $"Warning: Invalid length provided for check";
-
-                    if (errorFormatRange == null) { errorFormatRange = lengthCheckRange.Rows[rowNum + 1]; }
-                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, lengthCheckRange.Rows[rowNum + 1]); }
-                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    AddToErrorRange(lengthCheckRange, rowNum);
                 }
                 else if ((etabsLength[rowNum] - length) > 10)
                 {
                     lengthCheck[rowNum] = $"Error: ETABS length is greater than length in BIM data. ETABS = {etabsLength[rowNum]}, BIM = {length}";
-
-                    if (errorFormatRange == null) { errorFormatRange = lengthCheckRange.Rows[rowNum + 1]; }
-                    else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, lengthCheckRange.Rows[rowNum + 1]); }
-                    if (!errorPiers.Contains(etabsPierLabel[rowNum])) { errorPiers.Add(etabsPierLabel[rowNum]); }
+                    AddToErrorRange(lengthCheckRange, rowNum);
                 }
                 else
                 {
@@ -404,12 +456,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 #endregion
             }
 
-            WriteToExcelRangeAsCol(etabsRange.activeRange, 0, 25, false, matchedLabel, verticalBar, verticalAsProv, verticalAsPerc, verticalCheck, horizontalBar, horizontalAsProv, horizontalCheck);
-            WriteToExcelRangeAsCol(etabsRange.activeRange, 0 , 35, false, matchedDesignGroup, thicknessCheck, lengthCheck);
+            WriteToExcelRangeAsCol(etabsRange.activeRange, 0, outputColNum, false, matchedLabel, 
+                verticalBar, verticalAsProv, verticalAsPerc, verticalCheck, 
+                horizontalBar, horizontalAsProv, horizontalCheck);
+            WriteToExcelRangeAsCol(etabsRange.activeRange, 0 , outputColNum + 10, false, matchedDesignGroup, thicknessCheck, lengthCheck);
             
             #region Error handling
             if (errorFormatRange != null) { errorFormatRange.Font.Color = Color.Red; }
-            string errorMsg = "Error encountered in the following etabs piers, please check result. Copy error pier labels to clipboard?\n";
+            string errorMsg = "Error encountered in the following etabs piers, please check result?\n";
             string errorMsgToClipboard = "";
             if (errorPiers.Count != 0)
             {
@@ -422,24 +476,259 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 errorMsgToClipboard = errorMsgToClipboard.Substring(0, errorMsgToClipboard.Length - 1); // remove last "\n"
                 
                 totalStopwatch.Stop();
-                
-                DialogResult res = MessageBox.Show(errorMsg, "Warning", MessageBoxButtons.YesNo);
-                if (res == DialogResult.Yes)
+
+                MessageBox.Show(errorMsg, "Warning");
+                if (copyFailedCheck.Checked)
                 {
                     Clipboard.SetText(errorMsgToClipboard);
                 }
             }
             else { totalStopwatch.Stop(); }
             #endregion
-
-
-
         }
+
+        private void MatchColDesignLabels(Stopwatch totalStopwatch)
+        {
+            #region Init ETABS Array
+            string[] verticalAsPrecReqString = etabsRange.GetDataColumnAsStringArray("PMM Ratio or Rebar %");
+            double[] shearRebarReqMaj = etabsRange.GetDataColumnAsDoubleArray("At Major");
+            double[] shearRebarReqMin = etabsRange.GetDataColumnAsDoubleArray("At Minor");
+            string[] sectionNames = etabsRange.GetDataColumnAsStringArray("Section");
+            
+            double ConvertVertPrec(string asReqString) {
+                string stringValue = asReqString.Split(' ')[0];
+                bool pass = double.TryParse(stringValue, out double verticalAsPrecReqDouble);
+                if (pass) { return verticalAsPrecReqDouble; }
+                else { throw new Exception("$Unable to parse {asReqString} into number"); }
+            }
+            #endregion
+
+            #region Init Write Arrays
+            int numRows = etabsRange.activeRange.Rows.Count;
+            string[] etabsStorey = GetContentsAsStringArray(etabsRange.GetDataColumnAsRange("Story"), false);
+            string[] etabsColLabel = GetContentsAsStringArray(etabsRange.GetDataColumnAsRange("Label"), false);
+
+            string[] matchedLabel = new string[numRows];
+            string[] matchedDesignGroup = new string[numRows];
+
+            double[] width = new double[numRows];
+            double[] breadth= new double[numRows];
+
+            string[] verticalBar = new string[numRows];
+            object[] verticalAsProv = new object[numRows];
+            object[] verticalAsPerc = new object[numRows];
+            string[] verticalCheck = new string[numRows];
+
+            string[] horizontalBar = new string[numRows];
+            object[] horizontalAsProvMaj = new object[numRows];
+            object[] horizontalAsProvMin = new object[numRows];
+            string[] horizontalCheck = new string[numRows];
+
+            string[] thicknessCheck = new string[numRows];
+            string[] lengthCheck = new string[numRows];
+            #endregion
+
+            #region Clear formats
+            
+            // These ranges are later used for reference to union merging formats so we're sticking with this approach I guess
+            int outputColNum = ((AttributeTextBox)attributeDic["dispColOuputColNum_WC"]).GetIntFromTextBox() - 1;
+            Range verticalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 6];
+            verticalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+
+            Range horizontalCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 10];
+            horizontalCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+
+            Range matchResultRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 13];
+            matchResultRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+
+            Range thicknessCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 14];
+            thicknessCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+
+            Range lengthCheckRange = etabsRange.activeRange.Columns[1].Offset[0, outputColNum + 15];
+            lengthCheckRange.Font.ColorIndex = XlColorIndex.xlColorIndexAutomatic;
+            #endregion
+
+            #region Error Functions
+            Range errorFormatRange = null;
+            HashSet<string> errorPiers = new HashSet<string>();
+            
+            void AddToErrorRange(Range targetRange, int rowNum)
+            {
+                if (errorFormatRange == null) { errorFormatRange = targetRange.Rows[rowNum + 1]; }
+                else { errorFormatRange = errorFormatRange.Application.Union(errorFormatRange, targetRange.Rows[rowNum + 1]); }
+                if (!errorPiers.Contains(etabsColLabel[rowNum])) { errorPiers.Add(etabsColLabel[rowNum]); }
+            }
+            #endregion
+
+
+            for (int rowNum = 0; rowNum < numRows; rowNum++)
+            {
+                #region Match to Design Values
+                try
+                {
+                    matchedLabel[rowNum] = labelMap.GetDesignName(etabsColLabel[rowNum]);
+                }
+                catch (Exception ex)
+                {
+                    matchedDesignGroup[rowNum] = ex.Message;
+                    AddToErrorRange(matchResultRange, rowNum);
+                    continue;
+                }
+                
+
+                if (wallToGroupingDic.ContainsKey(matchedLabel[rowNum]))
+                {
+                    matchedDesignGroup[rowNum] = wallToGroupingDic[matchedLabel[rowNum]];
+                }
+                else
+                {
+                    matchedDesignGroup[rowNum] = "Error finding design group";
+                    AddToErrorRange(matchResultRange, rowNum);
+                    continue;
+                }
+                #endregion
+                
+                #region Calculate As
+                RebarEntryBim tryEntry = designGroupsDic[matchedDesignGroup[rowNum]].GetEntryFromEtabsStorey(etabsStorey[rowNum]);
+                if (!(tryEntry is ColumnRebarEntryBim))
+                {
+                    matchedDesignGroup[rowNum] = $"Design group {matchedDesignGroup[rowNum]} is not a column type";
+                    AddToErrorRange(matchResultRange, rowNum);
+                    continue;
+                }
+                ColumnRebarEntryBim entry = (ColumnRebarEntryBim)tryEntry;
+
+                verticalBar[rowNum] = entry.vertcialBarString;
+                (verticalAsProv[rowNum], verticalAsPerc[rowNum]) = entry.VerticalAs;
+                if (double.IsNaN((double)verticalAsProv[rowNum])) { verticalAsProv[rowNum] = ""; }
+
+                horizontalBar[rowNum] = entry.horizontalBarString;
+                horizontalAsProvMaj[rowNum] = entry.HorizontalAsMaj;
+                horizontalAsProvMin[rowNum] = entry.HorizontalAsMin;
+                #endregion
+
+                #region Check As
+                double verticalAsPrecReq = ConvertVertPrec(verticalAsPrecReqString[rowNum]);
+                if (verticalAsPrecReq < (double)verticalAsPerc[rowNum])
+                {
+                    verticalCheck[rowNum] = "Ok";
+                }
+                else
+                {
+                    verticalCheck[rowNum] = "Not Ok";
+                    AddToErrorRange(verticalCheckRange, rowNum);
+                }
+                
+                if ((shearRebarReqMaj[rowNum] < (double)horizontalAsProvMaj[rowNum]) & (shearRebarReqMin[rowNum] < (double)horizontalAsProvMin[rowNum])) 
+                {
+                    horizontalCheck[rowNum] = "Ok";
+                }
+                else
+                {
+                    horizontalCheck[rowNum] = "Not Ok";
+                    AddToErrorRange(horizontalCheckRange, rowNum);
+                }
+                #endregion
+
+                #region Check Dimension
+
+                #region Split Section Name
+                (double etabsThickness, double etabsLength) = ConvertSectionToDouble(sectionNames[rowNum]);
+                if (double.IsNaN(etabsThickness)) { continue; }
+                (double thk, double len) ConvertSectionToDouble(string sectionName)
+                {
+                    Match match = Regex.Match(sectionName, @"^[A-Za-z]+(\d+)x(\d+)");
+                    if (match.Success)
+                    {
+                        double thk = double.Parse(match.Groups[1].Value);
+                        double len = double.Parse(match.Groups[2].Value);
+                        return (thk, len);
+                    }
+                    else
+                    {
+                        Console.WriteLine("No match found.");
+                        thicknessCheck[rowNum] = $"Error: Unable to split ETABS section name {sectionName}";
+                        AddToErrorRange(thicknessCheckRange, rowNum);
+                        lengthCheck[rowNum] = $"Error: Unable to split ETABS section name {sectionName}";
+                        AddToErrorRange(lengthCheckRange, rowNum);
+                        return (double.NaN, double.NaN);
+                    }
+                }
+                #endregion
+
+                double thickness = entry.Thickness;
+                
+                if (double.IsNaN(thickness))
+                {
+                    thicknessCheck[rowNum] = $"Error: Invalid thickness provided for check";
+
+                    AddToErrorRange(thicknessCheckRange, rowNum);
+                }
+                else if (Math.Abs(etabsThickness - thickness) > 10)
+                {
+                    thicknessCheck[rowNum] = $"Error: ETABS thickness differs form length in BIM data. ETABS = {etabsThickness}, BIM = {thickness}";
+                    AddToErrorRange(thicknessCheckRange, rowNum);
+                }
+                else
+                {
+                    thicknessCheck[rowNum] = $"Ok";
+                }
+
+                double length = entry.Length;
+                if (double.IsNaN(length))
+                {
+                    lengthCheck[rowNum] = $"Warning: Invalid length provided for check";
+                    AddToErrorRange(lengthCheckRange, rowNum);
+                }
+                else if ((etabsLength - length) > 10)
+                {
+                    lengthCheck[rowNum] = $"Error: ETABS length is greater than length in BIM data. ETABS = {etabsLength}, BIM = {length}";
+                    AddToErrorRange(lengthCheckRange, rowNum);
+                }
+                else
+                {
+                    lengthCheck[rowNum] = $"Ok";
+                }
+                width[rowNum] = thickness;
+                breadth[rowNum] = length;
+                #endregion
+
+            }
+            WriteToExcelRangeAsCol(etabsRange.activeRange, 0, outputColNum, false, matchedLabel, width, breadth, 
+                verticalBar, verticalAsProv, verticalAsPerc, verticalCheck, 
+                horizontalBar, horizontalAsProvMaj, horizontalAsProvMin, horizontalCheck);
+            WriteToExcelRangeAsCol(etabsRange.activeRange, 0, outputColNum + 13, false, matchedDesignGroup, thicknessCheck, lengthCheck);
+
+            #region Error handling
+            if (errorFormatRange != null) { errorFormatRange.Font.Color = Color.Red; }
+            string errorMsg = "Error encountered in the following etabs columns, please check result.\n";
+            string errorMsgToClipboard = "";
+            if (errorPiers.Count != 0)
+            {
+                foreach (string errorPier in errorPiers)
+                {
+                    errorMsg += errorPier + ", ";
+                    errorMsgToClipboard += errorPier + "\n";
+                }
+                errorMsg = errorMsg.Substring(0, errorMsg.Length - 2); // remove last ", "
+                errorMsgToClipboard = errorMsgToClipboard.Substring(0, errorMsgToClipboard.Length - 1); // remove last "\n"
+
+                totalStopwatch.Stop();
+
+                MessageBox.Show(errorMsg, "Warning");
+                if (copyFailedCheck.Checked)
+                {
+                    Clipboard.SetText(errorMsgToClipboard);
+                }
+            }
+            else { totalStopwatch.Stop(); }
+            #endregion
+        }
+
+
         #endregion
-
-
     }
-    public class ExcelTableRange
+        public class ExcelTableRange
     {
         #region Init
         public Workbook workbook;
@@ -466,6 +755,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
         }
         public ExcelTableRange(string name, Worksheet worksheet)
         {
+            this.name = name;
             this.worksheet = worksheet;
             workbook = worksheet.Parent;
         }
@@ -487,7 +777,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             }
             return activeRange;
         }
-
         public Range GetUsedRangeFromStart(int headerRowNum, int colNum, int dataRowOffsetFromHeader = 0)
         {
             // Set dataRowOffsetFromHeader to 0 if there is no header
@@ -572,18 +861,23 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             Range colRange = GetDataColumnAsRange(headerText);
             return GetContentsAsDoubleArray(colRange,double.NaN);
         }
-
         public Range GetDataColumnAsRange(string headerText)
         {
             if (!headerMapping.ContainsKey(headerText)) { throw new Exception($"Header Text \"{headerText}\" not found in data \"{name}\""); }
             int colIndex = headerMapping[headerText];
             return activeRange.Columns[colIndex];
         }
+        public string[] GetDataColumnAsStringArray(string headerText)
+        {
+            Range colRange = GetDataColumnAsRange(headerText);
+            return GetContentsAsStringArray(colRange, false);
+        }
         #endregion
     }
 
     public class EtabsToDesignMap
     {
+        // This function has been generalised to map anything ETABS - DESIGN
         string name;
         Dictionary<string, string> etabsToDesignDic= new Dictionary<string, string>();
         Dictionary<string, string> designToEtabsDic = new Dictionary<string, string>();
@@ -609,8 +903,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 string etabsStoreyName = range.Cells[1].Value2.ToString();
                 string designStoreyName = range.Cells[2].Value2.ToString();
 
-                if (mappingOptions[0]) { etabsToDesignDic.Add(etabsStoreyName, designStoreyName); }
-                if (mappingOptions[1]) { designToEtabsDic.Add(designStoreyName, etabsStoreyName); }
+                if (mappingOptions[0]) {
+                    if (etabsToDesignDic.ContainsKey(etabsStoreyName)) { throw new Exception($"Unable to add {etabsStoreyName} as there is a duplicate copy for mapping of {name} Table"); }
+                    etabsToDesignDic.Add(etabsStoreyName, designStoreyName); 
+                }
+                if (mappingOptions[1]) {
+                    if (designToEtabsDic.ContainsKey(designStoreyName)) { throw new Exception($"Unable to add {designStoreyName} as there is a duplicate copy for mapping of {name} Table"); }
+                    designToEtabsDic.Add(designStoreyName, etabsStoreyName); 
+                }
                 if (mappingOptions[2])
                 {
                     indexToEtabsDic.Add(index, etabsStoreyName);
@@ -619,6 +919,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 }
             }
         }
+        
         #region Get Values
         public string GetDesignName(string etabsStoreyName)
         {
@@ -861,7 +1162,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             {
                 throw new ArgumentException($"Unable to read \"{inputString}\" into format: Hxx-yyy");
             }
-            
         }
         #endregion
 
@@ -910,18 +1210,39 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
             }
         }
 
-        public override double HorizontalAs
+        public override double HorizontalAs // For pier check use
         {
             get
             {
                 string[] parts = SplitAndTrim(horizontalBarString, '+');
-                (double dia, double spacing) = SplitRebarAndSpacingShear(parts[0]);
+                (double dia, double spacing, double num) = SplitRebarAndSpacingShear(parts[0]);
                 double asProv = 2 * (Math.PI * Math.Pow(dia, 2)) / 4 * (1000 / spacing);
                 asProv = Math.Round(asProv, 0);
                 return asProv;
             }
         }
-
+        public double HorizontalAsMaj // For col check use
+        {
+            get
+            {
+                string[] parts = SplitAndTrim(horizontalBarString, '+');
+                (double dia, double spacing, double num) = SplitRebarAndSpacingShear(parts[0]);
+                double asProv = num * (Math.PI * Math.Pow(dia, 2)) / 4 * (1000 / spacing);
+                asProv = Math.Round(asProv, 0);
+                return asProv;
+            }
+        }
+        public double HorizontalAsMin // For col check use
+        {
+            get
+            {
+                string[] parts = SplitAndTrim(horizontalBarString, '+');
+                (double dia, double spacing, double num) = SplitRebarAndSpacingShear(parts[1]);
+                double asProv = num * (Math.PI * Math.Pow(dia, 2)) / 4 * (1000 / spacing);
+                asProv = Math.Round(asProv, 0);
+                return asProv;
+            }
+        }
         private (int number, double dia) SplitRebarNumberAndDiameter(string inputString)
         {
             Regex regex = new Regex(@"(\d+)H(\d+)");
@@ -937,7 +1258,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 throw new ArgumentException($"Unable to read \"{inputString}\" into format: xxHyy");
             }
         }
-        private (double dia, double spacing) SplitRebarAndSpacingShear(string inputString)
+        private (double dia, double spacing, double num) SplitRebarAndSpacingShear(string inputString)
         {
             if (inputString[0] == 'H')
             {
@@ -947,7 +1268,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 {
                     double dia = double.Parse(match.Groups[1].Value);
                     double spacing = double.Parse(match.Groups[2].Value);
-                    return (dia, spacing);
+                    return (dia, spacing, 1);
                 }
                 else
                 {
@@ -960,9 +1281,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 Match match = regex.Match(inputString);
                 if (match.Success)
                 {
+                    double num = double.Parse(match.Groups[1].Value);
                     double dia = double.Parse(match.Groups[2].Value);
                     double spacing = double.Parse(match.Groups[3].Value);
-                    return (dia, spacing);
+                    return (dia, spacing, num);
                 }
                 else
                 {

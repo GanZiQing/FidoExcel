@@ -50,8 +50,8 @@
             this.beamDesign = this.Factory.CreateRibbonButton();
             this.group1 = this.Factory.CreateRibbonGroup();
             this.wallDesign = this.Factory.CreateRibbonButton();
-            this.tab1 = this.Factory.CreateRibbonTab();
             this.wallCheck = this.Factory.CreateRibbonButton();
+            this.tab1 = this.Factory.CreateRibbonTab();
             this.FidoRibbon.SuspendLayout();
             this.AutomationToolsGroup.SuspendLayout();
             this.group2.SuspendLayout();
@@ -198,12 +198,6 @@
             this.wallDesign.ShowImage = true;
             this.wallDesign.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.wallDesign_Click);
             // 
-            // tab1
-            // 
-            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
-            this.tab1.Label = "TabAddIns";
-            this.tab1.Name = "tab1";
-            // 
             // wallCheck
             // 
             this.wallCheck.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
@@ -212,6 +206,12 @@
             this.wallCheck.Name = "wallCheck";
             this.wallCheck.ShowImage = true;
             this.wallCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.wallCheck_Click);
+            // 
+            // tab1
+            // 
+            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
+            this.tab1.Label = "TabAddIns";
+            this.tab1.Name = "tab1";
             // 
             // LauncherRib
             // 
