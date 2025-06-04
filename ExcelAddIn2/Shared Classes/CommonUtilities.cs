@@ -145,6 +145,10 @@ namespace ExcelAddIn2
             {
                 return emptyValue;
             }
+            else if (range.Cells.Count > 1)
+            {
+                throw new Exception($"Unable to convert range {range.Worksheet.Name}!{range.AddressLocal} to single string.\nNumber of cells in range expected is 1, number of cells found is {range.Cells.Count}");
+            }
             else
             {
                 return range.Value2.ToString();

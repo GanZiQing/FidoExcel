@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace ExcelAddIn2
 {
@@ -33,7 +34,10 @@ namespace ExcelAddIn2
 
             backgroundWorker.ProgressChanged += (sender, e) =>
             {
-                progressTracker.UpdateProgress(e.ProgressPercentage);
+                //progressTracker.UpdateProgress(e.ProgressPercentage);
+
+                progressTracker.progress = e.ProgressPercentage;
+                progressTracker.RefreshProgress();
             };
 
             backgroundWorker.RunWorkerCompleted += (sender, e) =>
@@ -67,7 +71,6 @@ namespace ExcelAddIn2
             };
 
             progressTracker.ShowDialog();
-
             
         }
     }

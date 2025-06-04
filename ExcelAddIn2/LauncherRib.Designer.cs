@@ -51,6 +51,8 @@
             this.group1 = this.Factory.CreateRibbonGroup();
             this.wallDesign = this.Factory.CreateRibbonButton();
             this.wallCheck = this.Factory.CreateRibbonButton();
+            this.Misc = this.Factory.CreateRibbonGroup();
+            this.versionLabel = this.Factory.CreateRibbonLabel();
             this.tab1 = this.Factory.CreateRibbonTab();
             this.FidoRibbon.SuspendLayout();
             this.AutomationToolsGroup.SuspendLayout();
@@ -58,6 +60,7 @@
             this.forSharing.SuspendLayout();
             this.toHide.SuspendLayout();
             this.group1.SuspendLayout();
+            this.Misc.SuspendLayout();
             this.tab1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,6 +71,7 @@
             this.FidoRibbon.Groups.Add(this.forSharing);
             this.FidoRibbon.Groups.Add(this.toHide);
             this.FidoRibbon.Groups.Add(this.group1);
+            this.FidoRibbon.Groups.Add(this.Misc);
             this.FidoRibbon.KeyTip = "L1";
             this.FidoRibbon.Label = "Fido";
             this.FidoRibbon.Name = "FidoRibbon";
@@ -92,7 +96,7 @@
             // 
             this.reportPane.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.reportPane.Image = global::ExcelAddIn2.Properties.Resources.ppt;
-            this.reportPane.Label = "ETABS Report";
+            this.reportPane.Label = "Report";
             this.reportPane.Name = "reportPane";
             this.reportPane.ShowImage = true;
             this.reportPane.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.reportPane_Click);
@@ -207,6 +211,17 @@
             this.wallCheck.ShowImage = true;
             this.wallCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.wallCheck_Click);
             // 
+            // Misc
+            // 
+            this.Misc.Items.Add(this.versionLabel);
+            this.Misc.Label = "Info";
+            this.Misc.Name = "Misc";
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.Label = "Version Info";
+            this.versionLabel.Name = "versionLabel";
+            // 
             // tab1
             // 
             this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
@@ -231,6 +246,8 @@
             this.toHide.PerformLayout();
             this.group1.ResumeLayout(false);
             this.group1.PerformLayout();
+            this.Misc.ResumeLayout(false);
+            this.Misc.PerformLayout();
             this.tab1.ResumeLayout(false);
             this.tab1.PerformLayout();
             this.ResumeLayout(false);
@@ -256,6 +273,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton wallDesign;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton draftingPaneButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton wallCheck;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup Misc;
+        internal Microsoft.Office.Tools.Ribbon.RibbonLabel versionLabel;
     }
 
     partial class ThisRibbonCollection

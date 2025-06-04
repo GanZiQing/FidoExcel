@@ -29,23 +29,23 @@ namespace ExcelAddIn2
             RefreshProgress();
         }
 
-        public void UpdateProgress(int progressValue)
-        {
-            // Use the following to update progress, do not call this function directly
-            // worker.ReportProgress(ConvertToProgress(prog, maxprog));
-            progress = progressValue;
-            RefreshProgress();
+        //private void UpdateProgress(int progressValue)
+        //{
+        //    // Use the following to update progress, do not call this function directly
+        //    // worker.ReportProgress(ConvertToProgress(prog, maxprog));
+        //    progress = progressValue;
+        //    RefreshProgress();
 
-            //public void UpdateProgressWithMax(int currentProgress, int maxProgress)
-            //{
-            //    double progressDouble = Convert.ToDouble(currentProgress) / Convert.ToDouble(maxProgress) * 100;
-            //    progress = Convert.ToInt32(progressDouble);
-            //    RefreshProgress();
-            //}
-        }
+        //    //public void UpdateProgressWithMax(int currentProgress, int maxProgress)
+        //    //{
+        //    //    double progressDouble = Convert.ToDouble(currentProgress) / Convert.ToDouble(maxProgress) * 100;
+        //    //    progress = Convert.ToInt32(progressDouble);
+        //    //    RefreshProgress();
+        //    //}
+        //}
 
 
-        private void RefreshProgress()
+        public void RefreshProgress()
         {
             if (InvokeRequired)
             {
@@ -74,6 +74,25 @@ namespace ExcelAddIn2
             //    terminateProcess = true;
             UpdateStatus("Cancelling...");
             Close();
+        }
+
+        public DialogResult ShowMessageBox(string msg, string title, MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None)
+        {
+            DialogResult result = DialogResult.None;
+
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    result = MessageBox.Show(this, msg, title, buttons, icon);
+                });
+            }
+            else
+            {
+                result = MessageBox.Show(this, msg, title, buttons, icon);
+            }
+
+            return result;
         }
 
 

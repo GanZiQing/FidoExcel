@@ -11,6 +11,7 @@ using Button = System.Windows.Forms.Button;
 using TextBox = System.Windows.Forms.TextBox;
 using System.IO;
 using Application = Microsoft.Office.Interop.Excel.Application;
+using ScreenshotApp;
 
 namespace ExcelAddIn2
 {
@@ -1030,6 +1031,7 @@ namespace ExcelAddIn2
         {
             setButton = button;
             SubscribeToDirectoryTextBoxEvents();
+            AddContextMenu();
         }
 
         private void SubscribeToDirectoryTextBoxEvents()
@@ -1039,6 +1041,23 @@ namespace ExcelAddIn2
             textBox.KeyDown += new KeyEventHandler(textBox_KeyDown);
         }
 
+        private void AddContextMenu()
+        {
+            if (setButton.ContextMenuStrip == null) { setButton.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem menuItem = new ToolStripMenuItem("Set To Current Folder");
+            
+            setButton.ContextMenuStrip.Items.Add(menuItem);
+            menuItem.Click += (sender, e) => 
+            {
+                try
+                {
+                    string currentPath = Globals.ThisAddIn.Application.ActiveWorkbook.Path;
+                    SetValue(currentPath);
+                }
+                catch (Exception ex) { MessageBox.Show($"Unable to set folder path:\n{ex.Message}","Error"); }
+                
+            };
+        }        
         #endregion
 
         #region Add Open Folder Button

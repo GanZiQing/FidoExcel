@@ -30,7 +30,9 @@
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.dispImageLoc = new System.Windows.Forms.TextBox();
             this.deleteRefCheck = new System.Windows.Forms.CheckBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.setHeaderRow = new System.Windows.Forms.Button();
             this.dispHeaderRow = new System.Windows.Forms.TextBox();
             this.importToPpt = new System.Windows.Forms.Button();
@@ -77,9 +79,10 @@
             this.dispScreenshotX = new System.Windows.Forms.TextBox();
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
-            this.dispImageLoc = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
+            this.addToFolderCheck = new System.Windows.Forms.CheckBox();
+            this.setFolderNameCell = new System.Windows.Forms.Button();
+            this.dispFolderNameCell = new System.Windows.Forms.TextBox();
             this.tabPage1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -125,6 +128,17 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Import to Ppt";
             // 
+            // dispImageLoc
+            // 
+            this.dispImageLoc.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispImageLoc.Location = new System.Drawing.Point(262, 137);
+            this.dispImageLoc.Margin = new System.Windows.Forms.Padding(6);
+            this.dispImageLoc.MaxLength = 100;
+            this.dispImageLoc.Name = "dispImageLoc";
+            this.dispImageLoc.Size = new System.Drawing.Size(229, 29);
+            this.dispImageLoc.TabIndex = 50;
+            this.dispImageLoc.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // deleteRefCheck
             // 
             this.deleteRefCheck.AutoSize = true;
@@ -136,6 +150,19 @@
             this.deleteRefCheck.TabIndex = 41;
             this.deleteRefCheck.Text = "Delete Reference Slide";
             this.deleteRefCheck.UseVisualStyleBackColor = true;
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox2.Location = new System.Drawing.Point(15, 144);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(229, 22);
+            this.textBox2.TabIndex = 51;
+            this.textBox2.TabStop = false;
+            this.textBox2.Text = " Insert After Slide:";
             // 
             // setHeaderRow
             // 
@@ -411,6 +438,9 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.setFolderNameCell);
+            this.groupBox5.Controls.Add(this.dispFolderNameCell);
+            this.groupBox5.Controls.Add(this.addToFolderCheck);
             this.groupBox5.Controls.Add(this.openSCFolder);
             this.groupBox5.Controls.Add(this.setSCFolder);
             this.groupBox5.Controls.Add(this.dispSCFolder);
@@ -418,7 +448,7 @@
             this.groupBox5.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox5.Size = new System.Drawing.Size(502, 148);
+            this.groupBox5.Size = new System.Drawing.Size(502, 227);
             this.groupBox5.TabIndex = 50;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Screenshot Directory";
@@ -466,7 +496,7 @@
             this.groupBox3.Controls.Add(this.saveEtabsImage);
             this.groupBox3.Controls.Add(this.setFloorRange);
             this.groupBox3.Controls.Add(this.dispFloorRange);
-            this.groupBox3.Location = new System.Drawing.Point(11, 471);
+            this.groupBox3.Location = new System.Drawing.Point(12, 552);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(6);
@@ -570,7 +600,7 @@
             this.groupBox6.Controls.Add(this.dispScreenshotX);
             this.groupBox6.Controls.Add(this.textBox18);
             this.groupBox6.Controls.Add(this.textBox13);
-            this.groupBox6.Location = new System.Drawing.Point(11, 170);
+            this.groupBox6.Location = new System.Drawing.Point(11, 250);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(6);
@@ -716,30 +746,6 @@
             this.textBox13.TabStop = false;
             this.textBox13.Text = "Dimensions";
             // 
-            // dispImageLoc
-            // 
-            this.dispImageLoc.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispImageLoc.Location = new System.Drawing.Point(262, 137);
-            this.dispImageLoc.Margin = new System.Windows.Forms.Padding(6);
-            this.dispImageLoc.MaxLength = 100;
-            this.dispImageLoc.Name = "dispImageLoc";
-            this.dispImageLoc.Size = new System.Drawing.Size(229, 29);
-            this.dispImageLoc.TabIndex = 50;
-            this.dispImageLoc.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.Location = new System.Drawing.Point(15, 144);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(229, 22);
-            this.textBox2.TabIndex = 51;
-            this.textBox2.TabStop = false;
-            this.textBox2.Text = " Insert After Slide:";
-            // 
             // directoryUserControl1
             // 
             this.directoryUserControl1.Location = new System.Drawing.Point(15, 9);
@@ -747,6 +753,40 @@
             this.directoryUserControl1.Name = "directoryUserControl1";
             this.directoryUserControl1.Size = new System.Drawing.Size(502, 431);
             this.directoryUserControl1.TabIndex = 9;
+            // 
+            // addToFolderCheck
+            // 
+            this.addToFolderCheck.AutoSize = true;
+            this.addToFolderCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.addToFolderCheck.Location = new System.Drawing.Point(18, 131);
+            this.addToFolderCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.addToFolderCheck.Name = "addToFolderCheck";
+            this.addToFolderCheck.Size = new System.Drawing.Size(163, 29);
+            this.addToFolderCheck.TabIndex = 50;
+            this.addToFolderCheck.Text = "Add To Folder";
+            this.addToFolderCheck.UseVisualStyleBackColor = true;
+            // 
+            // setFolderNameCell
+            // 
+            this.setFolderNameCell.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setFolderNameCell.Location = new System.Drawing.Point(18, 170);
+            this.setFolderNameCell.Margin = new System.Windows.Forms.Padding(6);
+            this.setFolderNameCell.Name = "setFolderNameCell";
+            this.setFolderNameCell.Size = new System.Drawing.Size(229, 46);
+            this.setFolderNameCell.TabIndex = 47;
+            this.setFolderNameCell.Text = "Set Folder Name Cell";
+            this.setFolderNameCell.UseVisualStyleBackColor = true;
+            // 
+            // dispFolderNameCell
+            // 
+            this.dispFolderNameCell.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispFolderNameCell.Location = new System.Drawing.Point(269, 176);
+            this.dispFolderNameCell.Margin = new System.Windows.Forms.Padding(6);
+            this.dispFolderNameCell.Name = "dispFolderNameCell";
+            this.dispFolderNameCell.Size = new System.Drawing.Size(224, 29);
+            this.dispFolderNameCell.TabIndex = 48;
+            this.dispFolderNameCell.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.dispFolderNameCell.WordWrap = false;
             // 
             // ReportPane
             // 
@@ -830,5 +870,8 @@
         private System.Windows.Forms.CheckBox deleteRefCheck;
         private System.Windows.Forms.TextBox dispImageLoc;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.CheckBox addToFolderCheck;
+        private System.Windows.Forms.Button setFolderNameCell;
+        private System.Windows.Forms.TextBox dispFolderNameCell;
     }
 }

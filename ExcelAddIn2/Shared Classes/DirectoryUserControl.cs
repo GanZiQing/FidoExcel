@@ -30,7 +30,7 @@ namespace ExcelAddIn2
             List<string> headers = new List<string> { "File Path", "Folder Name", "File Name"};
             AddHeaderMenuToButton(importFilePath, headers);
 
-            headers = new List<string> { "File Path", "Folder Name"};
+            headers = new List<string> { "File Path", "Parent Folder Name", "Folder Name"};
             AddHeaderMenuToButton(importFolderPath, headers);
 
             headers = new List<string> { "File Name" };
@@ -50,14 +50,6 @@ namespace ExcelAddIn2
             AddContextStripEvent(importSpecificFile, "Get from Dialogue Box", (sender, e) => importSpecificFile_Click(sender, e));
             AddContextStripEvent(importSpecificFileNames, "Get from Dialogue Box", (sender, e) => importSpecificFileNames_Click(sender, e));
         }
-        // Moved to common utilities
-        //private void AddContextStripEvent(System.Windows.Forms.Button button, string contextText, EventHandler eventHandler)
-        //{
-        //    if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
-        //    ToolStripMenuItem newItem = new ToolStripMenuItem(contextText);
-        //    button.ContextMenuStrip.Items.Add(newItem);
-        //    newItem.Click += eventHandler;
-        //}
 
         bool attributeCreated = false;
         public void CreateAttributes(ref
@@ -337,10 +329,8 @@ namespace ExcelAddIn2
                     folderName[i] = Path.GetFileName(Path.GetDirectoryName(file));
                 }
 
-                if (isFile && !nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fullPath, folderName, fileName); }
-                else if (isFile && nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fileName); }
-                else if (!isFile && !nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fullPath, folderName); }
-                else if (!isFile && nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, folderName); }
+                if (!nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fullPath, folderName, fileName); }
+                else{ WriteToExcelSelectionAsRow(0, 0, true, fileName); }
                 #endregion
 
                 #region Format Path to be less annoying
