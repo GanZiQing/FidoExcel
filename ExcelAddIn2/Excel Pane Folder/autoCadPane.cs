@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autodesk.AutoCAD.DatabaseServices;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,7 +10,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar;
+using ACAS = Autodesk.AutoCAD.ApplicationServices;
+using ACDS = Autodesk.AutoCAD.DatabaseServices;
+using ADRT = Autodesk.AutoCAD.Runtime;
+//using Autodesk.AutoCAD.ApplicationServices;
+//using Autodesk.AutoCAD.DatabaseServices;
+//using Autodesk.AutoCAD.Runtime;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -28,12 +34,13 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         private void AddHeaders()
         {
             List<string> headers = null;
-
-            #region Dynamic Headers for Get Line Coordinates
-            AddDynamicActionToButton(getLineCoords, ()=>InsertDynamicHeader(lineCoordinateHeaderGenerator));
+            #region Line Functions
+            AddDynamicActionToButton(getLineCoords, () => InsertDynamicHeader(lineCoordinateHeaderGenerator));
             #endregion
+
+
         }
-        #region Dynamic Header Generator
+        #region Dynamic Header Generators
         private object lineCoordinateHeaderGenerator()
         {
             try
@@ -79,9 +86,34 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
         private void CreateAttributes()
         {
+            CustomAttribute att;
+            AttributeTextBox tbAtt;
+
             #region Line Functions
-            var att = new ComboBoxAttribute("lineCoordType_AC", dispLineOptions, "1 Start, mid, end");
+            #region Coordinates
+            att = new CheckBoxAttribute("lineXCheck_AC", printXCheck, true);
             attDic.Add(att.attName, att);
+
+            att = new CheckBoxAttribute("lineYCheck_AC", printYCheck, true);
+            attDic.Add(att.attName, att);
+
+            att = new CheckBoxAttribute("lineZCheck_AC", printZCheck);
+            attDic.Add(att.attName, att);
+
+            att = new CheckBoxAttribute("lineStartCheck_AC", printStartCheck, true);
+            attDic.Add(att.attName, att);
+
+            att = new CheckBoxAttribute("lineMidCheck_AC", printMidCheck, true);
+            attDic.Add(att.attName, att);
+
+            att = new CheckBoxAttribute("lineEndCheck_AC", printEndCheck, true);
+            attDic.Add(att.attName, att);
+            #endregion
+
+            #region Properties
+            att = new ComboBoxAttribute("lineProperty_AC", dispLineProperties, "Length");
+            attDic.Add(att.attName, att);
+            #endregion
             #endregion
         }
 
@@ -96,10 +128,57 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
         #endregion
 
-
         private void getLineStartEnd_Click(object sender, EventArgs e)
         {
-            lineCoordinateHeaderGenerator();
+            try
+            {
+                AdskGreeting();
+            }
+            catch (Exception ex) { throw new Exception($"Unable to get line coordinates\n{ex.Message}"); }
+        }
+
+        public void AdskGreeting()
+        {
+            // Get the current document and database, and start a transaction
+            ACAS.Document acDoc = ACAS.Application.DocumentManager.MdiActiveDocument;
+            Database acCurDb = acDoc.Database;
+
+            // Starts a new transaction with the Transaction Manager
+            using (Transaction acTrans = acCurDb.TransactionManager.StartTransaction())
+            {
+                // Open the Block table record for read
+                BlockTable acBlkTbl;
+                acBlkTbl = acTrans.GetObject(acCurDb.BlockTableId,
+                                             OpenMode.ForRead) as BlockTable;
+
+                // Open the Block table record Model space for write
+                BlockTableRecord acBlkTblRec;
+                acBlkTblRec = acTrans.GetObject(acBlkTbl[BlockTableRecord.ModelSpace],
+                                                OpenMode.ForWrite) as BlockTableRecord;
+
+                /* Creates a new MText object and assigns it a location,
+                text value and text style */
+                using (MText objText = new MText())
+                {
+                    // Specify the insertion point of the MText object
+                    objText.Location = new Autodesk.AutoCAD.Geometry.Point3d(2, 2, 0);
+
+                    // Set the text string for the MText object
+                    objText.Contents = "Greetings, Welcome to AutoCAD .NET";
+
+                    // Set the text style for the MText object
+                    objText.TextStyleId = acCurDb.Textstyle;
+
+                    // Appends the new MText object to model space
+                    acBlkTblRec.AppendEntity(objText);
+
+                    // Appends to new MText object to the active transaction
+                    acTrans.AddNewlyCreatedDBObject(objText, true);
+                }
+
+                // Saves the changes to the database and closes the transaction
+                acTrans.Commit();
+            }
         }
     }
 }

@@ -30,15 +30,16 @@
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.dispLineOptions = new System.Windows.Forms.ComboBox();
-            this.getLineCoords = new System.Windows.Forms.Button();
-            this.AutoCadTabControl = new System.Windows.Forms.TabControl();
-            this.printXCheck = new System.Windows.Forms.CheckBox();
-            this.printYCheck = new System.Windows.Forms.CheckBox();
-            this.printZCheck = new System.Windows.Forms.CheckBox();
+            this.getLineProperties = new System.Windows.Forms.Button();
             this.printEndCheck = new System.Windows.Forms.CheckBox();
             this.printMidCheck = new System.Windows.Forms.CheckBox();
             this.printStartCheck = new System.Windows.Forms.CheckBox();
+            this.printZCheck = new System.Windows.Forms.CheckBox();
+            this.printYCheck = new System.Windows.Forms.CheckBox();
+            this.printXCheck = new System.Windows.Forms.CheckBox();
+            this.dispLineProperties = new System.Windows.Forms.ComboBox();
+            this.getLineCoords = new System.Windows.Forms.Button();
+            this.AutoCadTabControl = new System.Windows.Forms.TabControl();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.AutoCadTabControl.SuspendLayout();
@@ -57,13 +58,14 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.getLineProperties);
             this.groupBox1.Controls.Add(this.printEndCheck);
             this.groupBox1.Controls.Add(this.printMidCheck);
             this.groupBox1.Controls.Add(this.printStartCheck);
             this.groupBox1.Controls.Add(this.printZCheck);
             this.groupBox1.Controls.Add(this.printYCheck);
             this.groupBox1.Controls.Add(this.printXCheck);
-            this.groupBox1.Controls.Add(this.dispLineOptions);
+            this.groupBox1.Controls.Add(this.dispLineProperties);
             this.groupBox1.Controls.Add(this.getLineCoords);
             this.groupBox1.Location = new System.Drawing.Point(15, 11);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
@@ -74,23 +76,103 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Line Functions";
             // 
-            // dispLineOptions
+            // getLineProperties
             // 
-            this.dispLineOptions.AutoCompleteCustomSource.AddRange(new string[] {
-            "1 Start, mid, end",
-            "2 Start, end",
-            "3 Mid"});
-            this.dispLineOptions.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.dispLineOptions.FormattingEnabled = true;
-            this.dispLineOptions.Items.AddRange(new object[] {
-            "1 Start, mid, end",
-            "2 Start, end",
-            "3 Mid"});
-            this.dispLineOptions.Location = new System.Drawing.Point(266, 43);
-            this.dispLineOptions.Margin = new System.Windows.Forms.Padding(6);
-            this.dispLineOptions.Name = "dispLineOptions";
-            this.dispLineOptions.Size = new System.Drawing.Size(220, 32);
-            this.dispLineOptions.TabIndex = 2;
+            this.getLineProperties.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.getLineProperties.Location = new System.Drawing.Point(11, 110);
+            this.getLineProperties.Margin = new System.Windows.Forms.Padding(6);
+            this.getLineProperties.Name = "getLineProperties";
+            this.getLineProperties.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.getLineProperties.Size = new System.Drawing.Size(229, 46);
+            this.getLineProperties.TabIndex = 48;
+            this.getLineProperties.Text = "Get Properties";
+            this.getLineProperties.UseVisualStyleBackColor = true;
+            // 
+            // printEndCheck
+            // 
+            this.printEndCheck.AutoSize = true;
+            this.printEndCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printEndCheck.Location = new System.Drawing.Point(415, 63);
+            this.printEndCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printEndCheck.Name = "printEndCheck";
+            this.printEndCheck.Size = new System.Drawing.Size(73, 29);
+            this.printEndCheck.TabIndex = 47;
+            this.printEndCheck.Text = "End";
+            this.printEndCheck.UseVisualStyleBackColor = true;
+            // 
+            // printMidCheck
+            // 
+            this.printMidCheck.AutoSize = true;
+            this.printMidCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printMidCheck.Location = new System.Drawing.Point(337, 63);
+            this.printMidCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printMidCheck.Name = "printMidCheck";
+            this.printMidCheck.Size = new System.Drawing.Size(70, 29);
+            this.printMidCheck.TabIndex = 46;
+            this.printMidCheck.Text = "Mid";
+            this.printMidCheck.UseVisualStyleBackColor = true;
+            // 
+            // printStartCheck
+            // 
+            this.printStartCheck.AutoSize = true;
+            this.printStartCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printStartCheck.Location = new System.Drawing.Point(250, 63);
+            this.printStartCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printStartCheck.Name = "printStartCheck";
+            this.printStartCheck.Size = new System.Drawing.Size(79, 29);
+            this.printStartCheck.TabIndex = 45;
+            this.printStartCheck.Text = "Start";
+            this.printStartCheck.UseVisualStyleBackColor = true;
+            // 
+            // printZCheck
+            // 
+            this.printZCheck.AutoSize = true;
+            this.printZCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printZCheck.Location = new System.Drawing.Point(415, 26);
+            this.printZCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printZCheck.Name = "printZCheck";
+            this.printZCheck.Size = new System.Drawing.Size(50, 29);
+            this.printZCheck.TabIndex = 44;
+            this.printZCheck.Text = "Z";
+            this.printZCheck.UseVisualStyleBackColor = true;
+            // 
+            // printYCheck
+            // 
+            this.printYCheck.AutoSize = true;
+            this.printYCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printYCheck.Location = new System.Drawing.Point(337, 26);
+            this.printYCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printYCheck.Name = "printYCheck";
+            this.printYCheck.Size = new System.Drawing.Size(51, 29);
+            this.printYCheck.TabIndex = 43;
+            this.printYCheck.Text = "Y";
+            this.printYCheck.UseVisualStyleBackColor = true;
+            // 
+            // printXCheck
+            // 
+            this.printXCheck.AutoSize = true;
+            this.printXCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printXCheck.Location = new System.Drawing.Point(250, 26);
+            this.printXCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printXCheck.Name = "printXCheck";
+            this.printXCheck.Size = new System.Drawing.Size(52, 29);
+            this.printXCheck.TabIndex = 42;
+            this.printXCheck.Text = "X";
+            this.printXCheck.UseVisualStyleBackColor = true;
+            // 
+            // dispLineProperties
+            // 
+            this.dispLineProperties.AutoCompleteCustomSource.AddRange(new string[] {
+            "Length"});
+            this.dispLineProperties.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.dispLineProperties.FormattingEnabled = true;
+            this.dispLineProperties.Items.AddRange(new object[] {
+            "Length"});
+            this.dispLineProperties.Location = new System.Drawing.Point(268, 118);
+            this.dispLineProperties.Margin = new System.Windows.Forms.Padding(6);
+            this.dispLineProperties.Name = "dispLineProperties";
+            this.dispLineProperties.Size = new System.Drawing.Size(220, 32);
+            this.dispLineProperties.TabIndex = 2;
             // 
             // getLineCoords
             // 
@@ -115,78 +197,6 @@
             this.AutoCadTabControl.Size = new System.Drawing.Size(539, 1521);
             this.AutoCadTabControl.TabIndex = 0;
             // 
-            // printXCheck
-            // 
-            this.printXCheck.AutoSize = true;
-            this.printXCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printXCheck.Location = new System.Drawing.Point(11, 91);
-            this.printXCheck.Margin = new System.Windows.Forms.Padding(4);
-            this.printXCheck.Name = "printXCheck";
-            this.printXCheck.Size = new System.Drawing.Size(52, 29);
-            this.printXCheck.TabIndex = 42;
-            this.printXCheck.Text = "X";
-            this.printXCheck.UseVisualStyleBackColor = true;
-            // 
-            // printYCheck
-            // 
-            this.printYCheck.AutoSize = true;
-            this.printYCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printYCheck.Location = new System.Drawing.Point(115, 91);
-            this.printYCheck.Margin = new System.Windows.Forms.Padding(4);
-            this.printYCheck.Name = "printYCheck";
-            this.printYCheck.Size = new System.Drawing.Size(51, 29);
-            this.printYCheck.TabIndex = 43;
-            this.printYCheck.Text = "Y";
-            this.printYCheck.UseVisualStyleBackColor = true;
-            // 
-            // printZCheck
-            // 
-            this.printZCheck.AutoSize = true;
-            this.printZCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printZCheck.Location = new System.Drawing.Point(218, 91);
-            this.printZCheck.Margin = new System.Windows.Forms.Padding(4);
-            this.printZCheck.Name = "printZCheck";
-            this.printZCheck.Size = new System.Drawing.Size(50, 29);
-            this.printZCheck.TabIndex = 44;
-            this.printZCheck.Text = "Z";
-            this.printZCheck.UseVisualStyleBackColor = true;
-            // 
-            // printEndCheck
-            // 
-            this.printEndCheck.AutoSize = true;
-            this.printEndCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printEndCheck.Location = new System.Drawing.Point(218, 128);
-            this.printEndCheck.Margin = new System.Windows.Forms.Padding(4);
-            this.printEndCheck.Name = "printEndCheck";
-            this.printEndCheck.Size = new System.Drawing.Size(73, 29);
-            this.printEndCheck.TabIndex = 47;
-            this.printEndCheck.Text = "End";
-            this.printEndCheck.UseVisualStyleBackColor = true;
-            // 
-            // printMidCheck
-            // 
-            this.printMidCheck.AutoSize = true;
-            this.printMidCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printMidCheck.Location = new System.Drawing.Point(115, 128);
-            this.printMidCheck.Margin = new System.Windows.Forms.Padding(4);
-            this.printMidCheck.Name = "printMidCheck";
-            this.printMidCheck.Size = new System.Drawing.Size(70, 29);
-            this.printMidCheck.TabIndex = 46;
-            this.printMidCheck.Text = "Mid";
-            this.printMidCheck.UseVisualStyleBackColor = true;
-            // 
-            // printStartCheck
-            // 
-            this.printStartCheck.AutoSize = true;
-            this.printStartCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printStartCheck.Location = new System.Drawing.Point(11, 128);
-            this.printStartCheck.Margin = new System.Windows.Forms.Padding(4);
-            this.printStartCheck.Name = "printStartCheck";
-            this.printStartCheck.Size = new System.Drawing.Size(79, 29);
-            this.printStartCheck.TabIndex = 45;
-            this.printStartCheck.Text = "Start";
-            this.printStartCheck.UseVisualStyleBackColor = true;
-            // 
             // AutoCadPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -208,12 +218,13 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button getLineCoords;
         private System.Windows.Forms.TabControl AutoCadTabControl;
-        private System.Windows.Forms.ComboBox dispLineOptions;
         private System.Windows.Forms.CheckBox printZCheck;
         private System.Windows.Forms.CheckBox printYCheck;
         private System.Windows.Forms.CheckBox printXCheck;
         private System.Windows.Forms.CheckBox printEndCheck;
         private System.Windows.Forms.CheckBox printMidCheck;
         private System.Windows.Forms.CheckBox printStartCheck;
+        private System.Windows.Forms.Button getLineProperties;
+        private System.Windows.Forms.ComboBox dispLineProperties;
     }
 }
