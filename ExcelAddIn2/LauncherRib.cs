@@ -367,5 +367,30 @@ namespace ExcelAddIn2
             #endregion
         }
         #endregion
+
+        #region AutoCAD
+
+        private List<CustomTaskPane> autoCadList = new List<CustomTaskPane>();
+        private void autoCAD_Click(object sender, RibbonControlEventArgs e)
+        {
+            int NumPanes = 1;
+            List<CustomTaskPane> thisPaneList = autoCadList;
+            string title = "AutoCAD Tools";
+
+            #region Default Code - Replace Task Pane Type
+            List<CustomTaskPane> windowTaskPane = GetWindowPanes(ref thisPaneList);
+
+            if (windowTaskPane.Count < NumPanes) // add new panes to list 
+            {
+                AddPane<AutoCadPane>(ref thisPaneList, title);
+            }
+            else // Start toggling visibility of lists
+            {
+                TogglePaneVisibility(windowTaskPane, NumPanes);
+            }
+            #endregion
+        }
+        #endregion
+
     }
 }

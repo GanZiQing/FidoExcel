@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Tools;
+using MigraDoc.Rendering;
+using PdfSharp.Pdf.Content.Objects;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Office.Interop.Excel;
+//using System.Windows;
 using System.Windows.Forms;
-using System.IO;
-using System.Drawing;
-using PdfSharp.Pdf.Content.Objects;
+using Action = System.Action;
 using Application = Microsoft.Office.Interop.Excel.Application;
-using Microsoft.Office.Tools;
+using Button = System.Windows.Forms.Button;
 //using Microsoft.Office.Tools.Excel;
 
 
@@ -1229,14 +1233,16 @@ namespace ExcelAddIn2
         }
         #endregion
 
-        #region Insert Headers
-        public static void InsertHeadersAtSelection(List<string> headers, string type = "cols", bool format = true)
+        #region Headers 
+
+        #region Insert Headers At Selection
+        public static void InsertListHeadersAtSelection(List<string> headers, string type = "cols", bool format = true)
         {
             Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
             Range writeRange = null;
             if (type == "cols")
             {
-                writeRange = WriteToExcelRangeAsRow(selectedRange,0,0,true,headers.ToArray());
+                writeRange = WriteToExcelRangeAsRow(selectedRange, 0, 0, true, headers.ToArray());
             }
             else if (type == "rows")
             {
@@ -1255,10 +1261,10 @@ namespace ExcelAddIn2
             }
         }
 
-        public static void InsertHeadersAtSelection(string[,] headers, bool format = true)
+        public static void InsertArrayHeadersAtSelection(string[,] headers, bool format = true)
         {
             Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-            Range writeRange = WriteObjectToExcelRange(selectedRange,0,0,true,headers);
+            Range writeRange = WriteObjectToExcelRange(selectedRange, 0, 0, true, headers);
 
             if (format && writeRange != null)
             {
@@ -1268,21 +1274,126 @@ namespace ExcelAddIn2
             }
         }
 
-        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, List<string> headerText, string toolStripName = "Add Header", bool format = true, string headerOrientation = "cols")
+        public static void InsertHeadersAtSelection(object headers, bool format = true)
         {
-            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
-            ToolStripMenuItem headerItem = new ToolStripMenuItem(toolStripName);
-            button.ContextMenuStrip.Items.Add(headerItem);
-            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, headerOrientation, format);
+            // this cannot be combined because only list has the option to add header as column :(
+            if (headers is List<string> listHeaders)
+            {
+                InsertListHeadersAtSelection(listHeaders);
+            }
+            else if (headers is string[,] arrayHeaders)
+            {
+                InsertArrayHeadersAtSelection(arrayHeaders);
+            }
+            else
+            {
+                throw new Exception("Unsupported header object type");
+            }
         }
 
-        public static void AddHeaderMenuToButton(System.Windows.Forms.Button button, string[,] headerText, string toolStripName = "Add Header", bool format = true)
+        public static void InsertDynamicHeader(Func<object> headerGenerator, bool format = true)
+        {
+            try
+            {
+                var header = headerGenerator();
+                InsertHeadersAtSelection(header, format);
+            }
+            catch (Exception ex) { MessageBox.Show($"Unable to generate header\n{ex.Message}","Error"); }
+        }
+        #endregion
+
+        #region Subscribe Button
+        public static void AddHeaderMenuToButton(Button button, List<string> headerText, string toolStripName = "Add Header", bool format = true, string headerOrientation = "cols")
         {
             if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
             ToolStripMenuItem headerItem = new ToolStripMenuItem(toolStripName);
             button.ContextMenuStrip.Items.Add(headerItem);
-            headerItem.Click += (sender, e) => InsertHeadersAtSelection(headerText, format);
+            headerItem.Click += (sender, e) => InsertListHeadersAtSelection(headerText, headerOrientation, format);
         }
+
+        public static void AddHeaderMenuToButton(Button button, string[,] headerText, string toolStripName = "Add Header", bool format = true)
+        {
+            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem headerItem = new ToolStripMenuItem(toolStripName);
+            button.ContextMenuStrip.Items.Add(headerItem);
+            headerItem.Click += (sender, e) => InsertArrayHeadersAtSelection(headerText, format);
+        }
+
+        public static void AddDynamicActionToButton(Button button, Action action, string toolStripName = "Add Header")
+        {
+            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem headerItem = new ToolStripMenuItem(toolStripName);
+            button.ContextMenuStrip.Items.Add(headerItem);
+            headerItem.Click += (sender, e) => action();
+        }
+        #endregion
+
+        #region Combo Headers
+        public static void AddComboHeaderMenuToButton(Button button, Dictionary<string, object> headerDic, ComboBox comboBox, string toolStripName = "Add Header", bool format = true, string headerOrientation = "cols")
+        {
+            #region Usage Example
+            //#region Dynamic Headers for Get Coordinates from AutoCAD Pane
+            //Dictionary<string, object> headerDic = new Dictionary<string, object>();
+            //string[,] arrayHeaders = new string[,] { 
+            //    { "Start", "", "", "Mid", "", "", "End", "", "" }, 
+            //    { "X", "Y", "Z", "X", "Y", "Z", "X", "Y", "Z" } };
+            //headerDic.Add("1 Start, mid, end", arrayHeaders);
+
+            //arrayHeaders = new string[,] {
+            //    { "Start", "", "", "End", "", "" },
+            //    { "X", "Y", "Z", "X", "Y", "Z" } };
+            //headerDic.Add("2 Start, end", arrayHeaders);
+
+            //arrayHeaders = new string[,] {
+            //    { "Mid", "", ""},
+            //    { "X", "Y", "Z"} };
+            //headerDic.Add("3 Mid", arrayHeaders);
+
+            //AddComboHeaderMenuToButton(getLineCoords, headerDic, dispLineOptions);
+            //#endregion
+            #endregion
+            if (button.ContextMenuStrip == null) { button.ContextMenuStrip = new ContextMenuStrip(); }
+            ToolStripMenuItem headerItem = new ToolStripMenuItem(toolStripName);
+            button.ContextMenuStrip.Items.Add(headerItem);
+            headerItem.Click += (sender, e) => InsertComboHeaderAtSelection(headerDic, comboBox, headerOrientation, format);
+        }
+
+        public static void InsertComboHeaderAtSelection(Dictionary<string, object> headerDic, object attObject, string headerOrientation, bool format)
+        {
+            try
+            {
+                // Get parameter value
+                string value;
+                if (attObject is ComboBox comboBox)
+                {
+                    value = comboBox.Text;
+                }
+                else if (attObject is string stringObj)
+                {
+                    value = stringObj;
+                }
+                else { throw new Exception($"Incorrect type for header dynamic attObject"); }
+
+                if (!headerDic.ContainsKey(value)) { throw new Exception($"No matching header for value \"{value}\""); }
+
+                // Print Value
+                if (headerDic[value] is List<string> listHeaders)
+                {
+                    InsertListHeadersAtSelection(listHeaders);
+                }
+                else if (headerDic[value] is string[,] arrayHeaders)
+                {
+                    InsertArrayHeadersAtSelection(arrayHeaders);
+                }
+                else
+                {
+                    throw new Exception("Unsupported header type");
+                }
+            }
+            catch (Exception ex) { MessageBox.Show($"Unable to add header, {ex.Message}", "Error"); }
+        }
+
+        #endregion
         #endregion
 
         #region Get Directories

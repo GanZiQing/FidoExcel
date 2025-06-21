@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Core;
@@ -14,9 +9,6 @@ using static ExcelAddIn2.CommonUtilities;
 using Ppt = Microsoft.Office.Interop.PowerPoint;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Windows.Controls.Primitives;
-using Microsoft.Office.Tools.Excel;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {

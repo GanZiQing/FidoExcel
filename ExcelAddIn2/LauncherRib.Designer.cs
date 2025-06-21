@@ -36,30 +36,33 @@
         {
             this.FidoRibbon = this.Factory.CreateRibbonTab();
             this.AutomationToolsGroup = this.Factory.CreateRibbonGroup();
-            this.ETABSPaneLauncher = this.Factory.CreateRibbonButton();
-            this.reportPane = this.Factory.CreateRibbonButton();
             this.group2 = this.Factory.CreateRibbonGroup();
-            this.ExcelToolsButton = this.Factory.CreateRibbonButton();
-            this.FormatToolsButton = this.Factory.CreateRibbonButton();
-            this.PlottingTools = this.Factory.CreateRibbonButton();
             this.forSharing = this.Factory.CreateRibbonGroup();
-            this.DirectoryAndPdfButton = this.Factory.CreateRibbonButton();
-            this.draftingPaneButton = this.Factory.CreateRibbonButton();
             this.toHide = this.Factory.CreateRibbonGroup();
-            this.PilingToolsButton = this.Factory.CreateRibbonButton();
-            this.beamDesign = this.Factory.CreateRibbonButton();
             this.group1 = this.Factory.CreateRibbonGroup();
-            this.wallDesign = this.Factory.CreateRibbonButton();
-            this.wallCheck = this.Factory.CreateRibbonButton();
+            this.group3 = this.Factory.CreateRibbonGroup();
             this.Misc = this.Factory.CreateRibbonGroup();
             this.versionLabel = this.Factory.CreateRibbonLabel();
             this.tab1 = this.Factory.CreateRibbonTab();
+            this.ETABSPaneLauncher = this.Factory.CreateRibbonButton();
+            this.reportPane = this.Factory.CreateRibbonButton();
+            this.ExcelToolsButton = this.Factory.CreateRibbonButton();
+            this.FormatToolsButton = this.Factory.CreateRibbonButton();
+            this.PlottingTools = this.Factory.CreateRibbonButton();
+            this.DirectoryAndPdfButton = this.Factory.CreateRibbonButton();
+            this.draftingPaneButton = this.Factory.CreateRibbonButton();
+            this.PilingToolsButton = this.Factory.CreateRibbonButton();
+            this.beamDesign = this.Factory.CreateRibbonButton();
+            this.wallDesign = this.Factory.CreateRibbonButton();
+            this.wallCheck = this.Factory.CreateRibbonButton();
+            this.autoCAD = this.Factory.CreateRibbonButton();
             this.FidoRibbon.SuspendLayout();
             this.AutomationToolsGroup.SuspendLayout();
             this.group2.SuspendLayout();
             this.forSharing.SuspendLayout();
             this.toHide.SuspendLayout();
             this.group1.SuspendLayout();
+            this.group3.SuspendLayout();
             this.Misc.SuspendLayout();
             this.tab1.SuspendLayout();
             this.SuspendLayout();
@@ -71,6 +74,7 @@
             this.FidoRibbon.Groups.Add(this.forSharing);
             this.FidoRibbon.Groups.Add(this.toHide);
             this.FidoRibbon.Groups.Add(this.group1);
+            this.FidoRibbon.Groups.Add(this.group3);
             this.FidoRibbon.Groups.Add(this.Misc);
             this.FidoRibbon.KeyTip = "L1";
             this.FidoRibbon.Label = "Fido";
@@ -82,6 +86,59 @@
             this.AutomationToolsGroup.Items.Add(this.reportPane);
             this.AutomationToolsGroup.Label = "ETABS";
             this.AutomationToolsGroup.Name = "AutomationToolsGroup";
+            // 
+            // group2
+            // 
+            this.group2.Items.Add(this.ExcelToolsButton);
+            this.group2.Items.Add(this.FormatToolsButton);
+            this.group2.Items.Add(this.PlottingTools);
+            this.group2.Label = "Excel";
+            this.group2.Name = "group2";
+            // 
+            // forSharing
+            // 
+            this.forSharing.Items.Add(this.DirectoryAndPdfButton);
+            this.forSharing.Items.Add(this.draftingPaneButton);
+            this.forSharing.Label = "Directories and PDF";
+            this.forSharing.Name = "forSharing";
+            // 
+            // toHide
+            // 
+            this.toHide.Items.Add(this.PilingToolsButton);
+            this.toHide.Items.Add(this.beamDesign);
+            this.toHide.Label = "Hidden Group";
+            this.toHide.Name = "toHide";
+            this.toHide.Visible = false;
+            // 
+            // group1
+            // 
+            this.group1.Items.Add(this.wallDesign);
+            this.group1.Items.Add(this.wallCheck);
+            this.group1.Label = "Wall Design";
+            this.group1.Name = "group1";
+            // 
+            // group3
+            // 
+            this.group3.Items.Add(this.autoCAD);
+            this.group3.Label = "AutoCAD";
+            this.group3.Name = "group3";
+            // 
+            // Misc
+            // 
+            this.Misc.Items.Add(this.versionLabel);
+            this.Misc.Label = "Info";
+            this.Misc.Name = "Misc";
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.Label = "Version Info";
+            this.versionLabel.Name = "versionLabel";
+            // 
+            // tab1
+            // 
+            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
+            this.tab1.Label = "TabAddIns";
+            this.tab1.Name = "tab1";
             // 
             // ETABSPaneLauncher
             // 
@@ -100,14 +157,6 @@
             this.reportPane.Name = "reportPane";
             this.reportPane.ShowImage = true;
             this.reportPane.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.reportPane_Click);
-            // 
-            // group2
-            // 
-            this.group2.Items.Add(this.ExcelToolsButton);
-            this.group2.Items.Add(this.FormatToolsButton);
-            this.group2.Items.Add(this.PlottingTools);
-            this.group2.Label = "Excel";
-            this.group2.Name = "group2";
             // 
             // ExcelToolsButton
             // 
@@ -136,13 +185,6 @@
             this.PlottingTools.ShowImage = true;
             this.PlottingTools.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.PlottingTools_Click);
             // 
-            // forSharing
-            // 
-            this.forSharing.Items.Add(this.DirectoryAndPdfButton);
-            this.forSharing.Items.Add(this.draftingPaneButton);
-            this.forSharing.Label = "Directories and PDF";
-            this.forSharing.Name = "forSharing";
-            // 
             // DirectoryAndPdfButton
             // 
             this.DirectoryAndPdfButton.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
@@ -161,14 +203,6 @@
             this.draftingPaneButton.ShowImage = true;
             this.draftingPaneButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.draftingPaneButton_Click);
             // 
-            // toHide
-            // 
-            this.toHide.Items.Add(this.PilingToolsButton);
-            this.toHide.Items.Add(this.beamDesign);
-            this.toHide.Label = "Hidden Group";
-            this.toHide.Name = "toHide";
-            this.toHide.Visible = false;
-            // 
             // PilingToolsButton
             // 
             this.PilingToolsButton.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
@@ -185,13 +219,6 @@
             this.beamDesign.Name = "beamDesign";
             this.beamDesign.ShowImage = true;
             this.beamDesign.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.beamDesign_Click);
-            // 
-            // group1
-            // 
-            this.group1.Items.Add(this.wallDesign);
-            this.group1.Items.Add(this.wallCheck);
-            this.group1.Label = "Wall Design";
-            this.group1.Name = "group1";
             // 
             // wallDesign
             // 
@@ -211,22 +238,14 @@
             this.wallCheck.ShowImage = true;
             this.wallCheck.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.wallCheck_Click);
             // 
-            // Misc
+            // autoCAD
             // 
-            this.Misc.Items.Add(this.versionLabel);
-            this.Misc.Label = "Info";
-            this.Misc.Name = "Misc";
-            // 
-            // versionLabel
-            // 
-            this.versionLabel.Label = "Version Info";
-            this.versionLabel.Name = "versionLabel";
-            // 
-            // tab1
-            // 
-            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
-            this.tab1.Label = "TabAddIns";
-            this.tab1.Name = "tab1";
+            this.autoCAD.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.autoCAD.Image = global::ExcelAddIn2.Properties.Resources.autocad_logo;
+            this.autoCAD.Label = "AutoCAD";
+            this.autoCAD.Name = "autoCAD";
+            this.autoCAD.ShowImage = true;
+            this.autoCAD.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.autoCAD_Click);
             // 
             // LauncherRib
             // 
@@ -246,6 +265,8 @@
             this.toHide.PerformLayout();
             this.group1.ResumeLayout(false);
             this.group1.PerformLayout();
+            this.group3.ResumeLayout(false);
+            this.group3.PerformLayout();
             this.Misc.ResumeLayout(false);
             this.Misc.PerformLayout();
             this.tab1.ResumeLayout(false);
@@ -275,6 +296,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton wallCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup Misc;
         internal Microsoft.Office.Tools.Ribbon.RibbonLabel versionLabel;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group3;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton autoCAD;
     }
 
     partial class ThisRibbonCollection

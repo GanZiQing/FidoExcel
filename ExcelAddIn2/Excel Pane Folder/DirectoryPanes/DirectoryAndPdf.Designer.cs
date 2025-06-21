@@ -107,7 +107,7 @@
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.openFilesInOrder = new System.Windows.Forms.Button();
             this.directoryUserControl = new ExcelAddIn2.DirectoryUserControl();
-            this.ExcelTabControl = new System.Windows.Forms.TabControl();
+            this.DirectoryTabControl = new System.Windows.Forms.TabControl();
             this.PrintPage.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.PrintMultipleGroup.SuspendLayout();
@@ -122,7 +122,7 @@
             this.dirPage.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.openFilesGroup.SuspendLayout();
-            this.ExcelTabControl.SuspendLayout();
+            this.DirectoryTabControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // PrintPage
@@ -1127,25 +1127,25 @@
             this.directoryUserControl.Size = new System.Drawing.Size(502, 657);
             this.directoryUserControl.TabIndex = 5;
             // 
-            // ExcelTabControl
+            // DirectoryTabControl
             // 
-            this.ExcelTabControl.Controls.Add(this.dirPage);
-            this.ExcelTabControl.Controls.Add(this.pdfPage);
-            this.ExcelTabControl.Controls.Add(this.PrintPage);
-            this.ExcelTabControl.Cursor = System.Windows.Forms.Cursors.Default;
-            this.ExcelTabControl.Location = new System.Drawing.Point(6, 6);
-            this.ExcelTabControl.Margin = new System.Windows.Forms.Padding(6);
-            this.ExcelTabControl.Name = "ExcelTabControl";
-            this.ExcelTabControl.SelectedIndex = 0;
-            this.ExcelTabControl.Size = new System.Drawing.Size(539, 1521);
-            this.ExcelTabControl.TabIndex = 1;
+            this.DirectoryTabControl.Controls.Add(this.dirPage);
+            this.DirectoryTabControl.Controls.Add(this.pdfPage);
+            this.DirectoryTabControl.Controls.Add(this.PrintPage);
+            this.DirectoryTabControl.Cursor = System.Windows.Forms.Cursors.Default;
+            this.DirectoryTabControl.Location = new System.Drawing.Point(6, 6);
+            this.DirectoryTabControl.Margin = new System.Windows.Forms.Padding(6);
+            this.DirectoryTabControl.Name = "DirectoryTabControl";
+            this.DirectoryTabControl.SelectedIndex = 0;
+            this.DirectoryTabControl.Size = new System.Drawing.Size(539, 1521);
+            this.DirectoryTabControl.TabIndex = 1;
             // 
             // DirectoryAndPdf
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.Controls.Add(this.ExcelTabControl);
+            this.Controls.Add(this.DirectoryTabControl);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "DirectoryAndPdf";
             this.Size = new System.Drawing.Size(550, 1532);
@@ -1171,7 +1171,7 @@
             this.groupBox5.PerformLayout();
             this.openFilesGroup.ResumeLayout(false);
             this.openFilesGroup.PerformLayout();
-            this.ExcelTabControl.ResumeLayout(false);
+            this.DirectoryTabControl.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1255,6 +1255,6 @@
         private System.Windows.Forms.TextBox textBox13;
         private System.Windows.Forms.Button openFilesInOrder;
         private DirectoryUserControl directoryUserControl;
-        private System.Windows.Forms.TabControl ExcelTabControl;
+        private System.Windows.Forms.TabControl DirectoryTabControl;
     }
 }

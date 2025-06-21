@@ -269,6 +269,18 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Excel Pane Folder\basePane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Excel Pane Folder\basePane.Designer.cs">
+      <DependentUpon>basePane.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Excel Pane Folder\AutoCadPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Excel Pane Folder\AutoCadPane.Designer.cs">
+      <DependentUpon>AutoCadPane.cs</DependentUpon>
+    </Compile>
     <Compile Include="Excel Pane Folder\DirectoryPanes\DraftingPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -408,6 +420,12 @@
     <Compile Include="Shared Classes\ScreenshotApp\SettingsForm.designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Excel Pane Folder\basePane.resx">
+      <DependentUpon>basePane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Excel Pane Folder\AutoCadPane.resx">
+      <DependentUpon>AutoCadPane.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\DirectoryPanes\DraftingPane.resx">
       <DependentUpon>DraftingPane.cs</DependentUpon>
     </EmbeddedResource>
@@ -507,6 +525,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\autocad-logo.png" />
     <Content Include="Resources\Combine_Logo.bmp" />
     <Content Include="Resources\etabs.png" />
     <Content Include="Resources\Intersect_Logo.bmp" />
