@@ -880,7 +880,7 @@
             this.groupBox5.Controls.Add(this.openFolder1);
             this.groupBox5.Controls.Add(this.setFolder1);
             this.groupBox5.Controls.Add(this.dispFolder1);
-            this.groupBox5.Location = new System.Drawing.Point(15, 705);
+            this.groupBox5.Location = new System.Drawing.Point(15, 836);
             this.groupBox5.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(6);
@@ -1072,7 +1072,7 @@
             this.openFilesGroup.Controls.Add(this.dispOpenDelay);
             this.openFilesGroup.Controls.Add(this.textBox13);
             this.openFilesGroup.Controls.Add(this.openFilesInOrder);
-            this.openFilesGroup.Location = new System.Drawing.Point(15, 543);
+            this.openFilesGroup.Location = new System.Drawing.Point(15, 674);
             this.openFilesGroup.Margin = new System.Windows.Forms.Padding(6);
             this.openFilesGroup.Name = "openFilesGroup";
             this.openFilesGroup.Padding = new System.Windows.Forms.Padding(6);
@@ -1124,7 +1124,7 @@
             this.directoryUserControl.Location = new System.Drawing.Point(15, 9);
             this.directoryUserControl.Margin = new System.Windows.Forms.Padding(2);
             this.directoryUserControl.Name = "directoryUserControl";
-            this.directoryUserControl.Size = new System.Drawing.Size(502, 526);
+            this.directoryUserControl.Size = new System.Drawing.Size(502, 657);
             this.directoryUserControl.TabIndex = 5;
             // 
             // ExcelTabControl

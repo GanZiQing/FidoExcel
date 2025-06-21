@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
+using Microsoft.VisualBasic.FileIO; // For Recycling
 
 namespace ExcelAddIn2
 {
@@ -27,21 +28,26 @@ namespace ExcelAddIn2
 
         private void AddContextStrips()
         {
-            List<string> headers = new List<string> { "File Path", "Folder Name", "File Name"};
+            #region Headers
+            List<string> headers = new List<string> { "File Path", "Folder Name", "File Name" };
             AddHeaderMenuToButton(importFilePath, headers);
+            AddHeaderMenuToButton(importSpecificFile, headers);
 
-            headers = new List<string> { "File Path", "Parent Folder Name", "Folder Name"};
+            headers = new List<string> { "File Path", "Parent Folder Name", "Folder Name" };
             AddHeaderMenuToButton(importFolderPath, headers);
 
             headers = new List<string> { "File Name" };
             AddHeaderMenuToButton(importFileName, headers);
+            AddHeaderMenuToButton(importSpecificFileNames, headers);
 
             headers = new List<string> { "Folder Name" };
             AddHeaderMenuToButton(importFolderName, headers);
 
             headers = new List<string> { "File Path", "Folder", "File Name", "New File Name", "Status" };
             AddHeaderMenuToButton(renameFiles, headers);
+            #endregion
 
+            #region Get from Dialogue Box
             //Add File Details from Dialogue
             AddContextStripEvent(importFilePath, "Get From Dialogue Box", (sender, e) => importFilePath_Click(sender, e));
             AddContextStripEvent(importFileName, "Get From Dialogue Box", (sender, e) => importFileName_Click(sender, e));
@@ -49,6 +55,7 @@ namespace ExcelAddIn2
             AddContextStripEvent(importFolderName, "Get From Dialogue Box", (sender, e) => importFolderName_Click(sender, e));
             AddContextStripEvent(importSpecificFile, "Get from Dialogue Box", (sender, e) => importSpecificFile_Click(sender, e));
             AddContextStripEvent(importSpecificFileNames, "Get from Dialogue Box", (sender, e) => importSpecificFileNames_Click(sender, e));
+            #endregion
         }
 
         bool attributeCreated = false;
@@ -57,14 +64,27 @@ namespace ExcelAddIn2
             Dictionary<string, CustomAttribute> CustomAttributeDic)
         {
             if (attributeCreated) { return; }
-            
+
             #region Directory
             DirectoryTextBox FolderPath = new DirectoryTextBox("FolderPath", dispDirectory, setDirectory);
             FolderPath.AddOpenButton(dirOpenPath);
             AttributeTextBoxDic.Add("FolderPath", FolderPath);
+
+            CheckBoxAttribute checkAtt = new CheckBoxAttribute("checkNested_Dir", nestedFoldersCheck, true);
+            CustomAttributeDic.Add(checkAtt.attName, checkAtt);
+            
+            checkAtt = new CheckBoxAttribute("includeExt_Dir", addExtensionCheck, true);
+            CustomAttributeDic.Add(checkAtt.attName, checkAtt);
+
             AttributeTextBox ExtensionType = new AttributeTextBox("ExtensionType", dispExtension, true);
             var thisCustomAtt = new CheckBoxAttribute("includeExtension", addExtensionCheck, true);
             CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
+
+            checkAtt = new CheckBoxAttribute("appendToFileName_Dir", appendFileNameCheck, false);
+            CustomAttributeDic.Add(checkAtt.attName, checkAtt);
+
+            checkAtt = new CheckBoxAttribute("mergeFolders_Dir", mergeFoldersCheck, false);
+            CustomAttributeDic.Add(checkAtt.attName, checkAtt);
             #endregion
 
             attributeCreated = true;
@@ -72,15 +92,22 @@ namespace ExcelAddIn2
 
         private void AddToolTips()
         {
-            #region Directory
+            #region Get
             toolTip1.SetToolTip(importFilePath,
                 "For each file in selected folder, return:\n" +
-                "  Full Directory | Folder Name | Filename");
+                "  Full Directory | Folder Name | File Name");
 
-            toolTip1.SetToolTip(renameFiles,
-                "Rename files assuming the selected range (4 columns) of the following format:" +
-                "  File Path | Folder | File Name | File Name\n" +
-                "  Data in Folder and Origional File name columns are not used.");
+            toolTip1.SetToolTip(importFileName,
+                "For each file in selected folder, return:\n" +
+                "  File Name");
+
+            toolTip1.SetToolTip(importFolderPath,
+                "For each folder in selected folder, return:\n" +
+                "  Full Directory | Parent Folder Name | Folder Name");
+
+            toolTip1.SetToolTip(importFolderName,
+                "For each folder in selected folder, return:\n" +
+                "  Folder Name");
 
             toolTip1.SetToolTip(dispExtension,
                 "Provide extension of the file type to limit search to. Extension should start with \".\"\n" +
@@ -88,30 +115,60 @@ namespace ExcelAddIn2
                 "  Use comma to define multiple file types (e.g \".pdf, .xlsx\")\n" +
                 "  Use \".excel\" to filter for .xlsx, .xlsm, .xlsb, .xls, .csv");
 
-            //toolTip1.SetToolTip(mergeFolders,
-            //    "Inserts reference headers used for \"Import Paths\" and \"Rename Files\"\n" +
-            //    "File Path | Folder | File Name | New File Name | Status");
+            toolTip1.SetToolTip(importSpecificFile,
+                "For each file in selected folder that matches the specified extension, return:\n" +
+                "  Full Directory | Folder Name | File Name");
+
+            toolTip1.SetToolTip(importSpecificFileNames,
+                "For each file in selected folder that matches the specified extension, return:\n" +
+                "  File Name");
+            #endregion
+
+            #region Edit
+            toolTip1.SetToolTip(renameFiles,
+                "Rename files. Takes input:\n" +
+                "  Path | *Parent Folder | *File/Folder Name | New File/Folder Name \n" +
+                "  *Data in these columns are not used.");
+
+            toolTip1.SetToolTip(copyFiles,
+                "Copy files from the selected file paths to target folder. Takes input:\n" +
+                "  File Path\n" +
+                "Primary usage is to use excel to filter desired files before copying.");
+
+            toolTip1.SetToolTip(moveFiles,
+                "Move files from the selected file paths to target folder. Takes input:\n" +
+                "  File Path\n" +
+                "Primary usage is to use excel to filter desired files before copying.");
+
+            toolTip1.SetToolTip(createFolders,
+                "Create folders. Takes input:\n" +
+                "  Relative Folder Path\n");
             #endregion
         }
-
 
         #region Resize
         public void ShowFileDetailsOnly()
         {
-            
             importFolderPath.Enabled = false;
-            importFolderName.Enabled = false; 
+            importFolderName.Enabled = false;
             dispExtension.Enabled = false;
             importSpecificFile.Enabled = false;
             importSpecificFileNames.Enabled = false;
+
             renameFiles.Enabled = false;
-            //mergeFolders.Enabled = false;
+            createFolders.Enabled = false;
+            copyFiles.Enabled = false;
+            moveFiles.Enabled = false;
+
             this.Height = 224;
         }
         public void ShowUpToSpecifyExtension()
         {
             renameFiles.Enabled = false;
-            //mergeFolders.Enabled = false;
+            createFolders.Enabled = false;
+            copyFiles.Enabled = false;
+            moveFiles.Enabled = false;
+
             this.Height = 428;
         }
         #endregion
@@ -122,8 +179,8 @@ namespace ExcelAddIn2
         #region Buttons
         private void importFilePath_Click(object sender, EventArgs e)
         {
-            if (sender is ToolStripMenuItem) 
-            { 
+            if (sender is ToolStripMenuItem)
+            {
                 string destinationFolder;
                 try
                 {
@@ -135,11 +192,11 @@ namespace ExcelAddIn2
 
                 importFilesOrFolders(true, false, overwriteDirectory: destinationFolder);
             }
-            if (sender is System.Windows.Forms.Button) 
-            { 
+            if (sender is System.Windows.Forms.Button)
+            {
                 importFilesOrFolders(true, false);
             }
-            
+
         }
 
         private void importFileName_Click(object sender, EventArgs e)
@@ -165,7 +222,7 @@ namespace ExcelAddIn2
 
             //importFilesOrFolders(true, true);
         }
-        
+
         private void importFolderPath_Click(object sender, EventArgs e)
         {
             //importFilesOrFolders(false, false);
@@ -188,7 +245,7 @@ namespace ExcelAddIn2
                 importFilesOrFolders(false, false);
             }
         }
-        
+
         private void importFolderName_Click(object sender, EventArgs e)
         {
             //importFilesOrFolders(false, true);
@@ -210,7 +267,7 @@ namespace ExcelAddIn2
                 importFilesOrFolders(false, true);
             }
         }
-        
+
         private void importSpecificFile_Click(object sender, EventArgs e)
         {
             #region Get Extension
@@ -280,7 +337,7 @@ namespace ExcelAddIn2
             }
         }
         #endregion
-        
+
         #region Main File Path Function
         private void importFilesOrFolders(bool isFile, bool nameOnly, string specifiedExtension = "", string overwriteDirectory = "")
         {
@@ -309,9 +366,9 @@ namespace ExcelAddIn2
                 List<string> files = new List<string>();
                 if (isFile)
                 {
-                    getFiles(directoryPath, ref files, checkNestedFolders.Checked, specifiedExtension);
+                    getFiles(directoryPath, ref files, nestedFoldersCheck.Checked, specifiedExtension);
                 }
-                else { getFolders(directoryPath, ref files, checkNestedFolders.Checked); }
+                else { getFolders(directoryPath, ref files, nestedFoldersCheck.Checked); }
 
                 if (files.Count == 0) { throw new Exception("No items found to print"); }
                 #endregion
@@ -330,7 +387,7 @@ namespace ExcelAddIn2
                 }
 
                 if (!nameOnly) { WriteToExcelSelectionAsRow(0, 0, true, fullPath, folderName, fileName); }
-                else{ WriteToExcelSelectionAsRow(0, 0, true, fileName); }
+                else { WriteToExcelSelectionAsRow(0, 0, true, fileName); }
                 #endregion
 
                 #region Format Path to be less annoying
@@ -501,7 +558,7 @@ namespace ExcelAddIn2
                      $"{sourcePaths.Length - failures}/{sourcePaths.Length} files renamed. Check status.", "Completed");
             }
         }
-        
+
         private string renameOneFile(string sourcePath, string newPath)
         {
 
@@ -559,7 +616,18 @@ namespace ExcelAddIn2
 
         #endregion
 
-        private void copyFiles_Click(object sender, EventArgs e)
+        #region Create Folder
+        private void createFolders_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Not Implemented");
+        }
+        #endregion
+
+        #region Copy
+        private void copyFiles_Click(object sender, EventArgs e) { copyOrMoveFiles(true); }
+        private void moveFiles_Click(object sender, EventArgs e) { copyOrMoveFiles(false); }
+
+        private void copyOrMoveFiles(bool isCopy)
         {
             try
             {
@@ -569,11 +637,14 @@ namespace ExcelAddIn2
                 catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); return; }
 
                 string[] filePaths = GetContentsAsStringArray(selectedRange, true);
+                if (filePaths == null) { throw new Exception("No file paths provided in selected range"); }
                 List<string> failedPaths = new List<string>();
-                foreach (string filePath in filePaths) 
+
+                foreach (string filePath in filePaths)
                 {
-                    if (!File.Exists(filePath)) { failedPaths.Add(filePath); }
+                    if (!File.Exists(filePath) & !Directory.Exists(filePath)) { failedPaths.Add(filePath); }
                 }
+
                 if (failedPaths.Count > 0)
                 {
                     string msg = "The following file path(s) do not exist:\n";
@@ -595,18 +666,92 @@ namespace ExcelAddIn2
                 int filesCopied = 0;
                 foreach (string filePath in filePaths)
                 {
-                    string destinationPath = Path.Combine(destinationFolder, Path.GetFileName(filePath));
-                    if (File.Exists(destinationPath)) 
+                    #region File
+                    if (File.Exists(filePath)) // Is a File
                     {
-                        DialogResult res = MessageBox.Show($"File {Path.GetFileName(filePath)} already exist at destination, overwrite?","Warning", MessageBoxButtons.YesNoCancel);
-                        if (res == DialogResult.Cancel) { throw new Exception("Terminated by user"); }
-                        else if (res == DialogResult.Yes) { File.Copy(filePath, destinationPath, true); filesCopied++; }
+                        string destinationPath = Path.Combine(destinationFolder, Path.GetFileName(filePath));
+                        if (File.Exists(destinationPath))
+                        {
+                            if (appendFileNameCheck.Checked) // Try new names
+                            {
+                                string originalFileName = Path.GetFileNameWithoutExtension(filePath);
+                                string originalExtension = Path.GetExtension(filePath);
+
+                                int attempt = 1;
+                                int maxAttempt = 100;
+                                while (attempt < maxAttempt)
+                                {
+                                    string newFileName = originalFileName + $" ({attempt})" + originalExtension;
+                                    string newDestinationPath = Path.Combine(destinationFolder, newFileName);
+                                    if (File.Exists(newDestinationPath)) { attempt++; continue; } // Skip remaining and try new name
+
+                                    if (isCopy) { File.Copy(filePath, newDestinationPath, false); }
+                                    else { File.Move(filePath, newDestinationPath); }
+                                    filesCopied++;
+                                    break;
+                                }
+
+                                if (attempt >= maxAttempt)
+                                {
+                                    MessageBox.Show($"Unable to find new name for {Path.GetFileName(filePath)}. File skipped.\n" +
+                                        $"File Path: {filePath}");
+                                }
+                            }
+                            else // Ask to delete
+                            {
+                                DialogResult res = MessageBox.Show($"File {Path.GetFileName(filePath)} already exist at destination, overwrite?", "Warning", MessageBoxButtons.YesNoCancel);
+                                if (res == DialogResult.Cancel) { throw new Exception("Terminated by user"); }
+                                else if (res == DialogResult.Yes)
+                                {
+                                    if (isCopy) { File.Copy(filePath, destinationPath, true); }
+                                    else
+                                    {
+                                        File.Delete(destinationPath);
+                                        File.Move(filePath, destinationPath);
+                                    }
+                                    filesCopied++;
+                                }
+                            }                           
+                        }
+                        else
+                        {
+                            if (isCopy) { File.Copy(filePath, destinationPath, false); }
+                            else { File.Move(filePath, destinationPath); }
+                            filesCopied++;
+                        }
                     }
-                    else
+                    #endregion
+
+                    #region Directory
+                    else // Is a Directory (case that file and folder does not exist is already taken care of at the start
                     {
-                        File.Copy(filePath, destinationPath, false);
-                        filesCopied++;
+                        string destinationPath = Path.Combine(destinationFolder, Path.GetFileName(filePath));
+                        if (Directory.Exists(destinationPath))
+                        {
+                            if (mergeFoldersCheck.Checked) { throw new NotImplementedException("Merge Folders not implemented"); }
+                            else // Ask to delete
+                            {
+                                string folderName = new DirectoryInfo(destinationPath).Name;
+                                DialogResult res = MessageBox.Show($"Folder {folderName} already exist at destination, delete existing?", "Warning", MessageBoxButtons.YesNoCancel);
+                                if (res == DialogResult.Cancel) { throw new Exception("Terminated by user"); }
+                                else if (res == DialogResult.Yes)
+                                {
+                                    FileSystem.DeleteDirectory(destinationPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+
+                                    if (isCopy) { copyFolder(filePath, destinationPath); }
+                                    else { Directory.Move(filePath, destinationPath); }
+                                    filesCopied++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (isCopy) { copyFolder(filePath, destinationPath); }
+                            else { Directory.Move(filePath, destinationPath); }
+                            filesCopied++;
+                        }
                     }
+                    #endregion
                 }
                 #endregion
 
@@ -617,5 +762,36 @@ namespace ExcelAddIn2
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
+
+        private void copyFolder(string sourcePath, string destinationPath)
+        {
+            // This function assumes both path have been checked and are ok
+            // Written by chatGPT
+
+            // Create destination directory if it doesn't exist
+            if (!Directory.Exists(destinationPath))
+            {
+                Directory.CreateDirectory(destinationPath);
+            }
+
+            // Copy all files
+            foreach (string filePath in Directory.GetFiles(sourcePath))
+            {
+                string fileName = Path.GetFileName(filePath);
+                string destFile = Path.Combine(destinationPath, fileName);
+                File.Copy(filePath, destFile, true); // Overwrite if exists
+            }
+
+            // Recursively copy all subdirectories
+            foreach (string dirPath in Directory.GetDirectories(sourcePath))
+            {
+                string dirName = Path.GetFileName(dirPath);
+                string destSubDir = Path.Combine(destinationPath, dirName);
+                copyFolder(dirPath, destSubDir);
+            }
+        }
+        #endregion
+
+
     }
 }
