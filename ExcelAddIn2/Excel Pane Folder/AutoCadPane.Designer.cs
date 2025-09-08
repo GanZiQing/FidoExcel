@@ -40,6 +40,7 @@
             this.dispLineProperties = new System.Windows.Forms.ComboBox();
             this.getLineCoords = new System.Windows.Forms.Button();
             this.AutoCadTabControl = new System.Windows.Forms.TabControl();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.AutoCadTabControl.SuspendLayout();
@@ -58,6 +59,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.getLineProperties);
             this.groupBox1.Controls.Add(this.printEndCheck);
             this.groupBox1.Controls.Add(this.printMidCheck);
@@ -95,7 +97,7 @@
             this.printEndCheck.Location = new System.Drawing.Point(415, 63);
             this.printEndCheck.Margin = new System.Windows.Forms.Padding(4);
             this.printEndCheck.Name = "printEndCheck";
-            this.printEndCheck.Size = new System.Drawing.Size(73, 29);
+            this.printEndCheck.Size = new System.Drawing.Size(64, 28);
             this.printEndCheck.TabIndex = 47;
             this.printEndCheck.Text = "End";
             this.printEndCheck.UseVisualStyleBackColor = true;
@@ -107,7 +109,7 @@
             this.printMidCheck.Location = new System.Drawing.Point(337, 63);
             this.printMidCheck.Margin = new System.Windows.Forms.Padding(4);
             this.printMidCheck.Name = "printMidCheck";
-            this.printMidCheck.Size = new System.Drawing.Size(70, 29);
+            this.printMidCheck.Size = new System.Drawing.Size(60, 28);
             this.printMidCheck.TabIndex = 46;
             this.printMidCheck.Text = "Mid";
             this.printMidCheck.UseVisualStyleBackColor = true;
@@ -119,7 +121,7 @@
             this.printStartCheck.Location = new System.Drawing.Point(250, 63);
             this.printStartCheck.Margin = new System.Windows.Forms.Padding(4);
             this.printStartCheck.Name = "printStartCheck";
-            this.printStartCheck.Size = new System.Drawing.Size(79, 29);
+            this.printStartCheck.Size = new System.Drawing.Size(65, 28);
             this.printStartCheck.TabIndex = 45;
             this.printStartCheck.Text = "Start";
             this.printStartCheck.UseVisualStyleBackColor = true;
@@ -131,7 +133,7 @@
             this.printZCheck.Location = new System.Drawing.Point(415, 26);
             this.printZCheck.Margin = new System.Windows.Forms.Padding(4);
             this.printZCheck.Name = "printZCheck";
-            this.printZCheck.Size = new System.Drawing.Size(50, 29);
+            this.printZCheck.Size = new System.Drawing.Size(41, 28);
             this.printZCheck.TabIndex = 44;
             this.printZCheck.Text = "Z";
             this.printZCheck.UseVisualStyleBackColor = true;
@@ -143,7 +145,7 @@
             this.printYCheck.Location = new System.Drawing.Point(337, 26);
             this.printYCheck.Margin = new System.Windows.Forms.Padding(4);
             this.printYCheck.Name = "printYCheck";
-            this.printYCheck.Size = new System.Drawing.Size(51, 29);
+            this.printYCheck.Size = new System.Drawing.Size(41, 28);
             this.printYCheck.TabIndex = 43;
             this.printYCheck.Text = "Y";
             this.printYCheck.UseVisualStyleBackColor = true;
@@ -155,7 +157,7 @@
             this.printXCheck.Location = new System.Drawing.Point(250, 26);
             this.printXCheck.Margin = new System.Windows.Forms.Padding(4);
             this.printXCheck.Name = "printXCheck";
-            this.printXCheck.Size = new System.Drawing.Size(52, 29);
+            this.printXCheck.Size = new System.Drawing.Size(43, 28);
             this.printXCheck.TabIndex = 42;
             this.printXCheck.Text = "X";
             this.printXCheck.UseVisualStyleBackColor = true;
@@ -197,6 +199,15 @@
             this.AutoCadTabControl.Size = new System.Drawing.Size(539, 1521);
             this.AutoCadTabControl.TabIndex = 0;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(146, 209);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(232, 24);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Not usable, to be removed";
+            // 
             // AutoCadPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
@@ -226,5 +237,6 @@
         private System.Windows.Forms.CheckBox printStartCheck;
         private System.Windows.Forms.Button getLineProperties;
         private System.Windows.Forms.ComboBox dispLineProperties;
+        private System.Windows.Forms.Label label1;
     }
 }

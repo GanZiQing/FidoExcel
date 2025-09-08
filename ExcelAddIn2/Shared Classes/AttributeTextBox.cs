@@ -1318,7 +1318,7 @@ namespace ExcelAddIn2
         }
         #endregion
     }
-
+        
     public class TargetCriteria
     {
         // Links together several objects to allow checking of source criterial easily

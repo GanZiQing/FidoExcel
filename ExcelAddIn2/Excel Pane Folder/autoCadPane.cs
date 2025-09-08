@@ -1,5 +1,4 @@
-﻿using Autodesk.AutoCAD.DatabaseServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,12 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
-using ACAS = Autodesk.AutoCAD.ApplicationServices;
-using ACDS = Autodesk.AutoCAD.DatabaseServices;
-using ADRT = Autodesk.AutoCAD.Runtime;
-//using Autodesk.AutoCAD.ApplicationServices;
-//using Autodesk.AutoCAD.DatabaseServices;
-//using Autodesk.AutoCAD.Runtime;
+//using ACAS = Autodesk.AutoCAD.ApplicationServices;
+//using ACDS = Autodesk.AutoCAD.DatabaseServices;
+//using ADRT = Autodesk.AutoCAD.Runtime;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Runtime;
+using Application = Autodesk.AutoCAD.ApplicationServices.Application;
+using Exception = System.Exception;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -134,13 +135,13 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             {
                 AdskGreeting();
             }
-            catch (Exception ex) { throw new Exception($"Unable to get line coordinates\n{ex.Message}"); }
+            catch (Exception ex) { MessageBox.Show($"Unable to get line coordinates\n{ex.Message}","Error"); }
         }
 
         public void AdskGreeting()
         {
             // Get the current document and database, and start a transaction
-            ACAS.Document acDoc = ACAS.Application.DocumentManager.MdiActiveDocument;
+            Document acDoc = Application.DocumentManager.MdiActiveDocument;
             Database acCurDb = acDoc.Database;
 
             // Starts a new transaction with the Transaction Manager
