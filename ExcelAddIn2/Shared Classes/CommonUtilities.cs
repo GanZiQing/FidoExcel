@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 //using System.Windows;
 using System.Windows.Forms;
+using static ExcelAddIn2.TwoDArrayFunctions;
 using Action = System.Action;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using Button = System.Windows.Forms.Button;
@@ -90,6 +91,21 @@ namespace ExcelAddIn2
             }
 
             return output;
+        }
+
+        public static double[] RemoveNaNFromDoubleArray(double[] inputArray)
+        {            
+            List<double> outputList = new List<double>();
+            foreach (double value in inputArray)
+            {
+                if (double.IsNaN(value))
+                {
+                    continue;
+                }
+                outputList.Add(value);
+            }
+
+            return outputList.ToArray();
         }
 
         //public static double GetDoubleFromObject(object item)
@@ -185,6 +201,23 @@ namespace ExcelAddIn2
             }
             return rangeArray;
         }
+
+        public static double[,] GetContentsAsDouble2DArray(Range range)
+        {
+            double[,] rangeArray = new double[range.Rows.Count, range.Columns.Count];
+            for (int rowNum = 0; rowNum < range.Rows.Count; rowNum++)
+            {
+                for (int colNum = 0; colNum < range.Columns.Count; colNum++)
+                {
+                    Range cell = range.Cells[rowNum + 1, colNum + 1];
+                    double value = ReadDoubleFromCell(cell, false);
+                    rangeArray[rowNum, colNum] = value;
+                }
+            }
+            return rangeArray;
+        }
+
+
         #endregion
 
         public static (int, int, int, int) GetRangeDetails(Range selectedRange)
@@ -1541,6 +1574,402 @@ namespace ExcelAddIn2
             ToolStripMenuItem newItem = new ToolStripMenuItem(contextText);
             button.ContextMenuStrip.Items.Add(newItem);
             newItem.Click += eventHandler;
+        }
+        #endregion
+
+        #region Rounding
+        public static double RoundDouble(double value, double n, RoundMode mode = RoundMode.Nearest)
+        {
+            if (n == 0) return value; // avoid divide by zero
+
+            double rounded;
+
+            switch (mode)
+            {
+                case RoundMode.Nearest:
+                    rounded = Math.Round(value / n) * n;
+                    break;
+
+                case RoundMode.Ceiling:
+                    rounded = Math.Ceiling(value / n) * n;
+                    break;
+
+                case RoundMode.Floor:
+                    rounded = Math.Floor(value / n) * n;
+                    break;
+
+                case RoundMode.CeilingAbs:
+                    {
+                        double absValue = Math.Abs(value);
+                        rounded = Math.Ceiling(absValue / n) * n;
+                        if (value < 0) { rounded = -rounded; }
+                        break;
+                    }
+                case RoundMode.FloorAbs:
+                    {
+                        double absValue = Math.Abs(value);
+                        rounded = Math.Floor(absValue / n) * n;
+                        if (value < 0) { rounded = -rounded; }
+                        break;
+                    }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mode), "Unsupported rounding mode.");
+            }
+
+            // If n < 1, round to appropriate decimal places to avoid floating point artifact
+            if (n < 1)
+            {
+                int decimals = (int)Math.Ceiling(-Math.Log10(n)) + 1;
+                rounded = Math.Round(rounded, decimals);
+            }
+
+            return rounded;
+        }
+
+        #endregion
+
+    }
+
+    static class TwoDArrayFunctions
+    {
+        public enum OutputArrayType
+        {
+            Object,
+            Double,
+            String
+        }
+        public enum RoundMode
+        {
+            Nearest,
+            Ceiling,
+            Floor,
+            CeilingAbs,
+            FloorAbs
+        }
+        public static (int totalRows, int totalCols) GetSizeOfConcat(List<object[,]> arrays)
+        {
+            // Get size of array if each array is just appended to the end
+            // Total No. rows = sum (numRow)
+            // Total No. cols = max (numCol)
+
+            int totalRows = 0;
+            int totalCols = 0;
+            foreach (object[,] array in arrays)
+            {
+                totalRows += array.GetLength(0);
+                if (totalCols < array.GetLength(1)) { totalCols = array.GetLength(1); }
+            }
+
+            return (totalRows, totalCols);
+        }
+
+        public static (int totalRows, int totalCols) GetSizeOfConcat(List<string[,]> arrays)
+        {
+            // Get size of array if each array is just appended to the end
+            // Total No. rows = sum (numRow)
+            // Total No. cols = max (numCol)
+
+            int totalRows = 0;
+            int totalCols = 0;
+            foreach (string[,] array in arrays)
+            {
+                totalRows += array.GetLength(0);
+                if (totalCols < array.GetLength(1)) { totalCols = array.GetLength(1); }
+            }
+
+            return (totalRows, totalCols);
+        }
+
+        public static (int totalRows, int totalCols) GetSizeOfConcat(List<double[,]> arrays)
+        {
+            // Get size of array if each array is just appended to the end
+            // Total No. rows = sum (numRow)
+            // Total No. cols = max (numCol)
+
+            int totalRows = 0;
+            int totalCols = 0;
+            foreach (double[,] array in arrays)
+            {
+                totalRows += array.GetLength(0);
+                if (totalCols < array.GetLength(1)) { totalCols = array.GetLength(1); }
+            }
+
+            return (totalRows, totalCols);
+        }
+
+        public static Array CreateEmptyArrayOfConcatSize(List<object[,]> arrays, OutputArrayType type, int addRows = 0, int addCols = 0)
+        {
+            // Returns empty array with size of concated array, plus additional rows and columns as required
+            (int totalRows, int totalCols) = GetSizeOfConcat(arrays);
+
+            switch (type)
+            {
+                case OutputArrayType.Double:
+                    return new double[totalRows + addRows, totalCols + addCols];
+                case OutputArrayType.String:
+                    return new string[totalRows + addRows, totalCols + addCols];
+                default:
+                    return new object[totalRows + addRows, totalCols + addCols];
+            }
+        }
+
+        public static Array CreateEmptyArrayOfConcatSize(List<double[,]> arrays, OutputArrayType type, int addRows = 0, int addCols = 0)
+        {
+            // Returns empty array with size of concated array, plus additional rows and columns as required
+            (int totalRows, int totalCols) = GetSizeOfConcat(arrays);
+
+            switch (type)
+            {
+                case OutputArrayType.Double:
+                    return new double[totalRows + addRows, totalCols + addCols];
+                case OutputArrayType.String:
+                    return new string[totalRows + addRows, totalCols + addCols];
+                default:
+                    return new object[totalRows + addRows, totalCols + addCols];
+            }
+        }
+
+        public static Array CreateEmptyArrayOfConcatSize(List<string[,]> arrays, OutputArrayType type, int addRows = 0, int addCols = 0)
+        {
+            // Returns empty array with size of concated array, plus additional rows and columns as required
+            (int totalRows, int totalCols) = GetSizeOfConcat(arrays);
+
+            switch (type)
+            {
+                case OutputArrayType.Double:
+                    return new double[totalRows + addRows, totalCols + addCols];
+                case OutputArrayType.String:
+                    return new string[totalRows + addRows, totalCols + addCols];
+                default:
+                    return new object[totalRows + addRows, totalCols + addCols];
+            }
+        }
+
+        public static double[] GetSingleRow(double[,] array, int rowNum)
+        {
+            int numCol = array.GetLength(1);
+            double[] row = new double[numCol];
+            for (int col = 0; col < numCol; col++)
+            {
+                row[col] = array[rowNum, col];
+            }
+            return row;
+        }
+
+        public static void WriteSingleRow(ref double[,] array, double[] row, int rowNum, bool checkNumCol = true)
+        {
+            int numCol = array.GetLength(1);
+
+            if (checkNumCol)
+            {
+                if (row.Length != numCol)
+                {
+                    throw new ArgumentException("Row length does not match array column count.");
+                }
+            }
+            else
+            {
+                if (row.Length > numCol)
+                {
+                    throw new ArgumentException("Row length exceeds array column count.");
+                }
+            }
+
+            for (int col = 0; col < numCol; col++)
+            {
+                array[rowNum, col] = row[col];
+            }
+        }
+
+        #region WriteArrayIntoArray
+        public static void WriteArrayIntoArray(ref object[,] destArray, object[,] sourceArray, int insertRowNum, int insertColNum)
+        {
+            int sourceNumRows = sourceArray.GetLength(0);
+            int sourceNumCols = sourceArray.GetLength(1);
+
+            // Bounds check
+            if (insertRowNum + sourceNumRows > destArray.GetLength(0) ||
+                insertColNum + sourceNumCols > destArray.GetLength(1))
+            {
+                throw new ArgumentException("Source array does not fit into destination array at the given position.");
+            }
+
+            // Copy data
+            for (int rowNum = 0; rowNum < sourceNumRows; rowNum++)
+            {
+                for (int colNum = 0; colNum < sourceNumCols; colNum++)
+                {
+                    destArray[insertRowNum + rowNum, insertColNum + colNum] = sourceArray[rowNum, colNum];
+                }
+            }
+        }
+        public static void WriteArrayIntoArray(ref object[,] destArray, double[,] sourceArray, int insertRowNum, int insertColNum)
+        {
+            int sourceNumRows = sourceArray.GetLength(0);
+            int sourceNumCols = sourceArray.GetLength(1);
+
+            // Bounds check
+            if (insertRowNum + sourceNumRows > destArray.GetLength(0) ||
+                insertColNum + sourceNumCols > destArray.GetLength(1))
+            {
+                throw new ArgumentException("Source array does not fit into destination array at the given position.");
+            }
+
+            // Copy data
+            for (int rowNum = 0; rowNum < sourceNumRows; rowNum++)
+            {
+                for (int colNum = 0; colNum < sourceNumCols; colNum++)
+                {
+                    destArray[insertRowNum + rowNum, insertColNum + colNum] = sourceArray[rowNum, colNum];
+                }
+            }
+        }
+
+        public static void WriteArrayIntoArray(ref double[,] destArray, double[,] sourceArray, int insertRowNum, int insertColNum)
+        {
+            int sourceNumRows = sourceArray.GetLength(0);
+            int sourceNumCols = sourceArray.GetLength(1);
+
+            // Bounds check
+            if (insertRowNum + sourceNumRows > destArray.GetLength(0) ||
+                insertColNum + sourceNumCols > destArray.GetLength(1))
+            {
+                throw new ArgumentException("Source array does not fit into destination array at the given position.");
+            }
+
+            // Copy data
+            for (int rowNum = 0; rowNum < sourceNumRows; rowNum++)
+            {
+                for (int colNum = 0; colNum < sourceNumCols; colNum++)
+                {
+                    destArray[insertRowNum + rowNum, insertColNum + colNum] = sourceArray[rowNum, colNum];
+                }
+            }
+        }
+
+        public static void WriteArrayIntoArray(ref string[,] destArray, string[,] sourceArray, int insertRowNum, int insertColNum)
+        {
+            int sourceNumRows = sourceArray.GetLength(0);
+            int sourceNumCols = sourceArray.GetLength(1);
+
+            // Bounds check
+            if (insertRowNum + sourceNumRows > destArray.GetLength(0) ||
+                insertColNum + sourceNumCols > destArray.GetLength(1))
+            {
+                throw new ArgumentException("Source array does not fit into destination array at the given position.");
+            }
+
+            // Copy data
+            for (int rowNum = 0; rowNum < sourceNumRows; rowNum++)
+            {
+                for (int colNum = 0; colNum < sourceNumCols; colNum++)
+                {
+                    destArray[insertRowNum + rowNum, insertColNum + colNum] = sourceArray[rowNum, colNum];
+                }
+            }
+        }
+        #endregion
+
+        #region ConcatArrays
+        public static object[,] ConcatArrays(List<object[,]> arrays)
+        {
+
+            #region Get Length of Final Array
+            int totalRows = 0;
+            int totalCols = 0;
+            foreach (object[,] array in arrays)
+            {
+                totalRows += array.GetLength(0);
+                if (totalCols < array.GetLength(1)) { totalCols = array.GetLength(1); }
+            }
+            if (totalRows == 0) { throw new Exception("No arrays to concatenate."); }
+            #endregion
+
+            #region Write into Array
+            object[,] finalArray = new object[totalRows, totalCols];
+            int currentRowNum = 0;
+            foreach (object[,] array in arrays)
+            {
+                WriteArrayIntoArray(ref finalArray, array, currentRowNum, 0);
+                currentRowNum += array.GetLength(0);
+            }
+            #endregion
+            return finalArray;
+        }
+        #endregion
+
+        #region Rounding and Scaling Arrays
+        public static void MultiplyArray(ref double[,] array, double factor)
+        {
+            int rows = array.GetLength(0);
+            int cols = array.GetLength(1);
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    array[r, c] *= factor;
+                }
+            }
+        }
+
+        public static void MultiplyArray(ref double[] array, double factor)
+        {
+            int rows = array.GetLength(0);
+
+            for (int r = 0; r < rows; r++)
+            {
+                array[r] *= factor;
+            }
+        }
+
+        public static void MultiplyArray(ref object[] array, double factor)
+        {
+            int rows = array.GetLength(0);
+
+            for (int r = 0; r < rows; r++)
+            {
+                if (array[r] is double)
+                {
+                    array[r] = (double)array[r] * factor;
+                }
+            }
+        }
+        public static void RoundArray(ref double[,] array, double roundFactor, RoundMode roundMode)
+        {
+            int rows = array.GetLength(0);
+            int cols = array.GetLength(1);
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    array[r, c] = CommonUtilities.RoundDouble(array[r, c], roundFactor, roundMode);
+                }
+            }
+        }
+        public static void RoundArray(ref double[] array, double roundFactor, RoundMode roundMode)
+        {
+            int rows = array.GetLength(0);
+            int cols = array.GetLength(1);
+
+            for (int r = 0; r < rows; r++)
+            {
+                array[r] = CommonUtilities.RoundDouble(array[r], roundFactor, roundMode);
+            }
+        }
+        public static void RoundArray(ref object[] array, double roundFactor, RoundMode roundMode)
+        {
+            int rows = array.GetLength(0);
+
+            for (int r = 0; r < rows; r++)
+            {
+                if (array[r] is double)
+                {
+                    array[r] = CommonUtilities.RoundDouble((double)array[r], roundFactor, roundMode);
+                }
+            }
         }
         #endregion
     }
