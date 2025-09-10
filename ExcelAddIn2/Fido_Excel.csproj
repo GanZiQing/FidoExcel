@@ -324,6 +324,7 @@
     </Compile>
     <Compile Include="Shared Classes\CellFormatObject.cs" />
     <Compile Include="Shared Classes\CommonUtilities.cs" />
+    <Compile Include="Shared Classes\EtabsFunctions.cs" />
     <Compile Include="Shared Classes\ExcelTableCol.cs" />
     <Compile Include="Excel Pane Folder\FormatToolsPane.cs">
       <SubType>UserControl</SubType>

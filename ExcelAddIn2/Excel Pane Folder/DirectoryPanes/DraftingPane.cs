@@ -99,7 +99,12 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             thisCustomAtt = new CheckBoxAttribute("addSheetNum_sheetRenum", addSheetNumberCheck, true);
             CustomAttributeDic.Add(thisCustomAtt.attName, thisCustomAtt);
+
+            thisAtt = new AttributeTextBox("middleText_sheetRenum", dispMidText, "Sheet of",true);
+            AttributeTextBoxDic.Add(thisAtt.attName, thisAtt);
             #endregion
+
+
 
             #region Test Coordinate
             thisAtt = new AttributeTextBox("inc_sheetRenum", dispIncrement, true);
@@ -153,7 +158,12 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 #endregion
 
                 WriteToExcelRangeAsCol(null, 0, 0, true, filePaths, fileNames, number);
-                dispTotalDwgNum.Text = filePaths.Length.ToString();
+                string totalDwgNum = filePaths.Length.ToString();
+                while (totalDwgNum.Length < 3)
+                {
+                    totalDwgNum = "0" + totalDwgNum;
+                }
+                dispTotalDwgNum.Text = totalDwgNum;
             }
             catch (Exception ex) { MessageBox.Show($"Error:{ex.Message}"); }
         }
@@ -163,11 +173,24 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         string fontName;
         double[] thisSheetCoord;
         double[] totalSheetCoord;
-
+        bool addFullStringCheck;
         #endregion
         string fontPath;
-        private void editFilesSheetNum_Click(object sender, EventArgs e)
+        private void addCurrentAndTotalSheetNum_Click(object sender, EventArgs e)
         {
+            addFullStringCheck = false;
+            runEditFilesAndSheetNum();
+        }
+
+        private void addFullString_Click(object sender, EventArgs e)
+        {
+            addFullStringCheck = true;
+            runEditFilesAndSheetNum();
+        }
+
+        private void runEditFilesAndSheetNum()
+        {
+            // This is the main function that gets run
             try
             {
                 #region Read input data
@@ -177,17 +200,10 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 string[] fileNames = GetContentsAsStringArray(selectedRange.Columns[2], false);
                 string[] fileNum = GetContentsAsStringArray(selectedRange.Columns[3], false);
 
-                //int fontSize = Convert.ToInt32(dispFontSizeSheetNum.Text);
-                //double xSheetNum = double.Parse(dispThisSheetX.Text) * 72 / 25.4;
-                //double ySheetNum = double.Parse(dispThisSheetY.Text) * 72 / 25.4;
-                //double xTotalSheetNum = double.Parse(dispTotalSheetX.Text) * 72 / 25.4;
-                //double yTotalSheetNum = double.Parse(dispTotalSheetY.Text) * 72 / 25.4;
                 #endregion
 
                 #region Create and Empty Destination
                 string workbookPath = Path.GetDirectoryName(Globals.ThisAddIn.Application.ActiveWorkbook.FullName);
-                //string printPath = Path.Combine(workbookPath, "Updated Dwg");
-                //CreateDestinationFolder(printPath);
                 string printPath;
                 try
                 {
@@ -214,7 +230,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     {
                         throw new Exception($"Unable to set the font resolver, try restarting excel. \n{ex.Message}");
                     }
-                } 
+                }
                 else
                 {
                     string path = dispValidCustomFont.Text;
@@ -250,10 +266,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 void RunFunction(BackgroundWorker worker, ProgressTracker progressTrackerLocal)
                 {
+
                     try
                     {
                         string[] finalFilePaths = new string[filePaths.Length];
-                        
+
                         for (int i = 0; i < filePaths.Length; i++)
                         {
                             string filePath = filePaths[i];
@@ -288,11 +305,15 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                                 return;
                             }
                         }
+
+                        worker.ReportProgress(100);
+                        progressTrackerLocal.UpdateStatus($"Completed, check message box");
                         MessageBox.Show("Operation completed", "Completed");
                     }
                     catch (Exception ex) { MessageBox.Show($"Error encountered\n{ex.Message}", "Error"); }
                 }
-                #endregion                
+
+                #endregion
             }
             catch (Exception ex) { MessageBox.Show($"Error encountered\n{ex.Message}", "Error"); }
             finally
@@ -303,6 +324,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 totalSheetCoord = null;
             }
         }
+
 
         private void AddSheetNumberToOne(string filePath, string sheetNum, string totalSheetNum)
         {
@@ -320,8 +342,26 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #endregion
             
             #region Print Sheet Name
-            AddTextBox(page, sheetNum, fontSize, thisSheetCoord[0], thisSheetCoord[1], fontName);
-            AddTextBox(page, totalSheetNum, fontSize, totalSheetCoord[0], totalSheetCoord[1], fontName);
+            if (addFullStringCheck)
+            {
+                //string fullText = $"{sheetNum} Sheet of {totalSheetNum}";
+                string part1 = $"{sheetNum}";
+                string part2 = $" {dispMidText.Text} ";
+                string part3 = $"{totalSheetNum}";
+                double x = thisSheetCoord[0];
+                double y = thisSheetCoord[1];
+
+                XSize stringSize = AddTextBox(page, part1, fontSize, x, y, fontName, null, null, true);
+                x += stringSize.Width;
+                stringSize = AddTextBox(page, part2, fontSize, x, y, fontName, null, null, false);
+                x += stringSize.Width;
+                stringSize = AddTextBox(page, part3, fontSize, x, y, fontName, null, null, true);
+            }
+            else
+            {
+                AddTextBox(page, sheetNum, fontSize, thisSheetCoord[0], thisSheetCoord[1], fontName);
+                AddTextBox(page, totalSheetNum, fontSize, totalSheetCoord[0], totalSheetCoord[1], fontName);
+            }
             #endregion
 
             inputDocument.Save(filePath);
@@ -367,8 +407,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             }
         }
 
-        private void AddTextBox(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord, 
-            string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null)
+        private XSize AddTextBox(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord, 
+            string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null, bool underline = false)
         {
             XGraphics gfx = XGraphics.FromPdfPage(page);
             XFont fontType = new XFont(fontName, fontSize);
@@ -397,17 +437,30 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #endregion
             
             XPoint bottomLeftPoint = new XPoint(xCoord, yCoord);
-
             XSize textSize = gfx.MeasureString(textContents, fontType);
             XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
             XRect rect = new XRect(topRightPoint, bottomLeftPoint);
             gfx.DrawRectangle(rectColor, rect);
             gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
+            XSize stringSize = gfx.MeasureString(textContents, fontType);
+            
+            if (underline)
+            {
+                //// Right-aligned: so the text starts at rect.Right - textSize.Width
+                //double startX = rect.Right - textSize.Width;
+                //double endX = rect.Right;
+
+                ////// place underline slightly below baseline (tweak +2 depending on font size)
+                ////double underlineY = rect.Bottom - 1;
+                XColor underlineColor = fontColor.Color;
+                gfx.DrawLine(new XPen(underlineColor, 1), xCoord, yCoord, xCoord + textSize.Width, yCoord);
+            }
             gfx.Dispose();
+            return stringSize;
         }
         #endregion
 
-        #region Add Coordinates
+        #region Add Test Coordinates
         private void testAddCoordinate_Click(object sender, EventArgs e)
         {
             try
@@ -521,6 +574,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
 
         #endregion
+
+
     }
 
     public class CustomFontResolver : IFontResolver

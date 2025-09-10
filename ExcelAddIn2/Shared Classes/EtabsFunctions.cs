@@ -1,0 +1,605 @@
+﻿using ETABSv1;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExcelAddIn2
+{
+    public static class EtabsFunctions
+    {
+        #region Replicate Element
+        public static void ReplicateSelectedElement(cOAPI etabsObject, cSapModel sapModel, double[,] offsetValues)
+        {
+            (int numSel, int[] objType, string[] objName) = GetSelectedElements(sapModel);
+            for (int objNum = 0; objNum < numSel; objNum++)
+            {
+                for (int rowNum = 0; rowNum < offsetValues.GetLength(0); rowNum++)
+                {
+                    double[] offsetValue = new double[3] { offsetValues[rowNum, 0], offsetValues[rowNum, 1], offsetValues[rowNum, 2] };
+                    CopyElement(sapModel, objType[objNum], objName[objNum], offsetValue);
+                }
+            }
+        }
+        #endregion
+
+        #region ETABS Common
+        static (int numSel, int[] objectType, string[] ObjectName) GetSelectedElements(cSapModel sapModel)
+        {
+            int ret = 0;
+            int NumSel = 0;
+            int[] ObjectType = new int[0];
+            string[] ObjectName = new string[0];
+            ret = sapModel.SelectObj.GetSelected(ref NumSel, ref ObjectType, ref ObjectName);
+            return (NumSel, ObjectType, ObjectName);
+        }
+
+        static void CopyElement(cSapModel SapModel, int objType, string objName, double[] offsetValue)
+        {
+            // Missing parameters that we assume to be 0
+            double rot = 0;
+            string mirr = "";
+
+            // This is from old code, to be refractored
+            int ret = 0;
+
+            switch (objType)
+            {
+                case 1: //Point
+                    {
+                        #region Adding new joint
+                        // Get coordinate data for joint
+                        double x = 0;
+                        double y = 0;
+                        double z = 0;
+                        ret = SapModel.PointObj.GetCoordCartesian(objName, ref x, ref y, ref z);
+
+                        // Calculate position of new coordinate
+                        double xFinal = x + offsetValue[0];
+                        double yFinal = y + offsetValue[1];
+                        double zFinal = z + offsetValue[2];
+
+                        // Add new coordinate
+                        string newJointName = "";
+                        ret = SapModel.PointObj.AddCartesian(xFinal, yFinal, zFinal, ref newJointName);
+                        #endregion
+
+                        #region Copying settings to New Joint
+                        // Assign joint restraint
+                        bool[] restraint = new bool[6];
+                        ret = SapModel.PointObj.GetRestraint(objName, ref restraint);
+                        ret = SapModel.PointObj.SetRestraint(newJointName, ref restraint);
+
+                        // Read joint load
+                        int NumberPLoads = -1;
+                        string[] PointName = new string[0];
+                        string[] LoadPat = new string[0];
+                        int[] LCStep = new int[0];
+                        string[] CSys = new string[0];
+                        double[] F1 = new double[0];
+                        double[] F2 = new double[0];
+                        double[] F3 = new double[0];
+                        double[] M1 = new double[0];
+                        double[] M2 = new double[0];
+                        double[] M3 = new double[0];
+
+                        ret = SapModel.PointObj.GetLoadForce(objName, ref NumberPLoads, ref PointName, ref LoadPat, ref LCStep, ref CSys, ref F1, ref F2, ref F3, ref M1, ref M2, ref M3);
+                        double[] LoadValue_J = new double[6];
+
+                        // Rotate and assign joint loads
+                        for (int j = 0; j < NumberPLoads; j++)
+                        {
+                            if ((rot == 0) && (mirr != "X") && (mirr != "Y"))
+                            {
+                                LoadValue_J[0] = F1[j];
+                                LoadValue_J[1] = F2[j];
+                                LoadValue_J[2] = F3[j];
+                                LoadValue_J[3] = M1[j];
+                                LoadValue_J[4] = M2[j];
+                                LoadValue_J[5] = M3[j];
+                            }
+                            else
+                            {
+                                (LoadValue_J[0], LoadValue_J[1], LoadValue_J[2], LoadValue_J[3], LoadValue_J[4], LoadValue_J[5]) = RotateJointLoad(F1[j], F2[j], F3[j], M1[j], M2[j], M3[j], rot, mirr);
+                            }
+                            ret = SapModel.PointObj.SetLoadForce(newJointName, LoadPat[j], ref LoadValue_J, false, CSys[j]);
+                        }
+                        #endregion
+                        break;
+                    }
+                case 2: //Frame
+                    {
+                        #region Get new coordinates for new frame
+                        // Get frame data
+                        string[] jointNames = new string[2];
+                        ret = SapModel.FrameObj.GetPoints(objName, ref jointNames[0], ref jointNames[1]);
+
+                        // Calculate new position of joints
+                        int numJoints = 2;
+                        double[,] ogCoord = new double[numJoints, 3];
+                        double[,] finalCoord = new double[numJoints, 3];
+
+                        // Get coordinates from point names and calculate final position
+                        for (int jointNum = 0; jointNum < numJoints; jointNum++)
+                        {
+                            ret = SapModel.PointObj.GetCoordCartesian(jointNames[jointNum], ref ogCoord[jointNum, 0], ref ogCoord[jointNum, 1], ref ogCoord[jointNum, 2]);
+                            for (int coordNum = 0; coordNum < 3; coordNum++)
+                            {
+                                finalCoord[jointNum, coordNum] = ogCoord[jointNum, coordNum] + offsetValue[coordNum];
+                            }
+                        }
+                        #endregion
+
+                        #region Get Some Properties Before Creating
+                        // Check rotation, To refractor this
+                        // Check if start and stop coordinates have shifted relative x
+                        bool frameFlipped = CheckRelativeNodes(
+                            new double[] { ogCoord[0, 0], ogCoord[1, 0] },
+                            new double[] { ogCoord[0, 1], ogCoord[1, 1] },
+                            new double[] { finalCoord[0, 0], ogCoord[1, 0] },
+                            new double[] { finalCoord[0, 1], ogCoord[1, 1] }
+                            );                         // x, y, xFinal, yFinal
+
+                        // Get section type 
+                        string PropName = "";
+                        string SAuto = "";
+                        ret = SapModel.FrameObj.GetSection(objName, ref PropName, ref SAuto);
+                        #endregion
+
+                        #region Create new frame
+                        //string newName_F = nameMod + ObjectName[i] + ".";
+                        //if (!frameFlipped)
+                        //{
+                        //    newName_F = newName_F + "R";
+                        //}
+                        string finalName_F = "";
+                        ret = SapModel.FrameObj.AddByCoord(
+                            finalCoord[0, 0], finalCoord[0, 1], finalCoord[0, 2],
+                            finalCoord[1, 0], finalCoord[1, 1], finalCoord[1, 2],
+                            ref finalName_F, PropName);
+                        #endregion
+
+                        #region Copy Settings to new frame
+                        // Assign Local Axis
+                        double Ang = 0;
+                        bool Advanced = false;
+                        ret = SapModel.FrameObj.GetLocalAxes(objName, ref Ang, ref Advanced);
+                        if (ogCoord[0, 2] != ogCoord[1, 2]) // Find Column
+                        {
+                            // Handle rotation for column
+                            Ang = Ang + rot;
+                            if (mirr == "Y")
+                            {
+                                Ang = Ang + 180;
+                            }
+                        }
+                        ret = SapModel.FrameObj.SetLocalAxes(finalName_F, Ang);
+
+                        // Assign Insert Point
+                        int CardinalPoint = 0;
+                        bool Mirror2 = false;
+                        bool Mirror3 = false;
+                        bool StiffTransform = false;
+                        double[] Offset1 = null;
+                        double[] Offset2 = null;
+                        string CSys = null;
+                        ret = SapModel.FrameObj.GetInsertionPoint_1(objName, ref CardinalPoint, ref Mirror2, ref Mirror3, ref StiffTransform, ref Offset1, ref Offset2, ref CSys);
+                        ret = SapModel.FrameObj.SetInsertionPoint_1(finalName_F, CardinalPoint, Mirror2, Mirror3, StiffTransform, ref Offset1, ref Offset2, CSys);
+
+                        // Assign End Length Offsets 
+                        bool AutoOffset = true;
+                        double Length1 = 0.0;
+                        double Length2 = 0.0;
+                        double RZ = 0.0;
+                        ret = SapModel.FrameObj.GetEndLengthOffset(objName, ref AutoOffset, ref Length1, ref Length2, ref RZ);
+                        ret = SapModel.FrameObj.SetEndLengthOffset(finalName_F, AutoOffset, Length1, Length2, RZ);
+
+                        // Assign Distributed Load
+                        int LoadCount = 0;
+                        string[] FrameName = new string[0];
+                        string[] LoadPatF = new string[0];
+                        int[] MyType = new int[0];
+                        string[] CSysF = new string[0];
+                        int[] Dir = new int[0];
+                        double[] RD1 = new double[0];
+                        double[] RD2 = new double[0];
+                        double[] Dist1 = new double[0];
+                        double[] Dist2 = new double[0];
+                        double[] Val1 = new double[0];
+                        double[] Val2 = new double[0];
+
+                        ret = SapModel.FrameObj.GetLoadDistributed(objName, ref LoadCount, ref FrameName, ref LoadPatF, ref MyType, ref CSysF, ref Dir, ref RD1, ref RD2, ref Dist1, ref Dist2, ref Val1, ref Val2);
+
+                        if (!frameFlipped) // To flip load assign if local axis is rotated
+                        {
+                            for (int j = 0; j < LoadCount; j++)
+                            {
+                                RD1[j] = 1 - RD1[j];
+                                RD2[j] = 1 - RD2[j];
+                            }
+                        }
+
+                        for (int j = 0; j < LoadCount; j++)
+                        {
+                            ret = SapModel.FrameObj.SetLoadDistributed(finalName_F, LoadPatF[j], MyType[j], Dir[j], RD1[j], RD2[j], Val1[j], Val2[j], CSysF[j], true, false); // 1st true is RelDist, 2nd false is whether to replace
+                        }
+
+                        // Assign Point Load
+                        double[] RelDist = new double[0];
+                        double[] Dist = new double[0];
+                        double[] Val = new double[0];
+                        ret = SapModel.FrameObj.GetLoadPoint(objName, ref LoadCount, ref FrameName, ref LoadPatF, ref MyType, ref CSysF, ref Dir, ref RelDist, ref Dist, ref Val);
+
+                        for (int j = 0; j < LoadCount; j++)
+                        {
+                            if (!frameFlipped) // To flip load assign if local axis is rotated
+                            {
+                                RelDist[j] = 1 - RelDist[j];
+                            }
+                            ret = SapModel.FrameObj.SetLoadPoint(finalName_F, LoadPatF[j], MyType[j], Dir[j], RelDist[j], Val[j], CSysF[j], true, false); // 1st true is RelDist, 2nd false is whether to replace
+                        }
+
+                        // Assign Releases
+                        bool[] II = new bool[0];
+                        bool[] JJ = new bool[0];
+                        double[] StartValue = new double[0];
+                        double[] EndValue = new double[0];
+                        ret = SapModel.FrameObj.GetReleases(objName, ref II, ref JJ, ref StartValue, ref EndValue);
+
+                        if (!frameFlipped) // To flip load assign if local axis is rotated
+                        {
+                            ret = SapModel.FrameObj.SetReleases(finalName_F, ref JJ, ref II, ref EndValue, ref StartValue); // Swap start and end
+                        }
+                        else
+                        {
+                            ret = SapModel.FrameObj.SetReleases(finalName_F, ref II, ref JJ, ref StartValue, ref EndValue);
+                        }
+
+                        // Assign Modifiers
+                        double[] Value = new double[0];
+                        ret = SapModel.FrameObj.GetModifiers(objName, ref Value);
+                        ret = SapModel.FrameObj.SetModifiers(finalName_F, ref Value);
+                        #endregion
+                        break;
+                    }
+
+                case 3: //Cable
+                    throw new Exception("Cable replication not yet implemented");
+
+                case 4: //Tendon
+                    throw new Exception("Tendon replication not yet implemented");
+
+                case 5: //Area
+                    {
+                        #region Get new coordinates for new area
+                        // Get area data
+                        int numJoints = -1;
+                        string[] jointNames = new string[0];
+                        ret = SapModel.AreaObj.GetPoints(objName, ref numJoints, ref jointNames);
+
+                        // Calculate new position of joints
+                        double[,] ogCoord = new double[numJoints, 3];
+                        // Area handles coordinates differently from frame
+                        //double[,] finalCoord = new double[numJoints, 3]; 
+                        double[] xFinal = new double[numJoints];
+                        double[] yFinal = new double[numJoints];
+                        double[] zFinal = new double[numJoints];
+
+
+
+                        // Get coordinates from point names and calculate final position
+                        for (int jointNum = 0; jointNum < numJoints; jointNum++)
+                        {
+                            ret = SapModel.PointObj.GetCoordCartesian(jointNames[jointNum], ref ogCoord[jointNum, 0], ref ogCoord[jointNum, 1], ref ogCoord[jointNum, 2]);
+                            xFinal[jointNum] = ogCoord[jointNum, 0] + offsetValue[0];
+                            yFinal[jointNum] = ogCoord[jointNum, 1] + offsetValue[1];
+                            zFinal[jointNum] = ogCoord[jointNum, 2] + offsetValue[2];
+                        }
+
+                        //// Get coordinates from point names
+                        //double[] xList_S = new double[numJoints];
+                        //double[] yList_S = new double[numJoints];
+                        //double[] zList_S = new double[numJoints];
+
+                        //for (int j = 0; j < numJoints; j++)
+                        //{
+                        //    double xIndv_S = 0;
+                        //    double yIndv_S = 0;
+                        //    double zIndv_S = 0;
+                        //    ret = SapModel.PointObj.GetCoordCartesian(jointNames[j], ref xIndv_S, ref yIndv_S, ref zIndv_S);
+                        //    (xList_S[j], yList_S[j], zList_S[j]) = CalculateNewCoordinates(xIndv_S, yIndv_S, zIndv_S, targX, targY, dZ, refX, refY, rot, mirr);
+                        //}
+                        #endregion
+
+                        #region Get properties before creating
+                        // Get Properties
+                        string PropName = "";
+                        ret = SapModel.AreaObj.GetProperty(objName, ref PropName);
+                        #endregion
+
+                        #region Add Area
+                        // Add area
+                        string finalName_S = "";
+                        ret = SapModel.AreaObj.AddByCoord(numJoints, ref xFinal, ref yFinal, ref zFinal, ref finalName_S, PropName);
+                        #endregion
+
+                        #region Copy Settings
+                        // Assign Pier Label
+                        string PierName = "";
+                        ret = SapModel.AreaObj.GetPier(objName, ref PierName);
+                        ret = SapModel.AreaObj.SetPier(finalName_S, PierName);
+
+                        // Get Uniform Load
+                        int NumberItems = -1;
+                        string[] AreaName = new string[0];
+                        string[] LoadPat = new string[0];
+                        string[] CSys = new string[0];
+                        int[] Dir = new int[0];
+                        double[] Value = new double[0];
+
+                        ret = SapModel.AreaObj.GetLoadUniform(objName, ref NumberItems, ref AreaName, ref LoadPat, ref CSys, ref Dir, ref Value);
+                        for (int j = 0; j < NumberItems; j++)
+                        {
+                            ret = SapModel.AreaObj.SetLoadUniform(finalName_S, LoadPat[j], Value[j], Dir[j], false, CSys[j]);
+                        }
+                        #endregion
+                        break;
+                    }
+
+                case 6: //Solid
+                    throw new Exception("Solid replication not yet implemented");
+
+                case 7: //Link
+                    {
+                        #region Get new coordinates for new link
+                        // Get Link Data
+                        string Point1 = "";
+                        string Point2 = "";
+                        ret = SapModel.LinkObj.GetPoints(objName, ref Point1, ref Point2);
+
+
+                        // Check if is a single joint link
+                        bool boolIsSingleJoint = false;
+                        int numJoints = 2;
+                        string[] jointNames = new string[2] { Point1, Point2 };
+                        if (Point1 == Point2) { boolIsSingleJoint = true; }
+
+                        // Calculate new position of joints
+                        double[,] ogCoord = new double[numJoints, 3];
+                        double[,] finalCoord = new double[numJoints, 3];
+
+                        // Get coordinates from point names and calculate final position
+                        for (int jointNum = 0; jointNum < numJoints; jointNum++)
+                        {
+                            ret = SapModel.PointObj.GetCoordCartesian(jointNames[jointNum], ref ogCoord[jointNum, 0], ref ogCoord[jointNum, 1], ref ogCoord[jointNum, 2]);
+                            for (int coordNum = 0; coordNum < 3; coordNum++)
+                            {
+                                finalCoord[jointNum, coordNum] = ogCoord[jointNum, coordNum] + offsetValue[coordNum];
+                            }
+                        }
+                        #endregion
+
+                        //// Get coordinate of points
+                        //double[] Point1Coord = new double[3]; // x, y, z
+                        //double[] Point2Coord = new double[3];
+                        //double[] Point1Coord_final = new double[3]; // coordinate after transformation
+                        //double[] Point2Coord_final = new double[3];
+                        //if (Point1 == Point2)
+                        //{
+                        //    boolIsSingleJoint = true;
+                        //    ret = SapModel.PointObj.GetCoordCartesian(Point1, ref Point1Coord[0], ref Point1Coord[1], ref Point1Coord[2]);
+                        //    (Point1Coord_final[0], Point1Coord_final[1], Point1Coord_final[2]) = CalculateNewCoordinates(Point1Coord[0], Point1Coord[1], Point1Coord[2], targX, targY, dZ, refX, refY, rot, mirr);
+                        //}
+                        //else
+                        //{
+                        //    // Get coordinate data for joint
+                        //    ret = SapModel.PointObj.GetCoordCartesian(Point1, ref Point1Coord[0], ref Point1Coord[1], ref Point1Coord[2]);
+                        //    ret = SapModel.PointObj.GetCoordCartesian(Point2, ref Point2Coord[0], ref Point2Coord[1], ref Point2Coord[2]);
+
+                        //    // Calculate position of new coordinate
+                        //    (Point1Coord_final[0], Point1Coord_final[1], Point1Coord_final[2]) = CalculateNewCoordinates(Point1Coord[0], Point1Coord[1], Point1Coord[2], targX, targY, dZ, refX, refY, rot, mirr);
+                        //    (Point2Coord_final[0], Point2Coord_final[1], Point2Coord_final[2]) = CalculateNewCoordinates(Point2Coord[0], Point2Coord[1], Point2Coord[2], targX, targY, dZ, refX, refY, rot, mirr);
+                        //}
+
+                        #region Add New Link
+                        // Get link property
+                        string PropNameLink = "";
+                        ret = SapModel.LinkObj.GetProperty(objName, ref PropNameLink);
+                        // Add new link
+                        //string newNameLink = nameMod + ObjectName[i];
+                        string finalName_L = "";
+                        ret = SapModel.LinkObj.AddByCoord(
+                            finalCoord[0, 0], finalCoord[0, 1], finalCoord[0, 2],
+                            finalCoord[1, 0], finalCoord[1, 1], finalCoord[1, 2],
+                            ref finalName_L, boolIsSingleJoint, PropNameLink);
+                        #endregion
+                        break;
+                    }
+                default:
+                    throw new Exception("Object type not recognised");
+
+            }
+
+        }
+
+        static bool CheckRelativeNodes(double[] xInitial, double[] yInitial, double[] xFinal, double[] yFinal)
+        {
+            double angleInitial = Math.Atan2(yInitial[1] - yInitial[0], xInitial[1] - xInitial[0]); // find original angle in rad
+            double angleFinal = Math.Atan2(yFinal[1] - yFinal[0], xFinal[1] - xFinal[0]); // find new angle in rad
+
+            bool angleTypeInitial = false; // anlgeType = true means node 1 pointing to node 2
+            if (angleInitial <= Math.PI / 2 && angleInitial > -Math.PI / 2)
+            {
+                angleTypeInitial = true;
+            }
+            bool angleTypeFinal = false;
+
+            if (angleFinal <= Math.PI / 2 && angleFinal > -Math.PI / 2)
+            {
+                angleTypeFinal = true;
+            }
+            bool angleTypeMatch = angleTypeFinal == angleTypeInitial;
+
+            return angleTypeMatch;
+        }
+
+        static (double, double, double, double, double, double) RotateJointLoad(double Fx, double Fy, double Fz, double Mx, double My, double Mz, double rot, string mirr)
+        {
+            double Fx_mirr = Fx;
+            double Fy_mirr = Fy;
+            double Fz_mirr = Fz;
+            double Mx_mirr = Mx;
+            double My_mirr = My;
+            double Mz_mirr = Mz;
+            rot = rot * (Math.PI / 180); // convert to radians
+
+            if (mirr == "X")
+            {
+                Fy_mirr = -Fy;
+                My_mirr = -My;
+                Mz_mirr = -Mz;
+            }
+            else if (mirr == "Y")
+            {
+                Fx_mirr = -Fx;
+                Mx_mirr = -Mx;
+                Mz_mirr = -Mz;
+            }
+
+            if (rot == 0)
+            {
+                return (Fx_mirr, Fy_mirr, Fz_mirr, Mx_mirr, My_mirr, Mz_mirr);
+            }
+            else
+            {
+                double Fx_final = Fx_mirr;
+                double Fy_final = Fy_mirr;
+                double Fz_final = Fz_mirr;
+                double Mx_final = Mx_mirr;
+                double My_final = My_mirr;
+                double Mz_final = Mz_mirr;
+
+                Fx_final = Fx_mirr * Math.Cos(rot) - Fy_mirr * Math.Sin(rot);
+                Fy_final = Fx_mirr * Math.Sin(rot) + Fy_mirr * Math.Cos(rot);
+                Mx_final = Mx_mirr * Math.Cos(rot) - My_mirr * Math.Sin(rot);
+                My_final = Mx_mirr * Math.Sin(rot) + My_mirr * Math.Cos(rot);
+
+                return (Fx_final, Fy_final, Fz_final, Mx_final, My_final, Mz_final);
+            }
+
+
+        }
+        #endregion
+
+        #region Init
+        public static void InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel, bool setUnits = false)
+        {
+            etabsObject = null;
+            sapModel = default(ETABSv1.cSapModel);
+
+            try
+            {
+                etabsObject = (ETABSv1.cOAPI)Marshal.GetActiveObject("CSI.ETABS.API.ETABSObject");
+                sapModel = etabsObject.SapModel;
+                if (sapModel == null)
+                {
+                    throw new Exception("Unable to attach to ETABS");
+                }
+
+                if (setUnits)
+                {
+                    sapModel.SetPresentUnits_2(ETABSv1.eForce.kN, ETABSv1.eLength.m, ETABSv1.eTemperature.C);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Unable to attach to ETABS\n{ex.Message}");
+            }
+        }
+        #endregion
+
+        #region Get Joints
+        static (List<string> selectedJoints, List<double> Xs, List<double> Ys, List<double> Zs) GetSelectedJointsAsList(ETABSv1.cSapModel sapModel)
+        {
+            #region Get selected objects
+            int numSel = 0;
+            int[] objectType = new int[0];
+            string[] objectName = new string[0];
+            int ret = sapModel.SelectObj.GetSelected(ref numSel, ref objectType, ref objectName);
+            if (ret != 0) { throw new Exception("Error getting selected joints"); }
+            #endregion
+
+            #region Get Point Coordinates
+            List<string> selectedJoints = new List<string>();
+            List<double> Xs = new List<double>();
+            List<double> Ys = new List<double>();
+            List<double> Zs = new List<double>();
+
+            for (int i = 0; i < numSel; i++)
+            {
+                if (objectType[i] != 1) { continue; }
+                selectedJoints.Add(objectName[i]);
+                double x = 0;
+                double y = 0;
+                double z = 0;
+                ret = sapModel.PointObj.GetCoordCartesian(objectName[i], ref x, ref y, ref z);
+                if (ret != 0) { throw new Exception($"Error getting coordinate for joint {objectName[i]}"); }
+                Xs.Add(Math.Round(x, 4));
+                Ys.Add(Math.Round(y, 4));
+                Zs.Add(Math.Round(z, 4));
+            }
+            #endregion
+
+            if (selectedJoints.Count == 0) { throw new Exception($"No joints selected in ETABS"); }
+            return (selectedJoints, Xs, Ys, Zs);
+        }
+
+        static (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) GetSelectedJointsAsArray(ETABSv1.cSapModel sapModel)
+        {
+            (List<string> selectedJointsL, List<double> XsL, List<double> YsL, List<double> ZsL) = GetSelectedJointsAsList(sapModel);
+            string[] selectedJoints = selectedJointsL.ToArray();
+            double[] Xs = XsL.ToArray();
+            double[] Ys = YsL.ToArray();
+            double[] Zs = ZsL.ToArray();
+
+            return (selectedJoints, Xs, Ys, Zs);
+        }
+
+        public static (string[] selectedJoints, double[] Xs, double[] Ys, double[] Zs) GetSortedJoints(ETABSv1.cSapModel sapModel, string sortType = "Z, X, Y")
+        {
+            (List<string> selectedJoints, List<double> Xs, List<double> Ys, List<double> Zs) = GetSelectedJointsAsList(sapModel);
+            var jointObject = selectedJoints.Select((selectedJoint, i) => new { name = selectedJoint, x = Xs[i], y = Ys[i], z = Zs[i] });
+
+            IEnumerable<(string name, double x, double y, double z)> sortedJoints;
+            if (sortType == "Z, X, Y")
+            {
+                sortedJoints = jointObject
+                .OrderBy(item => item.z)
+                .ThenBy(item => item.x)
+                .ThenBy(item => item.y)
+                .Select(item => (item.name, item.x, item.y, item.z));
+            }
+            else if (sortType == "Z, Y, X")
+            {
+                sortedJoints = jointObject
+                .OrderBy(item => item.z)
+                .ThenBy(item => item.y)
+                .ThenBy(item => item.x)
+                .Select(item => (item.name, item.x, item.y, item.z));
+            }
+            else { throw new NotImplementedException($"Sort type \"{sortType}\" not implemented"); }
+
+
+            string[] sortedJointArray = (string[])sortedJoints.Select(item => item.name).ToArray();
+            double[] sortedXs = sortedJoints.Select(item => item.x).ToArray();
+            double[] sortedYs = sortedJoints.Select(item => item.y).ToArray();
+            double[] sortedZs = sortedJoints.Select(item => item.z).ToArray();
+
+            return (sortedJointArray, sortedXs, sortedYs, sortedZs);
+        }
+
+        #endregion
+    }
+}

@@ -31,6 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.ExcelTabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.dispMidText = new System.Windows.Forms.TextBox();
+            this.addFullString = new System.Windows.Forms.Button();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             this.testCoordinateGroup = new System.Windows.Forms.GroupBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.dispIncrement = new System.Windows.Forms.TextBox();
@@ -65,6 +69,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ExcelTabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.testCoordinateGroup.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -84,6 +89,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.testCoordinateGroup);
             this.tabPage1.Controls.Add(this.groupBox6);
             this.tabPage1.Controls.Add(this.groupBox3);
@@ -94,6 +100,57 @@
             this.tabPage1.Size = new System.Drawing.Size(531, 1484);
             this.tabPage1.TabIndex = 4;
             this.tabPage1.Text = "Drafting";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.dispMidText);
+            this.groupBox1.Controls.Add(this.addFullString);
+            this.groupBox1.Controls.Add(this.textBox5);
+            this.groupBox1.Location = new System.Drawing.Point(15, 874);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(504, 139);
+            this.groupBox1.TabIndex = 49;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Add Full String";
+            // 
+            // dispMidText
+            // 
+            this.dispMidText.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispMidText.Location = new System.Drawing.Point(205, 33);
+            this.dispMidText.Margin = new System.Windows.Forms.Padding(6);
+            this.dispMidText.MaxLength = 1000;
+            this.dispMidText.Name = "dispMidText";
+            this.dispMidText.Size = new System.Drawing.Size(285, 29);
+            this.dispMidText.TabIndex = 127;
+            this.dispMidText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // addFullString
+            // 
+            this.addFullString.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.addFullString.Location = new System.Drawing.Point(13, 74);
+            this.addFullString.Margin = new System.Windows.Forms.Padding(6);
+            this.addFullString.Name = "addFullString";
+            this.addFullString.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.addFullString.Size = new System.Drawing.Size(477, 46);
+            this.addFullString.TabIndex = 126;
+            this.addFullString.Text = "Add Full String";
+            this.addFullString.UseVisualStyleBackColor = true;
+            this.addFullString.Click += new System.EventHandler(this.addFullString_Click);
+            // 
+            // textBox5
+            // 
+            this.textBox5.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox5.Location = new System.Drawing.Point(15, 31);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(6);
+            this.textBox5.Multiline = true;
+            this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
+            this.textBox5.ShortcutsEnabled = false;
+            this.textBox5.Size = new System.Drawing.Size(178, 31);
+            this.textBox5.TabIndex = 128;
+            this.textBox5.TabStop = false;
+            this.textBox5.Text = "Middle Text";
             // 
             // testCoordinateGroup
             // 
@@ -415,7 +472,7 @@
             this.groupBox3.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox3.Size = new System.Drawing.Size(502, 358);
+            this.groupBox3.Size = new System.Drawing.Size(502, 365);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Add Sheet Number";
@@ -457,15 +514,15 @@
             // editFilesSheetNum
             // 
             this.editFilesSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.editFilesSheetNum.Location = new System.Drawing.Point(14, 231);
+            this.editFilesSheetNum.Location = new System.Drawing.Point(15, 231);
             this.editFilesSheetNum.Margin = new System.Windows.Forms.Padding(6);
             this.editFilesSheetNum.Name = "editFilesSheetNum";
             this.editFilesSheetNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.editFilesSheetNum.Size = new System.Drawing.Size(477, 46);
             this.editFilesSheetNum.TabIndex = 112;
-            this.editFilesSheetNum.Text = "Edit Files";
+            this.editFilesSheetNum.Text = "Add Current and Total Sheet Num";
             this.editFilesSheetNum.UseVisualStyleBackColor = true;
-            this.editFilesSheetNum.Click += new System.EventHandler(this.editFilesSheetNum_Click);
+            this.editFilesSheetNum.Click += new System.EventHandler(this.addCurrentAndTotalSheetNum_Click);
             // 
             // textBox19
             // 
@@ -543,6 +600,8 @@
             this.Size = new System.Drawing.Size(550, 1532);
             this.ExcelTabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.testCoordinateGroup.ResumeLayout(false);
             this.testCoordinateGroup.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -589,5 +648,9 @@
         private System.Windows.Forms.Button setOutputFolder;
         private System.Windows.Forms.Button openOutputFolder;
         private System.Windows.Forms.TextBox dispOutputFolder;
+        private System.Windows.Forms.TextBox dispMidText;
+        private System.Windows.Forms.Button addFullString;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
