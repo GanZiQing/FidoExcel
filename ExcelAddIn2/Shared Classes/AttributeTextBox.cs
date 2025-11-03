@@ -805,6 +805,15 @@ namespace ExcelAddIn2
         #endregion
 
         #region Get Range
+        public Range GetDefaultRange()
+        {
+            Range referencedCell;
+            {
+                if (withSheet) { referencedCell = GetRangeFromFullAddress(); }
+                else { referencedCell = GetRangeForCurrentSheet(); }
+            }
+            return referencedCell;
+        }
         public Range GetRangeFromFullAddress()
         {
             string fullAddress = rangeTextBox.Text;
@@ -893,12 +902,6 @@ namespace ExcelAddIn2
             }
         }
 
-        public string GetFirstCellContent()
-        {
-            Range referencedCell = GetRangeFromFullAddress();
-            return referencedCell.Cells[1, 1].Value2.ToString();
-        }
-        
         public Range[] GetAreaRange(string sheetName = null)
         {
             Range allRange;
@@ -922,6 +925,27 @@ namespace ExcelAddIn2
         }
         #endregion
 
+        #region Get Contents
+        public string GetFirstCellContent()
+        {
+            Range referencedCell = GetDefaultRange();
+            return referencedCell.Cells[1, 1].Value2.ToString();
+        }
+
+        public string[] GetContentsAsStringArray(bool ignoreEmpty = false)
+        {
+            Range referencedCell = GetDefaultRange();
+            return CommonUtilities.GetContentsAsStringArray(referencedCell, ignoreEmpty);
+        }
+        #endregion
+
+        #region Check Range Sizes
+        public void CheckRangeSize(int numRows, int numCols, bool ignoreLargerSize = false)
+        {
+            Range referencedCell = GetDefaultRange();
+            CommonUtilities.CheckRangeSize(referencedCell, numRows, numCols, attName, ignoreLargerSize);
+        }
+        #endregion
     }
 
     public class SheetTextBox : AttributeTextBox
@@ -1326,6 +1350,7 @@ namespace ExcelAddIn2
         private AttributeTextBox criteriaValue;
         private ComboBoxAttribute logicSymbol;
         public bool isCriteriaDouble;
+        Range criteriaSourceRange;
 
         public TargetCriteria(RangeTextBox criteriaSource, ComboBoxAttribute logicSymbol, AttributeTextBox criteriaValue)
         {
@@ -1335,20 +1360,27 @@ namespace ExcelAddIn2
             CheckInputs();
         }
 
+        public TargetCriteria(Range criteriaSourceRange, ComboBoxAttribute logicSymbol, AttributeTextBox criteriaValue)
+        {
+            this.criteriaSourceRange = criteriaSourceRange;
+            this.criteriaValue = criteriaValue;
+            this.logicSymbol = logicSymbol;
+            CheckInputs();
+        }
+
         public void CheckInputs()
         {
             // Criteria Source Range
-            Range CriteriaSourceRange;
             try
             {
-                CriteriaSourceRange = criteriaSource.GetRangeFromFullAddress();
+                if (criteriaSourceRange == null) { criteriaSourceRange = criteriaSource.GetRangeFromFullAddress(); }
             }
             catch
             {
                 throw new Exception("Invalid input for Criteria Data Source.");
             }
 
-            if (CriteriaSourceRange.Columns.Count != 1)
+            if (criteriaSourceRange.Columns.Count != 1)
             {
                 throw new Exception("Invalid input for Criteria Data Source, more than one column provided");
             }
@@ -1378,7 +1410,12 @@ namespace ExcelAddIn2
 
         public bool CriteriaMet()
         {
-            string currentValue = criteriaSource.GetFirstCellContent();
+            #region Check for errors
+            object cellValue = criteriaSourceRange.Value2;
+            if (CommonUtilities.CheckIsExcelErr(cellValue)) { throw new Exception("Error value encountered"); }
+            #endregion
+
+            string currentValue = criteriaSourceRange.Value2.ToString();
             string targetValue = criteriaValue.textBox.Text;
             string logicSymbol = this.logicSymbol.comboBox.Text;
             
@@ -1411,8 +1448,6 @@ namespace ExcelAddIn2
             }
         }
     }
-
-
 }
 
 

@@ -942,7 +942,6 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 throw new ArgumentException($"Storey Index \"{storeyIndex}\" not found.");
             }
         }
-
         public string GetDesignName(int storeyIndex)
         {
             string etabsName = GetEtabsName(storeyIndex);

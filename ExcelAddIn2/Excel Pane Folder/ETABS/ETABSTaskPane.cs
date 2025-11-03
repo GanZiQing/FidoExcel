@@ -3,6 +3,7 @@ using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Office.Tools.Ribbon;
+using Microsoft.VisualStudio.Tools.Applications.Runtime;
 using MigraDoc.DocumentObjectModel;
 using PdfSharp.Snippets.Font;
 using System;
@@ -10,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
@@ -59,6 +61,8 @@ namespace ExcelAddIn2
 
             thisAtt = new CheckBoxAttribute("refreshView_AWL", refreshViewCheck, true);
             attributeDic.Add(thisAtt.attName, thisAtt);
+
+            CreateAttributesForBaseShear();
         }
 
         private void AddHeaders()
@@ -120,6 +124,21 @@ namespace ExcelAddIn2
             AddHeaderMenuToButton(setJointDataRange, headers);
             //AddHeaderMenuToButton(calAWL, headers);
             //AddHeaderMenuToButton(assignWL, headers);
+            #endregion
+
+            #region Error Joints
+            headers = new List<string>
+            {
+                "Joint Label",
+                "Joint UN",
+                "X [m]",
+                "Y [m]",
+                "Z [m]",
+                "Storey Name",
+                "Unstable DOF",
+                "Status"
+            };
+            AddHeaderMenuToButton(groupAndImportLog, headers);
             #endregion
         }
 
@@ -199,7 +218,7 @@ namespace ExcelAddIn2
 
         }
         #endregion
-        
+
         #region AWL
         #region Get ETABS Data
         private void getStoryData_Click(object sender, EventArgs e)
@@ -695,153 +714,653 @@ namespace ExcelAddIn2
         }
         #endregion
 
-
-    }
-
-    #region Story Table
-    class StoryTable
-    {
-        object[,] contents;
-
-        Dictionary<string, int> storyElevationToIndex = new Dictionary<string, int>();
-        public StoryTable(Range tableRange)
+        #region Get Wall
+        private void getWallUNBut_Click(object sender, EventArgs e)
         {
-            MapTable(tableRange);
-        }
-        public void MapTable(Range tableRange)
-        {
-            contents = GetContentsAsObject2DArray(tableRange);
-            CheckForDoubles(tableRange);
-
-            for (int rowNum = 0; rowNum < contents.GetLength(0); rowNum++)
+            try
             {
-                double elevationDouble;
-                try
-                {
-                    elevationDouble = double.Parse(contents[rowNum, 1].ToString());
-                }
-                catch { throw new Exception($"Unable to parse \"{contents[rowNum, 1]}\" into number"); }
-
-
-                string elevationString = elevationDouble.ToString("#.####");
-                if (elevationString == "") { elevationString = "0"; }
-                if (storyElevationToIndex.ContainsKey(elevationString)) { throw new Exception($"Duplicate elevation \"{elevationString}\" found in story table"); }
-                storyElevationToIndex.Add(elevationString, rowNum);
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                (int numSel, string[] objName) = GetSelectedElementsByType(sapModel, 5);
+                WriteToExcelRangeAsCol(null, 0, 0, false, objName);
             }
-            //"Story Name", 0
-            //    "Story Elevation [m]", 1
-            //    "Effective Height [m]", 2
-            //    "Minimum WL", 3
-            //    "Maximum WL", 4
-            //    "Min X", 5 
-            //    "Max X", 6 
-            //    "Min Y", 7 
-            //    "Max Y" 8
-
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
 
-        #region Check Doubles
-        public void CheckForDoubles(Range sourceRange)
+        private void getWallPierBut_Click(object sender, EventArgs e)
         {
-            Range firstCell = sourceRange.Cells[1, 1];
-            // Only check from 2nd column onwards
-            for (int i = 0; i < contents.GetLength(0); i++)
+            try
             {
-                for (int j = 1; j < contents.GetLength(1); j++)
-                {
-                    object cellValue = contents[i, j];
+                throw new NotImplementedException("Not imiplemented");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
 
-                    if (!(cellValue is double))
+        private void setWallPierBut_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                Range activeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                CheckRangeSize(activeRange, 0, 2, "Assign Pier Labels");
+                object[,] excelValues = GetContentsAsObject2DArray(activeRange);
+                string[] wallUNs = new string[excelValues.GetLength(0)];
+                string[] pierLabels = new string[excelValues.GetLength(0)];
+
+                for (int rowNum = 0; rowNum < excelValues.GetLength(0); rowNum++)
+                {
+                    wallUNs[rowNum] = excelValues[rowNum, 0].ToString();
+                    pierLabels[rowNum] = excelValues[rowNum, 1].ToString();
+                }
+                #endregion
+
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+
+                #region Get all Pier Labels
+                int ret = 0;
+                HashSet<string> allPierLabels = new HashSet<string>();
+                {
+                    int numNames = 0;
+                    string[] pierLabelsETABS = new string[0];
+                    ret = sapModel.PierLabel.GetNameList(ref numNames, ref pierLabelsETABS);
+                    if (numNames == 0) { allPierLabels = pierLabelsETABS.ToHashSet(); }
+                }
+                #endregion
+
+                #region Assign To ETABS
+                bool allSuccess = true;
+                string[] status = new string[wallUNs.Length];
+                for (int rowNum = 0; rowNum < wallUNs.Length; rowNum++)
+                {
+                    try
                     {
-                        throw new Exception($"Error: Value '{cellValue}' in cell {firstCell.Offset[i, j].Address[false, false]} is not a number.");
+                        // if pier does not exist add pier
+                        string wallUN = wallUNs[rowNum];
+                        string pierLabel = pierLabels[rowNum];
+                        if (!allPierLabels.Contains(pierLabel))
+                        {
+                            ret = sapModel.PierLabel.SetPier(pierLabel);
+                            if (ret == 0) { allPierLabels.Add(pierLabel); }
+                        }
+
+                        // Assign Pier to wall
+                        ret = sapModel.AreaObj.SetPier(wallUN, pierLabel);
+                        if (ret != 0) { status[rowNum] = $"Error encountered: Unknown"; allSuccess = false; }
+                        else { status[rowNum] = $"Completed"; }
+                    }
+                    catch (Exception ex)
+                    {
+                        status[rowNum] = $"Error encountered: {ex.Message}";
+                        allSuccess = false;
+                    }
+                }
+                #endregion
+
+                #region Write Status to ETABS
+                if (!allSuccess)
+                {
+                    WriteToExcelRangeAsCol(null, 0, 2, false, status);
+                    MessageBox.Show("One or more errors encountered, please see status column", "Warning");
+                }
+                else
+                {
+                    MessageBox.Show("Completed", "Completed");
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
+
+        #region ETABS Error Analysis
+        private string getAnalysisFile(cSapModel sapModel, string extension)
+        {
+            string cleanExtension = extension.StartsWith(".") ? extension : "." + extension;
+            string etabsFilePath = sapModel.GetModelFilename();
+            string returnFileName = Path.ChangeExtension(etabsFilePath, cleanExtension);
+            return returnFileName;
+        }
+        private void groupAndImportLog_Click(object sender, EventArgs e)
+        {
+            // Copy from old code, to refractor later
+            try
+            {
+                #region Init ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                // Get Storey Details
+                (_, Dictionary<double, string> elevationToStoreyMap) = GetEtabsStoreys(sapModel);
+                #endregion
+
+                #region Create Lists
+                string grpNm = ".E.Error Joints";
+                Dictionary<string, EtabsJoint> unstableJoints = new Dictionary<string, EtabsJoint>();
+                #endregion
+
+                #region Analyse Files
+                string logFilePath = getAnalysisFile(sapModel, ".LOG");
+                int numLines = File.ReadLines(logFilePath).Count();
+
+
+                using (StreamReader sr = new StreamReader(logFilePath))
+                {
+                    for (int i = 0; i < numLines; i++)
+                    {
+                        string line = sr.ReadLine();
+                        if (line.Length > 6)
+                        {
+                            if (line.Substring(1, 5) == "Joint")
+                            {
+                                string[] textRowSplitted = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                                // Create or get joint object
+                                EtabsJoint joint;
+                                if (!unstableJoints.ContainsKey(textRowSplitted[1]))
+                                {
+                                    string uniqueName = textRowSplitted[1];
+                                    joint = new EtabsJoint
+                                    (
+                                        uniqueName,
+                                        "",
+                                        Convert.ToDouble(textRowSplitted[3]),
+                                        Convert.ToDouble(textRowSplitted[4]),
+                                        Convert.ToDouble(textRowSplitted[5])
+                                    );
+                                    unstableJoints.Add(uniqueName, joint);
+                                    joint.GetLabelAndStorey(sapModel, elevationToStoreyMap);
+                                }
+                                else { joint = unstableJoints[textRowSplitted[1]]; }
+
+                                // Add unstable dimension to joint
+                                joint.AddUnstableDimension(textRowSplitted[2]);
+                            }
+                        }
+                    }
+                }
+
+                if (unstableJoints.Count == 0)
+                {
+                    sapModel.GroupDef.Delete(grpNm);
+                    throw new Exception("No error joints found");
+                }
+                #endregion
+
+                #region Add Joints to Group and Create Write Object
+                // Create Group
+                int ret = sapModel.GroupDef.Delete(grpNm);
+                ret = sapModel.GroupDef.SetGroup(grpNm);
+
+                // Init Write Lists
+                List<string> labelNames = new List<string>();
+                List<string> uniqueNames = new List<string>();
+                List<double> x = new List<double>();
+                List<double> y = new List<double>();
+                List<double> z = new List<double>();
+                List<string> storeyNames = new List<string>();
+                List<string> unstableDimension = new List<string>();
+                List<string> status = new List<string>();
+
+                // Iterate through joints
+                foreach (EtabsJoint joint in unstableJoints.Values)
+                {
+                    #region Group Joints
+                    if (joint.uniqueName[0] == '~')
+                    {
+                        joint.status = "Internal Joint";
+                    }
+                    else
+                    {
+                        ret = sapModel.PointObj.SetGroupAssign(joint.uniqueName, grpNm);
+                        if (ret == 0)
+                        {
+                            joint.status = $"Added to {grpNm}";
+                        }
+                        else
+                        {
+                            joint.status = $"Unable to add to {grpNm}";
+                        }
+                    }
+                    #endregion
+
+                    #region Create Write Object
+                    labelNames.Add(joint.labelName);
+                    uniqueNames.Add(joint.uniqueName);
+                    x.Add(joint.x / 1000);
+                    y.Add(joint.y / 1000);
+                    z.Add(joint.z / 1000);
+                    unstableDimension.Add(joint.GetAllUnstableDimensionsAsString());
+                    status.Add(joint.status);
+                    storeyNames.Add(joint.storeyName);
+                    #endregion
+                }
+                #endregion
+
+                #region Write to Excel
+                WriteToExcelSelectionAsRow(0, 0, true,
+                    labelNames.ToArray(),
+                    uniqueNames.ToArray(),
+                    x.ToArray(),
+                    y.ToArray(),
+                    z.ToArray(),
+                    storeyNames.ToArray(),
+                    unstableDimension.ToArray(),
+                    status.ToArray()
+                    );
+
+                MessageBox.Show("Completed", "Completed");
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+
+        private void groupAndImportLog_Click_OG(object sender, EventArgs e)
+        {
+            // Copy from old code, to refractor later
+            try
+            {
+                #region Init ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                #endregion
+
+                #region Create Lists
+                List<string> errorJoints = new List<string>();
+                List<double> coord1 = new List<double>();
+                List<double> coord2 = new List<double>();
+                List<double> coord3 = new List<double>();
+                string grpNm = ".E.Error Joints";
+                #endregion
+
+                #region Analyse Files
+                string logFilePath = getAnalysisFile(sapModel, ".LOG");
+                int numLines = File.ReadLines(logFilePath).Count();
+
+                using (StreamReader sr = new StreamReader(logFilePath))
+                {
+                    for (int i = 0; i < numLines; i++)
+                    {
+                        string line = sr.ReadLine();
+                        if (line.Length > 6)
+                        {
+                            if (line.Substring(1, 5) == "Joint")
+                            {
+                                string[] row = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (!(errorJoints.Contains(row[1])))
+                                {
+                                    errorJoints.Add(row[1]);
+                                    coord1.Add(Convert.ToDouble(row[3]));
+                                    coord2.Add(Convert.ToDouble(row[4]));
+                                    coord3.Add(Convert.ToDouble(row[5]));
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                if (errorJoints.Count == 0)
+                {
+                    sapModel.GroupDef.Delete(grpNm);
+                    throw new Exception("No error joints found");
+                }
+                #endregion
+
+                #region Add Joints to Group
+                int ret = sapModel.GroupDef.Delete(grpNm);
+                ret = sapModel.GroupDef.SetGroup(grpNm);
+                List<string> grouped = new List<string>();
+                int counter = 0;
+                foreach (string joint in errorJoints)
+                {
+                    if (joint[0] == '~')
+                    {
+                        grouped.Add("Internal Joint");
+                    }
+                    else
+                    {
+                        ret = sapModel.PointObj.SetGroupAssign(joint, grpNm);
+                        if (ret == 0)
+                        {
+                            counter++;
+                            grouped.Add("Added");
+                        }
+                        else
+                        {
+                            grouped.Add("Failed to Add");
+                        }
+                    }
+                }
+                #endregion
+
+                #region Write to Excel
+                WriteToExcelSelectionAsRow(0, 0, true, errorJoints.ToArray(), coord1.ToArray(), coord2.ToArray(), coord3.ToArray(), grouped.ToArray());
+                MessageBox.Show("Completed", "Completed");
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        private void groupAndImportWrn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                throw new Exception("Not Implemented");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+
+        private void openLog_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                string logFilePath = getAnalysisFile(sapModel, ".LOG");
+                Process.Start(logFilePath);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        private void openWRN_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                string logFilePath = getAnalysisFile(sapModel, ".WRN");
+                Process.Start(logFilePath);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        private void findSlantedWalls_Click(object sender, EventArgs e)
+        {
+            // Copy from old code, to refractor later
+            try
+            {
+                #region Init ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                #endregion
+
+                #region Get list of walls from ETABS
+                int NumberNames = -1;
+                string[] WallNames = null;
+                ETABSv1.eAreaDesignOrientation[] DesignOrientation = null;
+                int NumberBoundaryPts = -1;
+                int[] PointDelimiter = null;
+                string[] PointNames = null;
+                double[] PointX = null;
+                double[] PointY = null;
+                double[] PointZ = null;
+
+                int ret = sapModel.AreaObj.GetAllAreas(ref NumberNames, ref WallNames, ref DesignOrientation, ref NumberBoundaryPts, ref PointDelimiter, ref PointNames, ref PointX, ref PointY, ref PointZ);
+                #endregion
+
+                #region Initialise new error group
+                string grpName = ".E.Slanted Walls"; // Set group name for error list
+                ret = sapModel.GroupDef.SetGroup(grpName);
+                ret = sapModel.GroupDef.Delete(grpName);
+                ret = sapModel.GroupDef.SetGroup(grpName);
+                int NumWalls = 0;
+                int numFailedWalls = 0;
+                #endregion
+
+                #region Analyse Walls
+                // For each wall, compare the location of the coordinates and check whether there is a matching pair
+                for (int i = 0; i < NumberNames; i++)
+                {
+                    if (DesignOrientation[i].ToString() == "Wall")
+                    {
+                        NumWalls++;
+                        // Find Number of Points to loop Through
+                        int numPoints = 0;
+                        if (i == 0)
+                        {
+                            numPoints = PointDelimiter[i] + 1;
+                        }
+                        else
+                        {
+                            numPoints = PointDelimiter[i] - PointDelimiter[i - 1];
+                        }
+
+                        // Isolate required Points
+                        double[] localX = new double[numPoints];
+                        double[] localY = new double[numPoints];
+                        double[] localZ = new double[numPoints];
+                        int index = PointDelimiter[i] - numPoints + 1;
+                        Array.Copy(PointX, index, localX, 0, numPoints);
+                        Array.Copy(PointY, index, localY, 0, numPoints);
+                        Array.Copy(PointZ, index, localZ, 0, numPoints);
+
+                        // Round the numbers to 3 decimal place
+                        int dp = 4;
+                        for (int j = 0; j < localX.Count(); j++)
+                        {
+                            localX[j] = Math.Round(localX[j], dp, MidpointRounding.AwayFromZero);
+                            localY[j] = Math.Round(localY[j], dp, MidpointRounding.AwayFromZero);
+                            localZ[j] = Math.Round(localZ[j], dp, MidpointRounding.AwayFromZero);
+                        }
+
+                        // Count number of distinct points
+                        int distinctX = localX.Distinct().Count();
+                        int distinctY = localY.Distinct().Count();
+                        int distinctZ = localZ.Distinct().Count();
+
+                        if (((distinctX > 2) || (distinctY > 2) || (distinctZ > 2)))
+                        {
+                            // Wall is slanted add to Group
+                            ret = sapModel.AreaObj.SetGroupAssign(WallNames[i], grpName);
+                            numFailedWalls++;
+                        }
+                    }
+                }
+                #endregion
+
+                #region Report Status
+                string message = "Number of walls checked = " + NumWalls.ToString() + "\nNumber of walls failed = " + numFailedWalls.ToString();
+                if (numFailedWalls > 0) { message += $"\nCheck walls in group: {grpName}"; }
+                else { ret = sapModel.GroupDef.Delete(grpName); }
+                MessageBox.Show(message, "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                #endregion
+            }
+
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
+
+        #region Story Table
+        class StoryTable
+        {
+            object[,] contents;
+
+            Dictionary<string, int> storyElevationToIndex = new Dictionary<string, int>();
+            public StoryTable(Range tableRange)
+            {
+                MapTable(tableRange);
+            }
+            public void MapTable(Range tableRange)
+            {
+                contents = GetContentsAsObject2DArray(tableRange);
+                CheckForDoubles(tableRange);
+
+                for (int rowNum = 0; rowNum < contents.GetLength(0); rowNum++)
+                {
+                    double elevationDouble;
+                    try
+                    {
+                        elevationDouble = double.Parse(contents[rowNum, 1].ToString());
+                    }
+                    catch { throw new Exception($"Unable to parse \"{contents[rowNum, 1]}\" into number"); }
+
+
+                    string elevationString = elevationDouble.ToString("#.####");
+                    if (elevationString == "") { elevationString = "0"; }
+                    if (storyElevationToIndex.ContainsKey(elevationString)) { throw new Exception($"Duplicate elevation \"{elevationString}\" found in story table"); }
+                    storyElevationToIndex.Add(elevationString, rowNum);
+                }
+            }
+
+            #region Check Doubles
+            public void CheckForDoubles(Range sourceRange)
+            {
+                Range firstCell = sourceRange.Cells[1, 1];
+                // Only check from 2nd column onwards
+                for (int i = 0; i < contents.GetLength(0); i++)
+                {
+                    for (int j = 1; j < contents.GetLength(1); j++)
+                    {
+                        object cellValue = contents[i, j];
+
+                        if (!(cellValue is double))
+                        {
+                            throw new Exception($"Error: Value '{cellValue}' in cell {firstCell.Offset[i, j].Address[false, false]} is not a number.");
+                        }
                     }
                 }
             }
+
+            #endregion
+
+            #region Get Values
+            private int GetIndexFromElevation(double elevation)
+            {
+                string elevationString = elevation.ToString("#.####");
+                if (elevationString == "") { elevationString = "0"; }
+                if (!storyElevationToIndex.ContainsKey(elevationString)) { throw new Exception($"Story elevation \"{elevationString}\" not found in story table"); }
+                return storyElevationToIndex[elevationString];
+            }
+            public double EffHeight(double elevation)
+            {
+                int rowNum = GetIndexFromElevation(elevation);
+                return (double)contents[rowNum, 2];
+            }
+            public double MinWL(double elevation)
+            {
+                int rowNum = GetIndexFromElevation(elevation);
+                return (double)contents[rowNum, 3];
+            }
+
+            public double MaxWL(double elevation)
+            {
+                int rowNum = GetIndexFromElevation(elevation);
+                return (double)contents[rowNum, 4];
+            }
+
+            public double MinX(double elevation)
+            {
+                int rowNum = GetIndexFromElevation(elevation);
+                return (double)contents[rowNum, 5];
+            }
+
+            public double MaxX(double elevation)
+            {
+                int rowNum = GetIndexFromElevation(elevation);
+                return (double)contents[rowNum, 6];
+            }
+
+            public double MinY(double elevation)
+            {
+                int rowNum = GetIndexFromElevation(elevation);
+                return (double)contents[rowNum, 7];
+            }
+
+            public double MaxY(double elevation)
+            {
+                int rowNum = GetIndexFromElevation(elevation);
+                return (double)contents[rowNum, 8];
+            }
+
+            #endregion
+
+            #region Wind Load Equations
+            public Func<double, double> WindLoadInY(double elevation)
+            {
+                double x1 = MinX(elevation);
+                double x2 = MaxX(elevation);
+                double y1 = MinWL(elevation);
+                double y2 = MaxWL(elevation);
+                // y = mx + c
+                double m = (y2 - y1) / (x2 - x1);
+                double c = y1 - m * x1; // c = y - mx
+
+                Func<double, double> windLoadEquation = x => (m * x + c);
+                return windLoadEquation;
+            }
+
+            public Func<double, double> WindLoadInX(double elevation)
+            {
+                double x1 = MinY(elevation);
+                double x2 = MaxY(elevation);
+                double y1 = MinWL(elevation);
+                double y2 = MaxWL(elevation);
+                // y = mx + c
+                double m = (y2 - y1) / (x2 - x1);
+                double c = y1 - m * x1; // c = y - mx
+
+                Func<double, double> windLoadEquation = x => (m * x + c);
+                return windLoadEquation;
+            }
+            #endregion
         }
+
 
         #endregion
 
-        #region Get Values
-        private int GetIndexFromElevation(double elevation)
+        #region Test Retrieve Table
+        private void getPilingForces_Click(object sender, EventArgs e)
         {
-            string elevationString = elevation.ToString("#.####");
-            if (elevationString == "") { elevationString = "0"; }
-            if (!storyElevationToIndex.ContainsKey(elevationString)) { throw new Exception($"Story elevation \"{elevationString}\" not found in story table"); }
-            return storyElevationToIndex[elevationString];
+            try
+            {
+                //throw new Exception("Not Implemented");
+                #region Init ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                (_, Dictionary<double, string> elevationToStoreyMap) = GetEtabsStoreys(sapModel);
+                #endregion
+
+                #region Get Tables
+                int numberTables = 0;
+                string[] tableKey = null;
+                string[] tableName = null;
+                int[] importType = null;
+
+                int ret = sapModel.DatabaseTables.GetAvailableTables(
+                    ref numberTables,
+                    ref tableKey,
+                    ref tableName,
+                    ref importType
+                );
+                if ( ret != 0 ) { throw new Exception("Error retrieving table list"); }
+                #endregion
+
+                #region Get Column Data Table
+                string[] fieldKeyList = null;
+                string[] fieldsKeysIncluded = null;
+                string[] tableData = null;
+                int tableVersion = 0;
+                int numberRecords = 0;
+
+                ret = sapModel.DatabaseTables.GetTableForDisplayArray(
+                    "Design Forces - Columns",
+                    ref fieldKeyList,
+                    "All",
+                    ref tableVersion,
+                    ref fieldsKeysIncluded,
+                    ref numberRecords,
+                    ref tableData
+                );
+                if (ret != 0) { throw new Exception("Error retrieving Column data table list"); }
+                #endregion
+
+                #region Get Pier Data Table
+                ret = sapModel.DatabaseTables.GetTableForDisplayArray(
+                    "Design Forces - Piers",
+                    ref fieldKeyList,
+                    "All",
+                    ref tableVersion,
+                    ref fieldsKeysIncluded,
+                    ref numberRecords,
+                    ref tableData
+                );
+                if (ret != 0) { throw new Exception("Error retrieving Pier data table list"); }
+                #endregion
+
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
 
-        public double EffHeight(double elevation)
-        {
-            int rowNum = GetIndexFromElevation(elevation);
-            return (double)contents[rowNum, 2];
-        }
-        public double MinWL(double elevation)
-        {
-            int rowNum = GetIndexFromElevation(elevation);
-            return (double)contents[rowNum, 3];
-        }
 
-        public double MaxWL(double elevation)
-        {
-            int rowNum = GetIndexFromElevation(elevation);
-            return (double)contents[rowNum, 4];
-        }
-
-        public double MinX(double elevation)
-        {
-            int rowNum = GetIndexFromElevation(elevation);
-            return (double)contents[rowNum, 5];
-        }
-
-        public double MaxX(double elevation)
-        {
-            int rowNum = GetIndexFromElevation(elevation);
-            return (double)contents[rowNum, 6];
-        }
-
-        public double MinY(double elevation)
-        {
-            int rowNum = GetIndexFromElevation(elevation);
-            return (double)contents[rowNum, 7];
-        }
-
-        public double MaxY(double elevation)
-        {
-            int rowNum = GetIndexFromElevation(elevation);
-            return (double)contents[rowNum, 8];
-        }
-
-        #endregion
-
-        #region Wind Load Equations
-        public Func<double, double> WindLoadInY(double elevation)
-        {
-            double x1 = MinX(elevation);
-            double x2 = MaxX(elevation);
-            double y1 = MinWL(elevation);
-            double y2 = MaxWL(elevation);
-            // y = mx + c
-            double m = (y2 - y1) / (x2 - x1);
-            double c = y1 - m * x1; // c = y - mx
-
-            Func<double, double> windLoadEquation = x => (m * x + c);
-            return windLoadEquation;
-        }
-
-        public Func<double, double> WindLoadInX(double elevation)
-        {
-            double x1 = MinY(elevation);
-            double x2 = MaxY(elevation);
-            double y1 = MinWL(elevation);
-            double y2 = MaxWL(elevation);
-            // y = mx + c
-            double m = (y2 - y1) / (x2 - x1);
-            double c = y1 - m * x1; // c = y - mx
-
-            Func<double, double> windLoadEquation = x => (m * x + c);
-            return windLoadEquation;
-        }
         #endregion
     }
-    #endregion
 }

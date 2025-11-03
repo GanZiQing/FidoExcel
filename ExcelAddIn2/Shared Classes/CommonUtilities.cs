@@ -709,6 +709,30 @@ namespace ExcelAddIn2
                 throw new ArgumentException($"IntersectRanges, input type {type} not found.");
             }
         }
+
+        #region Check value is error
+        // Copied from https://stackoverflow.com/questions/2424718/how-to-know-if-a-cell-has-an-error-in-the-formula-in-c-sharp
+        public enum CVErrEnum : Int32
+        {
+            ErrDiv0 = -2146826281,
+            ErrGettingData = -2146826245,
+            ErrNA = -2146826246,
+            ErrName = -2146826259,
+            ErrNull = -2146826288,
+            ErrNum = -2146826252,
+            ErrRef = -2146826265,
+            ErrValue = -2146826273
+        }
+        public static bool CheckIsExcelErr(object obj)
+        {
+            return (obj) is Int32;
+        }
+
+        public static bool CheckIsExcelErr(object obj, CVErrEnum whichError)
+        {
+            return (obj is Int32) && ((Int32)obj == (Int32)whichError);
+        }
+        #endregion
         #endregion
 
         #region Check Input
@@ -1121,9 +1145,26 @@ namespace ExcelAddIn2
         {
             int numRow = writeObject.GetLength(0);
             int numCol = writeObject.GetLength(1);
-            Workbook workBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            if (startRange == null) { startRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection; }
+
+            #region Get Confirmation
+            if (warning)
+            {
+                DialogResult result = MessageBox.Show("Confirm to export values to current selection? This will override cell values at current selection and cannot be undone.\n" +
+                "Output table size:\n" +
+                $"Number of rows: {numRow}\n" +
+                $"Number of columns: {numCol}", "Confirmation", MessageBoxButtons.YesNo);
+                if (result != DialogResult.Yes)
+                {
+                    throw new Exception("Terminated by user");
+                }
+            }
+            #endregion
+
+            #region Write To Excel
+            Workbook workBook = startRange.Worksheet.Parent;
             Worksheet workSheet = startRange.Worksheet;
-            Range writeRange = null; 
+            Range writeRange = null;
             try
             {
                 workBook.Application.ScreenUpdating = false;
@@ -1136,7 +1177,8 @@ namespace ExcelAddIn2
             finally
             {
                 workBook.Application.ScreenUpdating = true;
-            }
+            } 
+            #endregion
             return writeRange;
         }
         
@@ -1158,6 +1200,30 @@ namespace ExcelAddIn2
             writeRange.UnMerge();
             if (writeRange.MergeCells) { writeRange.UnMerge(); }
             writeRange.ClearContents();
+        }
+        
+        public static void FormatHeader(Range writeRange)
+        {
+            try
+            {
+                writeRange.Font.Bold = true;
+                writeRange.HorizontalAlignment = XlHAlign.xlHAlignCenter;
+                writeRange.VerticalAlignment = XlVAlign.xlVAlignCenter;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error formatting range at {writeRange.Worksheet.Name}, {writeRange.AddressLocal}\n{ex.Message}");
+            }           
+        }
+
+        public static void WriteWarning()
+        {
+            DialogResult result = MessageBox.Show("Confirm to export values to current selection? This will override cell values at current selection and cannot be undone."
+                , "Warning",MessageBoxButtons.YesNo);
+            if (result != DialogResult.Yes)
+            {
+                throw new Exception("Terminated by user");
+            }
         }
         #endregion
 
@@ -1872,8 +1938,14 @@ namespace ExcelAddIn2
         #endregion
 
         #region ConcatArrays
-        public static object[,] ConcatArrays(List<object[,]> arrays)
+        public static object[,] ConcatArraysBelow(List<object[,]> arrays)
         {
+            #region Checks
+            if (arrays == null || arrays.Count == 0)
+            {
+                throw new ArgumentException("The list of arrays cannot be null or empty.");
+            }
+            #endregion
 
             #region Get Length of Final Array
             int totalRows = 0;
@@ -1893,6 +1965,39 @@ namespace ExcelAddIn2
             {
                 WriteArrayIntoArray(ref finalArray, array, currentRowNum, 0);
                 currentRowNum += array.GetLength(0);
+            }
+            #endregion
+            return finalArray;
+        }
+
+        public static object[,] ConcatArraysBeside(List<object[,]> arrays)
+        {
+            #region Checks
+            if (arrays == null || arrays.Count == 0)
+            {
+                throw new ArgumentException("The list of arrays cannot be null or empty.");
+            }
+            #endregion
+
+            #region Get Length of Final Array
+            int totalRows = 0;
+            int totalCols = 0;
+            foreach (object[,] array in arrays)
+            {
+                if (totalRows < array.GetLength(0)) { totalRows = array.GetLength(0); }
+                totalCols += array.GetLength(1);
+            }
+
+            if (totalCols == 0) { throw new Exception("No arrays to concatenate."); }
+            #endregion
+
+            #region Write into Array
+            object[,] finalArray = new object[totalRows, totalCols];
+            int currentColNum = 0;
+            foreach (object[,] array in arrays)
+            {
+                WriteArrayIntoArray(ref finalArray, array, 0, currentColNum);
+                currentColNum += array.GetLength(1);
             }
             #endregion
             return finalArray;

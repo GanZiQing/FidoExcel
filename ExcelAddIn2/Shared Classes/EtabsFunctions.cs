@@ -1,10 +1,16 @@
 ﻿using ETABSv1;
+using ExcelAddIn2.Excel_Pane_Folder.HDB_Design;
+using PdfSharp.BigGustave;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 
 namespace ExcelAddIn2
 {
@@ -26,7 +32,7 @@ namespace ExcelAddIn2
         #endregion
 
         #region ETABS Common
-        static (int numSel, int[] objectType, string[] ObjectName) GetSelectedElements(cSapModel sapModel)
+        public static (int numSel, int[] objectType, string[] ObjectName) GetSelectedElements(cSapModel sapModel)
         {
             int ret = 0;
             int NumSel = 0;
@@ -34,6 +40,26 @@ namespace ExcelAddIn2
             string[] ObjectName = new string[0];
             ret = sapModel.SelectObj.GetSelected(ref NumSel, ref ObjectType, ref ObjectName);
             return (NumSel, ObjectType, ObjectName);
+        }
+
+
+        public static (int numSel, string[] ObjectName) GetSelectedElementsByType(cSapModel sapModel, int type)
+        {
+            // come back to refractor. Need to add function to get all only
+            (int numSelAll, int[] objTypeAll, string[] objNameAll) = GetSelectedElements(sapModel);
+
+            List<string> wallUNs = new List<string>();
+            int wallCount = 0;
+
+            for (int i = 0; i < numSelAll; i++)
+            {
+                if (objTypeAll[i] != type) { continue; }
+
+                wallUNs.Add(objNameAll[i]);
+                wallCount++;
+            }
+
+            return (wallCount, wallUNs.ToArray());
         }
 
         static void CopyElement(cSapModel SapModel, int objType, string objName, double[] offsetValue)
@@ -493,6 +519,78 @@ namespace ExcelAddIn2
         }
         #endregion
 
+        #region ETABS Get Group Data
+        static public (int[] objectTypeIds, string[] objectNames) GetGroupElements(cSapModel sapModel, string groupName)
+        {
+            int numberItems = 0;
+            int[] objectTypeIDs = null;
+            string[] objectNames = null;
+            try
+            {
+                int ret = sapModel.GroupDef.GetAssignments(groupName, ref numberItems, ref objectTypeIDs, ref objectNames);
+                if (ret != 0) { throw new Exception($"Failed to get elements assigned to group '{groupName}'. Ensure the group exists."); }
+                return (objectTypeIDs, objectNames);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An unexpected error occurred while getting group elements: {ex.Message}");
+            }
+        }
+        static public (int[] objectTypeIds, string[] objectNames) GetGroupElementofType(cSapModel sapModel, string groupName, HashSet<EtabsObjectType> targetObjectTypes)
+        {
+            List<int> objectTypeIdsListAfterFilter = new List<int>();
+            List<string> objectNamesAfterFilter = new List<string>();
+            
+            (int[] objectTypeIds, string[] objectNames) = GetGroupElements(sapModel, groupName);
+
+            for (int i = 0; i < objectNames.Length; i++)
+            {
+                EtabsObjectType objectType = (EtabsObjectType)objectTypeIds[i];
+                if (!targetObjectTypes.Contains(objectType)) { continue; }  // Skip if not in target types
+
+                objectTypeIdsListAfterFilter.Add(objectTypeIds[i]);
+                objectNamesAfterFilter.Add(objectNames[i]);
+            }
+
+            return (objectTypeIdsListAfterFilter.ToArray(), objectNamesAfterFilter.ToArray());
+        }
+        #endregion
+
+        #region ETABS Storey
+        public static (Dictionary<string, double> storeyToElevationMap, Dictionary<double, string> elevationToStoreyMap) GetEtabsStoreys(cSapModel sapModel)
+        {
+            #region Get Data Using ETABS API and Redorder
+            int ret = 0;
+            double BaseElevation = 0;
+            int NumberStories = 0;
+            string[] storyNames = new string[0];
+            double[] storyElevations = new double[0];
+            double[] storyHeights = new double[0];
+            bool[] isMasterStory = new bool[0];
+            string[] similarToStory = new string[0];
+            bool[] spliceAbove = new bool[0];
+            double[] spliceHeight = new double[0];
+            int[] color = new int[0];
+
+            ret = sapModel.Story.GetStories_2(ref BaseElevation, ref NumberStories, ref storyNames, ref storyElevations, ref storyHeights, ref isMasterStory, ref similarToStory, ref spliceAbove, ref spliceHeight, ref color);
+            if (ret != 0) { throw new Exception("Unable to get story info"); }
+            #endregion
+
+            #region Map to Object
+            Dictionary<string, double> storeyToElevationMap = new Dictionary<string, double>();
+            Dictionary<double, string> elevationToStoreyMap = new Dictionary<double, string>();
+
+            for (int i = 0; i < NumberStories; i++)
+            {
+                storeyToElevationMap.Add(storyNames[i], storyElevations[i]);
+                elevationToStoreyMap.Add(Math.Round(storyElevations[i], 4), storyNames[i]);
+            }
+            #endregion
+
+            return (storeyToElevationMap, elevationToStoreyMap);
+        }
+        #endregion
+
         #region Init
         public static void InitializeETABS(out ETABSv1.cOAPI etabsObject, out ETABSv1.cSapModel sapModel, bool setUnits = false)
         {
@@ -505,7 +603,7 @@ namespace ExcelAddIn2
                 sapModel = etabsObject.SapModel;
                 if (sapModel == null)
                 {
-                    throw new Exception("Unable to attach to ETABS");
+                    throw new Exception("No active instance of ETABS found.");
                 }
 
                 if (setUnits)
@@ -515,7 +613,9 @@ namespace ExcelAddIn2
             }
             catch (Exception ex)
             {
-                throw new Exception($"Unable to attach to ETABS\n{ex.Message}");
+                throw new Exception($"Unable to attach to ETABS.\n" +
+                    $"Check that active instance of API is set. See Tools -> Active Instance for API\n" +
+                    $"{ex.Message}");
             }
         }
         #endregion
@@ -601,5 +701,489 @@ namespace ExcelAddIn2
         }
 
         #endregion
+
+        #region Break ETABS Table
+
+        public static (string[,]tableData, string[]fieldKeysIncluded) GetEtabsTable2D(cSapModel sapModel, string tableName, string groupName = "All")
+        {
+            string[] fieldKeyList = null;
+            string[] fieldsKeysIncluded = null;
+            string[] tableData = null;
+            int tableVersion = 0;
+            int numberRecords = 0;
+
+            int ret = sapModel.DatabaseTables.GetTableForDisplayArray(
+                tableName,
+                ref fieldKeyList,
+                groupName,
+                ref tableVersion,
+                ref fieldsKeysIncluded,
+                ref numberRecords,
+                ref tableData
+            );
+            if (ret != 0) { throw new Exception("Error retrieving joint reaction data table from ETABS"); }
+
+            string[,] tableData2d = BreakEtabsTableTo2D(tableData, fieldsKeysIncluded, numberRecords);
+            return (tableData2d, fieldsKeysIncluded);
+        }
+
+        public static (Dictionary<string, string[]> tableDataDic, string[] fieldKeysIncluded, int numberRecords) GetEtabsTableDic(cSapModel sapModel, string tableName, string groupName = "All")
+        {
+            string[] fieldKeyList = null;
+            string[] fieldsKeysIncluded = null;
+            string[] tableData = null;
+            int tableVersion = 0;
+            int numberRecords = 0;
+
+            int ret = sapModel.DatabaseTables.GetTableForDisplayArray(
+                tableName,
+                ref fieldKeyList,
+                groupName,
+                ref tableVersion,
+                ref fieldsKeysIncluded,
+                ref numberRecords,
+                ref tableData
+            );
+            if (ret != 0) { throw new Exception("Error retrieving joint reaction data table from ETABS"); }
+
+            Dictionary<string, string[]> tableDataDic = BreakEtabsTableToDictionary(tableData, fieldsKeysIncluded, numberRecords);
+            return (tableDataDic, fieldsKeysIncluded, numberRecords);
+        }
+
+        public static string[,] BreakEtabsTableTo2D(string[] tableData, string[] fieldKeysIncluded, int numberRecords)
+        {
+            string[,] tableData2d = new string[numberRecords, fieldKeysIncluded.Length];
+            int counter = 0;
+            for (int rowNum = 0; rowNum < numberRecords; rowNum++)
+            {
+                for (int colNum = 0; colNum < fieldKeysIncluded.Length; colNum++)
+                {
+                    tableData2d[rowNum, colNum] = tableData[counter];
+                    counter++;
+                }
+            }
+            return tableData2d;
+        }
+
+        public static Dictionary<string,string[]> BreakEtabsTableToDictionary(string[] tableData, string[] fieldKeysIncluded, int numberRecords)
+        {
+            Dictionary<string, string[]> tableDataDic = new Dictionary<string, string[]>();
+            
+            #region Create Initial Empty Dictionary with Keys
+            foreach (string fieldKey in fieldKeysIncluded)
+            {
+                tableDataDic.Add(fieldKey, new string[numberRecords]);
+            }
+            #endregion
+
+            int counter = 0;
+            for (int rowNum = 0; rowNum < numberRecords; rowNum++)
+            {
+                for (int colNum = 0; colNum < fieldKeysIncluded.Length; colNum++)
+                {
+                    string fieldKey = fieldKeysIncluded[colNum];
+                    string[] dataArray = tableDataDic[fieldKey];
+                    dataArray[rowNum] = tableData[counter];
+                    counter++;
+                }
+            }
+            return tableDataDic;
+        }
+        #endregion
     }
+
+    #region ETABS Objects
+    public class GeneralEtabsObject
+    {
+        public string uniqueName;
+        public int objectTypeInt;
+        public EtabsObjectType objectType;
+        public string labelName;
+        public string status;
+
+        public string objectTypeString;
+        public GeneralEtabsObject(string uniqueName, string labelName, int objectTypeInt)
+        {
+            this.uniqueName = uniqueName;
+            this.labelName = labelName;
+            this.objectTypeInt = objectTypeInt;
+            objectType = EtabsObjectTypeHelper.MapToObjectType(objectTypeInt);
+        }
+        // Should add an overrided class to get UN probably
+    }
+
+    #region Joints
+    public class EtabsJoint : GeneralEtabsObject
+    {
+        public double x;
+        public double y;
+        public double z;
+        public string storeyName;
+        public List<string> unstableDimension = new List<string>();
+
+        public EtabsJoint(string uniqueName, string labelName) : base(uniqueName, labelName, 1)
+        { 
+
+        }
+        public EtabsJoint(string uniqueName, string labelName, double x, double y, double z) : base(uniqueName, labelName, 1)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        #region Get UN/Labels
+        public string GetAndSetUn(cSapModel sapModel)
+        {
+            int ret = sapModel.PointObj.GetNameFromLabel(labelName, storeyName, ref uniqueName);
+            if (ret != 0) { throw new Exception($"Unable to get unique name for joint {labelName}, at storey {storeyName}"); }
+
+            return uniqueName;
+        }
+
+        public (string,string) GetLabelAndStorey(cSapModel sapModel, Dictionary<double, string> elevationToStoreyMap)
+        {
+            if (uniqueName[0] == '~')
+            {
+                labelName = "NA";
+                if (elevationToStoreyMap.ContainsKey(z / 1000))
+                {
+                    storeyName = elevationToStoreyMap[z / 1000];
+                }
+                else { storeyName = "Unknown"; }
+            }
+            else
+            {
+                int ret = sapModel.PointObj.GetLabelFromName(uniqueName, ref labelName, ref storeyName);
+                if (ret != 0) { throw new Exception($"Unable to get label and storey for joint with unique name {uniqueName}"); }
+            }
+            return (labelName, storeyName);
+        }
+        #endregion
+
+        #region Unstable Dimension
+        public List<string> AddUnstableDimension(string dimension)
+        {
+            unstableDimension.Add(dimension);
+            return unstableDimension;
+        }
+
+        public string GetAllUnstableDimensionsAsString()
+        {
+            string unstableDimString = string.Join(", ", unstableDimension);
+            return unstableDimString;
+        }
+        #endregion
+
+        #region Base Shear Reaction
+        public Dictionary<string, double[]> baseReactions;
+        public Dictionary<string, int> baseReactionRowNum;
+        public void AddShearReaction(string loadCase, int rowNum,
+            double Fx, double Fy, double Fz, double Mx, double My, double Mz)
+        {
+            #region Checks
+            if (baseReactions == null) { 
+                baseReactions = new Dictionary<string, double[]>(); 
+            }
+            if (baseReactionRowNum == null) { baseReactionRowNum = new Dictionary<string, int>(); }
+            if (baseReactions.ContainsKey(loadCase)) { throw new Exception($"Load case \"{loadCase}\" already exist for joint with unique name \"{uniqueName}\""); }
+            if (baseReactionRowNum.ContainsKey(loadCase)) { throw new Exception($"Load case \"{loadCase}\" already exist for joint with unique name \"{uniqueName}\""); }
+            #endregion
+            double[] reactions = new double[6];
+            reactions[0] = Fx;
+            reactions[1] = Fy;
+            reactions[2] = Fz;
+            reactions[3] = Mx;
+            reactions[4] = My;
+            reactions[5] = Mz;
+            baseReactions.Add(loadCase, reactions);
+            baseReactionRowNum.Add(loadCase, rowNum);
+        }
+
+        #endregion
+    }
+    #endregion
+
+    #region Frame
+    public class EtabsFrame: GeneralEtabsObject
+    {
+        public string[] jointUN = new string[2];
+        eFrameDesignOrientation frameType;
+        public EtabsFrame(string uniqueName, string labelName, cSapModel sapModel = null) : base(uniqueName, labelName, 2)
+        {
+            // If sapModel provided, classify immediately
+            if (sapModel != null) { Classify(sapModel); }
+        }
+        public eFrameDesignOrientation Classify(cSapModel sapModel)
+        {
+            eFrameDesignOrientation frameType = eFrameDesignOrientation.Null;
+            int ret = sapModel.FrameObj.GetDesignOrientation(uniqueName, ref frameType);
+
+            if (ret != 0)
+            {
+                throw new Exception($"Error: Frame with unique name {uniqueName} not found or API Failure");
+            }
+            return frameType;
+        }
+        public string[] GetBaseJoints(cSapModel sapModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region Joints
+        List<EtabsJoint> joints;
+        public List<EtabsJoint> GetJoints(cSapModel sapModel)
+        {
+            if (joints != null) { return joints; }
+            joints = new List<EtabsJoint>();
+            string point1 = "";
+            string point2 = "";
+
+            int ret = sapModel.FrameObj.GetPoints(uniqueName, ref point1, ref point2);
+            if (ret != 0)
+            {
+                throw new Exception($"Error: Area with unique name {uniqueName} not found or API Failure");
+            }
+
+            joints.Add(new EtabsJoint(point1, ""));
+            joints.Add(new EtabsJoint(point2, ""));
+            return joints;
+        }
+        #endregion
+    }
+
+    #endregion
+
+    #region Area
+
+    public class EtabsArea : GeneralEtabsObject
+    {
+        public string[] jointUN = new string[4];
+        eAreaDesignOrientation areaType;
+        public EtabsArea(string uniqueName, string labelName, cSapModel sapModel = null) : base(uniqueName, labelName, 5)
+        {
+            // If sapModel provided, classify immediately
+            if (sapModel != null) { Classify(sapModel); }
+        }
+        public eAreaDesignOrientation Classify(cSapModel sapModel)
+        {
+            eAreaDesignOrientation areaType = eAreaDesignOrientation.Null;
+            int ret = sapModel.AreaObj.GetDesignOrientation(uniqueName, ref areaType);
+
+            if (ret != 0)
+            {
+                throw new Exception($"Error: Area with unique name {uniqueName} not found or API Failure");
+            }
+            return areaType;
+        }
+
+        public string[] GetBaseJoints(cSapModel sapModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region Joints
+        List<EtabsJoint> joints;
+        public List<EtabsJoint> GetJoints(cSapModel sapModel)
+        {
+            if (joints != null) { return joints; }
+            joints = new List<EtabsJoint>();
+            int numPoints = -1;
+            string[] pointNames = new string[0];
+            int ret = sapModel.AreaObj.GetPoints(uniqueName, ref numPoints, ref pointNames);
+            if (ret != 0)
+            {
+                throw new Exception($"Error: Area with unique name {uniqueName} not found or API Failure");
+            }
+
+            foreach (string pointName in pointNames)
+            {
+                EtabsJoint jointObj = new EtabsJoint(pointName, "");
+                joints.Add(jointObj);
+            }
+            return joints;
+        } 
+        #endregion
+    }
+    #endregion
+
+    #region ETABS Object Type
+    static public class EtabsObjectTypeHelper
+    {
+        static public EtabsObjectType MapToObjectType(int objectTypeInt, string uniqueName = "", string labelName = "")
+        {
+            if (objectTypeInt < 1 || objectTypeInt > 7)
+            {
+                throw new Exception($"Object type {objectTypeInt} not recognised for object with UN: {uniqueName}, Label Name: {labelName}");
+            }
+            EtabsObjectType objectType = (EtabsObjectType)objectTypeInt;
+            return objectType;
+        }
+        static public GeneralEtabsObject ClassifyEtabsObject(string uniqueName, int objectTypeInt, cSapModel sapModel = null)
+        {
+            int ret = -1;
+            switch (objectTypeInt)
+            {
+                
+                case 1: //Point
+                    {
+                        return new EtabsJoint(uniqueName, "");
+                    }
+                case 2: //Frame
+                    {
+                       return new EtabsFrame(uniqueName, "", sapModel);
+                    }
+
+                case 3: //Cable
+                    {
+                        return new GeneralEtabsObject(uniqueName, "", objectTypeInt);
+                    }
+
+                case 4: //Tendon
+                    {
+                        return new GeneralEtabsObject(uniqueName, "", objectTypeInt);
+                    }
+
+                case 5: //Area
+                    {
+                        return new EtabsArea(uniqueName, "", sapModel);
+                    }
+
+                case 6: //Solid
+                    {
+                        return new GeneralEtabsObject(uniqueName, "", objectTypeInt);
+                    }
+
+                case 7: //Link
+                    {
+                        return new GeneralEtabsObject(uniqueName, "", objectTypeInt);
+                    }
+                default:
+                    throw new Exception($"Object type {objectTypeInt} not recognised");
+            }
+        }
+        static public Dictionary<string, GeneralEtabsObject> GetVerticalElements(cSapModel sapModel, string groupName)
+        {
+            (int[] objectTypeIds, string[] objectNames) = EtabsFunctions.GetGroupElementofType(sapModel, groupName, new HashSet<EtabsObjectType> { EtabsObjectType.Area, EtabsObjectType.Frame });
+            Dictionary<string, GeneralEtabsObject> colAndWallObjects = new Dictionary<string, GeneralEtabsObject>();
+            for (int i = 0; i < objectTypeIds.Length; i++)
+            {
+                GeneralEtabsObject obj = ClassifyEtabsObject(objectNames[i], objectTypeIds[i], sapModel);
+                if (obj.objectType == EtabsObjectType.Area)
+                {
+                    EtabsArea areaObj = (EtabsArea)obj;
+                    eAreaDesignOrientation areaType = areaObj.Classify(sapModel);
+                    if (areaType != eAreaDesignOrientation.Wall)
+                    {
+                        continue;
+                    }
+                }
+                else if (obj.objectType == EtabsObjectType.Frame)
+                {
+                    EtabsFrame frameObj = (EtabsFrame)obj;
+                    eFrameDesignOrientation frameType = frameObj.Classify(sapModel);
+                    if (frameType != eFrameDesignOrientation.Column && frameType != eFrameDesignOrientation.Brace)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+                colAndWallObjects.Add(objectNames[i], obj);
+            }
+            return colAndWallObjects;
+        }
+
+        static public Dictionary<string, GeneralEtabsObject> GetJointsFromElements(cSapModel sapModel, IEnumerable<GeneralEtabsObject> elements, bool throwWarningForUndefinedElements = true)
+        {
+            Dictionary<string, GeneralEtabsObject> jointsDict = new Dictionary<string, GeneralEtabsObject>();
+            foreach (var element in elements)
+            {
+                List<EtabsJoint> joints = new List<EtabsJoint>();
+                switch (element.objectType)
+                {
+                    case EtabsObjectType.Point:
+                        {
+                            EtabsJoint jointObj = (EtabsJoint)element;
+
+                            if (!jointsDict.ContainsKey(jointObj.uniqueName))
+                            {
+                                jointsDict.Add(jointObj.uniqueName, jointObj);
+                            }
+                            break;
+                        }
+                    case EtabsObjectType.Frame:
+                        {
+                            EtabsFrame frameObj = (EtabsFrame)element;
+
+                            foreach (EtabsJoint jointObj in frameObj.GetJoints(sapModel))
+                            {
+                                if (!jointsDict.ContainsKey(jointObj.uniqueName))
+                                {
+                                    jointsDict.Add(jointObj.uniqueName, jointObj);
+                                }
+                            }
+                            break;
+                        }
+                    case EtabsObjectType.Area:
+                        {
+                            EtabsArea areaObj = (EtabsArea)element;
+
+                            foreach (EtabsJoint jointObj in areaObj.GetJoints(sapModel))
+                            {
+                                if (!jointsDict.ContainsKey(jointObj.uniqueName))
+                                {
+                                    jointsDict.Add(jointObj.uniqueName, jointObj);
+                                }
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            if (throwWarningForUndefinedElements)
+                            {
+                                throw new Exception($"Object type {element.objectType} not supported for getting joints");
+                            }
+                            break;
+                        }
+                }
+            }
+
+            return jointsDict;
+        }
+    }
+    public enum EtabsObjectType
+    {
+        Point = 1, 
+        Frame = 2, 
+        Cable = 3, 
+        Tendon = 4,
+        Area = 5, 
+        Solid = 6, 
+        Link = 7 
+    }
+
+    #region References
+    //eAreaDesignOrientation
+    //Wall 1  
+    //Floor 2  
+    //Ramp_DO_NOT_USE 3  
+    //Null 4  
+    //Other 5 
+
+    //eFrameDesignOrientation
+    //Column 1  
+    //Beam 2  
+    //Brace 3  
+    //Null 4  
+    //Other 5 
+    #endregion
+    #endregion
+
+    #endregion
+
+
 }
+

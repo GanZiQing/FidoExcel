@@ -1329,36 +1329,17 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             {
                 //inputDocument.Outlines is giving me issues when it is empty, I don't know why and i can't seem detect when it is empty (simply accessing inputDocument.Outlines is an error).
                 PdfOutlineCollection thisCollection = inputDocument.Outlines;
+                AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, parentOutline, inputDocument.Outlines);
             }
-            catch { return; }
-
-            AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, parentOutline, inputDocument.Outlines);
-
+            catch 
+            {
+                // This is for bookmarks that are not detected by PDFsharp outlines
+                GeneralOutline generalOutline = new GeneralOutline((PdfDictionary)inputDocument.Internals.Catalog.Elements.GetObject("/Outlines"));
+                //AddNestedBookmarksGeneral(inputDocument, outputDocument, inputPageTracker, parentOutline);
+            }
         }
         void AddNestedBookmarks(PdfDocument inputDocument, PdfDocument outputDocument, Dictionary<PdfPage, PdfPage> inputPageTracker, PdfOutline parentOutline, PdfOutlineCollection inputOutlineCollection)
         {
-            //try
-            //{
-            //    if (inputOutlineCollection.Count == 0) { return; }
-            //    foreach (PdfOutline inputOutline in inputOutlineCollection)
-            //    {
-            //        // Create a new bookmark in the output document
-            //        PdfPage inputPage = inputOutline.DestinationPage;
-            //        PdfPage outputPage = inputPageTracker[inputPage];
-            //        PdfOutline newOutline = parentOutline.Outlines.Add(inputOutline.Title, outputPage);
-
-            //        try
-            //        {
-            //            //inputDocument.Outlines is giving me issues when it is empty, I don't know why and i can't seem detect when it is empty (simply accessing inputDocument.Outlines is an error).
-            //            PdfOutlineCollection thisCollection = inputDocument.Outlines;
-            //        }
-            //        catch { continue; }
-            //        AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, newOutline, inputOutline.Outlines);
-            //    }
-            //}
-
-            //catch (Exception ex) { }
-
             if (inputOutlineCollection.Count == 0) { return; }
             foreach (PdfOutline inputOutline in inputOutlineCollection)
             {
@@ -1375,6 +1356,76 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 catch { continue; }
                 AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, newOutline, inputOutline.Outlines);
             }
+        }
+
+        void AddNestedBookmarksGeneral(PdfDocument inputDocument, PdfDocument outputDocument, Dictionary<PdfPage, PdfPage> inputPageTracker, PdfOutline parentOutline, GeneralOutline inputOutlineCollection)
+        {
+            try
+            {
+                if (inputOutlineCollection.Count == 0) { return; }
+                //foreach (PdfOutline inputOutline in inputOutlineCollection)
+                //{
+                //    // Create a new bookmark in the output document
+                //    PdfPage inputPage = inputOutline.DestinationPage;
+                //    PdfPage outputPage = inputPageTracker[inputPage];
+                //    PdfOutline newOutline = parentOutline.Outlines.Add(inputOutline.Title, outputPage);
+
+                //    try
+                //    {
+                //        //inputDocument.Outlines is giving me issues when it is empty, I don't know why and i can't seem detect when it is empty (simply accessing inputDocument.Outlines is an error).
+                //        PdfOutlineCollection thisCollection = inputDocument.Outlines;
+                //    }
+                //    catch { continue; }
+                //    AddNestedBookmarks(inputDocument, outputDocument, inputPageTracker, newOutline, inputOutline.Outlines);
+                //}
+            }
+            catch { }
+        }
+
+        class GeneralOutline
+        {
+            public string Title;
+            public PdfPage DestinationPage;
+            public int Count;
+            List<GeneralOutline> Outlines = new List<GeneralOutline>();
+            //List<PdfDictionary> Outlines = new List<PdfDictionary>();
+            public GeneralOutline(PdfDictionary outline)
+            {
+                GetChildOutlines(outline);
+                Count = Outlines.Count;
+
+                Title = outline.Elements.GetString("/Title");
+                DestinationPage = outline.Elements.GetObject("/Dest") as PdfPage;
+            }
+
+            void GetChildOutlines(PdfDictionary outline)
+            {
+                PdfDictionary childOutline = outline.Elements.GetObject("/First") as PdfDictionary;
+
+                if (childOutline == null) 
+                { 
+                    return; 
+                }
+
+                while (childOutline != null)
+                {
+                    GeneralOutline chileGeneralOutline = new GeneralOutline(childOutline);
+                    Outlines.Add(chileGeneralOutline);
+                    childOutline = childOutline.Elements.GetObject("/Next") as PdfDictionary;
+                }
+            }
+        }
+
+        void GetGeneralBookmarks(PdfDocument inputDocument)
+        {
+            // get the outline object
+            PdfDictionary outline = (PdfDictionary)inputDocument.Internals.Catalog.Elements.GetObject("/Outlines");
+
+            // you can then access the first outline using:
+            PdfDictionary first = (PdfDictionary)outline.Elements.GetObject("/First");
+
+            // you can then access the title of the first outline using:
+            string title = first.Elements.GetString("/Title");
         }
         #endregion 
         

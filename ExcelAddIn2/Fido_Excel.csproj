@@ -36,7 +36,7 @@
     <PublishUrl>C:\Users\epona\Documents\VSTO\01_Excel\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.28</ApplicationVersion>
+    <ApplicationVersion>1.0.0.31</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
@@ -298,6 +298,9 @@
     <Compile Include="Excel Pane Folder\DirectoryPanes\DraftingPane.Designer.cs">
       <DependentUpon>DraftingPane.cs</DependentUpon>
     </Compile>
+    <Compile Include="Excel Pane Folder\ETABS\ETABSTaskPaneBaseShear.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Excel Pane Folder\HDB Design\WallCheckPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -352,10 +355,10 @@
     </Compile>
     <Compile Include="Excel Pane Folder\Piling Pane\Beaver.cs" />
     <Compile Include="Shared Classes\AttributeTextBox.cs" />
-    <Compile Include="Excel Pane Folder\ETABSTaskPane.cs">
+    <Compile Include="Excel Pane Folder\ETABS\ETABSTaskPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Excel Pane Folder\ETABSTaskPane.Designer.cs">
+    <Compile Include="Excel Pane Folder\ETABS\ETABSTaskPane.Designer.cs">
       <DependentUpon>ETABSTaskPane.cs</DependentUpon>
     </Compile>
     <Compile Include="Shared Classes\CustomAttribute.cs" />
@@ -450,7 +453,7 @@
     <EmbeddedResource Include="Shared Classes\DirectoryUserControl.resx">
       <DependentUpon>DirectoryUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Excel Pane Folder\ETABSTaskPane.resx">
+    <EmbeddedResource Include="Excel Pane Folder\ETABS\ETABSTaskPane.resx">
       <DependentUpon>ETABSTaskPane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\BeamDesign.resx">

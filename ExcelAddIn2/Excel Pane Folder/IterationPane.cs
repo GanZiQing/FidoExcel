@@ -90,6 +90,15 @@ namespace ExcelAddIn2
             RangeAttributeDic.Add("OutSheet1", OutSheet1);
             RangeTextBox InRange1 = new RangeTextBox("InRange1", DispInputR1, SetInRange1, "column");
             RangeAttributeDic.Add("InRange1", InRange1);
+
+            CheckBoxAttribute thisAtt = new CheckBoxAttribute("OverrideRowsCheck_IT", OverrideInputCheck, false);
+            OtherAttributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new CheckBoxAttribute("CreateNewSheetsCheck_IT", CreateNewSheetCheck, true);
+            OtherAttributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new CheckBoxAttribute("deleteSheetsCheck_IT", delExistingSheetCheck, true);
+            OtherAttributeDic.Add(thisAtt.attName, thisAtt);
             #endregion
 
             #region Multiple Runs Iteration Setting
@@ -143,13 +152,35 @@ namespace ExcelAddIn2
 
             AttributeTextBox Increment = new AttributeTextBox("Increment", dispIncrement, true);
             Increment.type = "double";
-            Increment.textBox.Text = "0.1";
+            Increment.SetDefaultValue("0.1");
             RangeAttributeDic.Add("Increment", Increment);
 
             AttributeTextBox LoopNum = new AttributeTextBox("LoopNum", dispLoopNum, true);
             LoopNum.type = "int";
-            LoopNum.textBox.Text = "100";
+            LoopNum.SetDefaultValue("100");
             RangeAttributeDic.Add("LoopNum", LoopNum);
+            #endregion
+
+            #region Range Cell Iteration
+            RangeTextBox CriteriaSource3 = new RangeTextBox("CriteriaSource3", dispCriteriaSource3, setCriteriaSource3, "cell", false);
+            RangeAttributeDic.Add("CriteriaSource3", CriteriaSource3);
+            ComboBoxAttribute LogicSymbol3 = new ComboBoxAttribute("LogicSymbol3", dispLogicSymbol3, "<=");
+            OtherAttributeDic.Add("LogicSymbol3", LogicSymbol3);
+            AttributeTextBox CriteriaValue3 = new AttributeTextBox("CriteriaValue3", dispCriteriaValue3, true);
+            RangeAttributeDic.Add("CriteriaValue3", CriteriaValue3);
+
+            AttributeTextBox Increment2 = new AttributeTextBox("Increment2", dispIncrement2, true);
+            Increment2.type = "double";
+            Increment2.SetDefaultValue("0.1");
+            RangeAttributeDic.Add("Increment2", Increment2);
+
+            AttributeTextBox LoopNum2 = new AttributeTextBox("LoopNum2", dispLoopNum2, true);
+            LoopNum2.type = "int";
+            LoopNum2.SetDefaultValue("100");
+            RangeAttributeDic.Add("LoopNum2", LoopNum2);
+
+            RangeTextBox rtb = new RangeTextBox("StatusSource_RangeCellIter", dispStatusCol2, setStatusCol2, "cell", false);
+            RangeAttributeDic.Add(rtb.attName, rtb);
             #endregion
         }
 
@@ -169,9 +200,9 @@ namespace ExcelAddIn2
             #endregion
 
             #region Others
-            toolTip1.SetToolTip(increaseVal,
+            toolTip1.SetToolTip(increaseValCell,
                 "Increase the value of current cell by increment until target criteria is achived or maximumn number of loops completed");
-            toolTip1.SetToolTip(increaseVal,
+            toolTip1.SetToolTip(increaseValCell,
                 "Decrease the value of current cell by increment until target criteria is achived or maximumn number of loops completed");
             #endregion
         }
@@ -1036,7 +1067,7 @@ namespace ExcelAddIn2
         {
             List<Worksheet> OGSheets = new List<Worksheet>();
             HashSet<string> PrintSheets;
-            if (CheckNewSheet1.Checked)
+            if (CreateNewSheetCheck.Checked)
             {
                 try
                 {
@@ -1184,7 +1215,7 @@ namespace ExcelAddIn2
                     #endregion
 
                     #region Rename Sheet and make new sheet if required 
-                    if (CheckNewSheet1.Checked)
+                    if (CreateNewSheetCheck.Checked)
                     {
                         // Rename Sheets To Append Name
                         bool toContinue = RenameSheetsToSave(OGSheets, Row.Text);
@@ -1827,7 +1858,7 @@ namespace ExcelAddIn2
                     #endregion
 
                     #region Rename Sheet and make new sheet if required 
-                    if (CheckNewSheet1.Checked)
+                    if (CreateNewSheetCheck.Checked)
                     {
                         // Rename Sheets To Append Name
                         bool toContinue = RenameSheetsToSave(OGSheets, currentRow.Text);
@@ -2544,7 +2575,7 @@ namespace ExcelAddIn2
                             #endregion
 
                             #region Rename Sheet and make new sheet if required (only last iteration)
-                            if (CheckNewSheet1.Checked &&
+                            if (CreateNewSheetCheck.Checked &&
                                 (iterationSetNum == ((string[])dataTable["Name"]).Count() - 1))
                             {
                                 // Rename Sheets To Append Name
@@ -2896,6 +2927,112 @@ namespace ExcelAddIn2
             criteria.CheckInputs();
             bool pass = criteria.CriteriaMet();
 
+        }
+        #endregion
+
+        #region Range Cell Iteration
+        private void increaseValRange_Click(object sender, EventArgs e)
+        {
+            runRangeIter(true);
+        }
+
+        private void decreaseValRange_Click(object sender, EventArgs e)
+        {
+            runRangeIter(false);
+        }
+
+        private void runRangeIter(bool increaseVal)
+        {
+            try
+            {
+                #region Get Inputs
+                // Selected Range for Cells to Update
+                Range selRange = ThisApplication.ActiveWindow.RangeSelection;
+                if (selRange.Columns.Count > 1)
+                {
+                    MessageBox.Show("Selected range can only contain one column", "Error");
+                    return;
+                }
+
+                // Criteria source column number 
+                int sourceColNum;
+                {
+                    Range iterationSource = ((RangeTextBox)RangeAttributeDic["CriteriaSource3"]).GetRangeForCurrentSheet();
+                    sourceColNum = iterationSource.Column;
+                }
+
+                // Increment settings
+                double increment;
+                double maxIter;
+                try
+                {
+                    increment = RangeAttributeDic["Increment2"].GetDoubleFromTextBox();
+                    maxIter = RangeAttributeDic["LoopNum2"].GetIntFromTextBox();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error");
+                    return;
+                }
+                #endregion
+
+                #region Iterate through rows
+                string[] status = new string[selRange.Rows.Count];
+                int counter = 0;
+                foreach (Range cell in selRange.Cells)
+                {
+                    #region Get Criteria Cell
+                    Range criteriaCell = cell.Worksheet.Cells[cell.Row, sourceColNum];
+                    #endregion
+
+                    try
+                    {
+                        #region Create Iteration Object
+                        TargetCriteria criteria = new TargetCriteria(criteriaCell, (ComboBoxAttribute)OtherAttributeDic["LogicSymbol3"], RangeAttributeDic["CriteriaValue3"]);
+
+                        if (criteria.CriteriaMet())
+                        {
+                            status[counter] = "Criteria already fulfilled";
+                            counter += 1;
+                            continue;
+                        }
+                        #endregion
+
+                        #region Iterate
+                        for (int iterNum = 0; iterNum < maxIter; iterNum++)
+                        {
+                            cell.Value2 = cell.Value2 + increment;
+                            if (criteria.CriteriaMet())
+                            {
+                                status[counter] = "Value found";
+                                break;
+                            }
+                        }
+                        #endregion
+
+                        if (status[counter] != "Value found") { status[counter] = "Max number of loops reached, value not found"; }
+                        counter += 1;
+                    }
+                    catch (Exception ex)
+                    {
+                        status[counter] = $"Err: {ex.Message}";
+                        counter += 1;
+                    }
+                }
+                #endregion
+
+                #region Print Status
+                Range statusRange;
+                {
+                    Worksheet ws = selRange.Worksheet;
+                    Range startCell = ws.Cells[selRange.Cells[1].Row, sourceColNum+1];
+                    Range endCell = ws.Cells[selRange.Cells[selRange.Cells.Count].Row, sourceColNum+1];
+                    statusRange = ws.Range[startCell, endCell];
+                }
+                WriteToExcelRangeAsCol(statusRange, 0, 0, false, status);
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
         #endregion
     }

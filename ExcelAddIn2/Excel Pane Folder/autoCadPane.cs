@@ -38,9 +38,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #region Line Functions
             AddDynamicActionToButton(getLineCoords, () => InsertDynamicHeader(lineCoordinateHeaderGenerator));
             #endregion
-
-
         }
+
         #region Dynamic Header Generators
         private object lineCoordinateHeaderGenerator()
         {
