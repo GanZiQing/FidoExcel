@@ -1216,10 +1216,19 @@ namespace ExcelAddIn2
             }           
         }
 
-        public static void WriteWarning()
+        public static void WriteWarning(string message="")
         {
-            DialogResult result = MessageBox.Show("Confirm to export values to current selection? This will override cell values at current selection and cannot be undone."
-                , "Warning",MessageBoxButtons.YesNo);
+            string defaultMessage = $"Confirm to export values to current selection? This will override cell values at current selection and cannot be undone.";
+            if (message == "")
+            {
+                message = defaultMessage;
+            }
+            else
+            {
+                message = message + "\n" + defaultMessage;
+            }
+
+            DialogResult result = MessageBox.Show(message, "Warning", MessageBoxButtons.YesNo);
             if (result != DialogResult.Yes)
             {
                 throw new Exception("Terminated by user");

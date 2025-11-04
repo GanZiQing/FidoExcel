@@ -18,12 +18,12 @@ namespace ExcelAddIn2
         private void Launcher_Load(object sender, RibbonUIEventArgs e)
         {
             string versionNum = "Debug Mode";
-            string lastUpdated = "2025-10-24";
+            string lastUpdated = "2025-11-03";
             try
             {
-                //System.Deployment.Application.ApplicationDeployment applicationDeployment = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
-                //Version version = applicationDeployment.CurrentVersion;
-                //versionNum = version.ToString();
+                System.Deployment.Application.ApplicationDeployment applicationDeployment = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
+                Version version = applicationDeployment.CurrentVersion;
+                versionNum = version.ToString();
             }
             catch { }
             versionLabel.Label = $"Version:\n  {versionNum}\nLast Updated:\n  {lastUpdated}";

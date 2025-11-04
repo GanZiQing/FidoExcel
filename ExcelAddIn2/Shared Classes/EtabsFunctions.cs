@@ -790,6 +790,37 @@ namespace ExcelAddIn2
             return tableDataDic;
         }
         #endregion
+
+        #region ETABS Group
+        public static HashSet<string> GetExistingEtabsGroup(cSapModel sapModel, bool includeAll)
+        {
+            
+            int numberNames = 0;
+            string[] groupNames = new string[0];
+            int ret = sapModel.GroupDef.GetNameList(ref numberNames, ref groupNames);
+            if (ret != 0) { throw new Exception($"Unable to get group name list from ETABS"); }
+            HashSet<string> groupNameSet = new HashSet<string>(groupNames);
+            groupNameSet.Remove("All");
+            return groupNameSet;
+        }
+        public static void CheckEtabsGroupExists(cSapModel sapModel, string[] groupNames)
+        {
+            HashSet<string> groupNameSet = GetExistingEtabsGroup(sapModel, false);
+            List<string> undefinedGroups = new List<string>();
+            foreach (string groupName in groupNames)
+            {
+
+                if (groupNameSet.Contains(groupName)) { continue; }
+                undefinedGroups.Add(groupName);
+            }
+
+            if (undefinedGroups.Count > 0)
+            {
+                string undefinedGroupStr = string.Join(", ", undefinedGroups);
+                throw new Exception($"The following ETABS groups do not exist: {undefinedGroupStr}");
+            }
+        }
+        #endregion
     }
 
     #region ETABS Objects
@@ -801,7 +832,7 @@ namespace ExcelAddIn2
         public string labelName;
         public string status;
 
-        public string objectTypeString;
+        //public string objectTypeString;
         public GeneralEtabsObject(string uniqueName, string labelName, int objectTypeInt)
         {
             this.uniqueName = uniqueName;
@@ -810,6 +841,33 @@ namespace ExcelAddIn2
             objectType = EtabsObjectTypeHelper.MapToObjectType(objectTypeInt);
         }
         // Should add an overrided class to get UN probably
+        public string objectTypeString
+        {
+            get 
+            { 
+                switch (objectType)
+                {
+                    case EtabsObjectType.Point:
+                        return "Joint";
+                    case EtabsObjectType.Frame:
+                        return "Frame";
+                    case EtabsObjectType.Cable:
+                        return "Cable";
+                    case EtabsObjectType.Tendon:
+                        return "Tendon";
+                    case EtabsObjectType.Area:
+                        return "Area";
+                    case EtabsObjectType.Solid:
+                        return "Solid";
+                    case EtabsObjectType.Link:
+                        return "Link";
+                    default:
+                        return "Unknown";
+                }
+            }
+        }
+
+            
     }
 
     #region Joints
@@ -916,7 +974,7 @@ namespace ExcelAddIn2
         }
         public eFrameDesignOrientation Classify(cSapModel sapModel)
         {
-            eFrameDesignOrientation frameType = eFrameDesignOrientation.Null;
+            frameType = eFrameDesignOrientation.Null;
             int ret = sapModel.FrameObj.GetDesignOrientation(uniqueName, ref frameType);
 
             if (ret != 0)
@@ -967,7 +1025,7 @@ namespace ExcelAddIn2
         }
         public eAreaDesignOrientation Classify(cSapModel sapModel)
         {
-            eAreaDesignOrientation areaType = eAreaDesignOrientation.Null;
+            areaType = eAreaDesignOrientation.Null;
             int ret = sapModel.AreaObj.GetDesignOrientation(uniqueName, ref areaType);
 
             if (ret != 0)
@@ -1021,7 +1079,6 @@ namespace ExcelAddIn2
         }
         static public GeneralEtabsObject ClassifyEtabsObject(string uniqueName, int objectTypeInt, cSapModel sapModel = null)
         {
-            int ret = -1;
             switch (objectTypeInt)
             {
                 
@@ -1062,10 +1119,11 @@ namespace ExcelAddIn2
                     throw new Exception($"Object type {objectTypeInt} not recognised");
             }
         }
-        static public Dictionary<string, GeneralEtabsObject> GetVerticalElements(cSapModel sapModel, string groupName)
+        static public List<GeneralEtabsObject> GetVerticalElements(cSapModel sapModel, string groupName)
         {
             (int[] objectTypeIds, string[] objectNames) = EtabsFunctions.GetGroupElementofType(sapModel, groupName, new HashSet<EtabsObjectType> { EtabsObjectType.Area, EtabsObjectType.Frame });
-            Dictionary<string, GeneralEtabsObject> colAndWallObjects = new Dictionary<string, GeneralEtabsObject>();
+            //Dictionary<string, GeneralEtabsObject> colAndWallObjects = new Dictionary<string, GeneralEtabsObject>();
+            List< GeneralEtabsObject > colAndWallObjects = new List<GeneralEtabsObject>();
             for (int i = 0; i < objectTypeIds.Length; i++)
             {
                 GeneralEtabsObject obj = ClassifyEtabsObject(objectNames[i], objectTypeIds[i], sapModel);
@@ -1091,17 +1149,17 @@ namespace ExcelAddIn2
                 {
                     continue;
                 }
-                colAndWallObjects.Add(objectNames[i], obj);
+                colAndWallObjects.Add(obj);
             }
             return colAndWallObjects;
         }
 
-        static public Dictionary<string, GeneralEtabsObject> GetJointsFromElements(cSapModel sapModel, IEnumerable<GeneralEtabsObject> elements, bool throwWarningForUndefinedElements = true)
+        static public Dictionary<string, GeneralEtabsObject> GetUniqueJointsFromElements(cSapModel sapModel, IEnumerable<GeneralEtabsObject> elements, bool throwWarningForUndefinedElements = true)
         {
             Dictionary<string, GeneralEtabsObject> jointsDict = new Dictionary<string, GeneralEtabsObject>();
             foreach (var element in elements)
             {
-                List<EtabsJoint> joints = new List<EtabsJoint>();
+                //List<EtabsJoint> joints = new List<EtabsJoint>();
                 switch (element.objectType)
                 {
                     case EtabsObjectType.Point:
