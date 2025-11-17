@@ -996,7 +996,7 @@ namespace ExcelAddIn2
             // Get values
             foreach ((Range HeaderCell, string TargetAddress) in OutputHeaders)
             {
-                ThisApplication.Calculate();
+                AwaitExcelCalculation();
                 string SourceAddress = "";
                 try
                 {
@@ -2912,6 +2912,7 @@ namespace ExcelAddIn2
             for (int iterNum = 0; iterNum <maxIter; iterNum++)
             {
                 selRange.Value2 = selRange.Value2 + increment;
+                AwaitExcelCalculation();
                 if (criteria.CriteriaMet())
                 {
                     MessageBox.Show("Value found", "Completed");
@@ -2967,6 +2968,7 @@ namespace ExcelAddIn2
                 try
                 {
                     increment = RangeAttributeDic["Increment2"].GetDoubleFromTextBox();
+                    if (!increaseVal) { increment = -increment; }
                     maxIter = RangeAttributeDic["LoopNum2"].GetIntFromTextBox();
                 }
                 catch (Exception ex)
@@ -3002,6 +3004,7 @@ namespace ExcelAddIn2
                         for (int iterNum = 0; iterNum < maxIter; iterNum++)
                         {
                             cell.Value2 = cell.Value2 + increment;
+                            AwaitExcelCalculation();
                             if (criteria.CriteriaMet())
                             {
                                 status[counter] = "Value found";

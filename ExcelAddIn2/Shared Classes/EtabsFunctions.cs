@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
 namespace ExcelAddIn2
@@ -42,8 +43,7 @@ namespace ExcelAddIn2
             return (NumSel, ObjectType, ObjectName);
         }
 
-
-        public static (int numSel, string[] ObjectName) GetSelectedElementsByType(cSapModel sapModel, int type)
+        public static (int numSel, string[] ObjectName) GetSelectedElementsByType(cSapModel sapModel, EtabsObjectType type)
         {
             // come back to refractor. Need to add function to get all only
             (int numSelAll, int[] objTypeAll, string[] objNameAll) = GetSelectedElements(sapModel);
@@ -53,7 +53,7 @@ namespace ExcelAddIn2
 
             for (int i = 0; i < numSelAll; i++)
             {
-                if (objTypeAll[i] != type) { continue; }
+                if (objTypeAll[i] != (int)type) { continue; }
 
                 wallUNs.Add(objNameAll[i]);
                 wallCount++;
@@ -831,6 +831,7 @@ namespace ExcelAddIn2
         public EtabsObjectType objectType;
         public string labelName;
         public string status;
+        public string storeyName;
 
         //public string objectTypeString;
         public GeneralEtabsObject(string uniqueName, string labelName, int objectTypeInt)
@@ -873,10 +874,10 @@ namespace ExcelAddIn2
     #region Joints
     public class EtabsJoint : GeneralEtabsObject
     {
-        public double x;
-        public double y;
-        public double z;
-        public string storeyName;
+        public double x = double.NaN;
+        public double y = double.NaN;
+        public double z = double.NaN;
+        
         public List<string> unstableDimension = new List<string>();
 
         public EtabsJoint(string uniqueName, string labelName) : base(uniqueName, labelName, 1)
@@ -936,7 +937,7 @@ namespace ExcelAddIn2
         #region Base Shear Reaction
         public Dictionary<string, double[]> baseReactions;
         public Dictionary<string, int> baseReactionRowNum;
-        public void AddShearReaction(string loadCase, int rowNum,
+        public void AddBaseReaction(string loadCase, int rowNum,
             double Fx, double Fy, double Fz, double Mx, double My, double Mz)
         {
             #region Checks
@@ -947,7 +948,8 @@ namespace ExcelAddIn2
             if (baseReactions.ContainsKey(loadCase)) { throw new Exception($"Load case \"{loadCase}\" already exist for joint with unique name \"{uniqueName}\""); }
             if (baseReactionRowNum.ContainsKey(loadCase)) { throw new Exception($"Load case \"{loadCase}\" already exist for joint with unique name \"{uniqueName}\""); }
             #endregion
-            double[] reactions = new double[6];
+
+            double[] reactions = new double[9];
             reactions[0] = Fx;
             reactions[1] = Fy;
             reactions[2] = Fz;
@@ -957,7 +959,37 @@ namespace ExcelAddIn2
             baseReactions.Add(loadCase, reactions);
             baseReactionRowNum.Add(loadCase, rowNum);
         }
+        /// <summary>
+        ///     Assumes all joints are at base level, no consideration of elevation
+        /// </summary>
+        public double[] GetMomentAboutPoint(cSapModel sapModel, string loadCase, double xOrigin, double yOrigin)
+        {
+            //throw new NotImplementedException("Not working, kept for reference");
+            if (double.IsNaN(this.x)) { GetCoordinates(sapModel); }
 
+            if (!baseReactions.ContainsKey(loadCase)) { throw new Exception($"Base reaction for joint with unqiue name \"{uniqueName}\" and load case \"{loadCase}\" not initialised, unable to calculate base moment."); }
+            double[] reactions = baseReactions[loadCase];
+
+            double dx = this.x - xOrigin;
+            double dy = this.y - yOrigin;
+            if (double.IsNaN(dx) || double.IsNaN(dy)) { throw new Exception($"Undefined origin for joint with UN {uniqueName}"); }
+
+            reactions[6] = dy * baseReactions[loadCase][2]; // Mx about origin
+            reactions[7] = -dx * baseReactions[loadCase][2]; // My about origin
+            reactions[8] = dx * baseReactions[loadCase][1] - dy * baseReactions[loadCase][0]; // Mz about origin
+
+            return reactions;
+        }
+        #endregion
+
+        #region Get Coordinates
+        public double[] GetCoordinates(cSapModel sapModel)
+        {
+            int ret = sapModel.PointObj.GetCoordCartesian(uniqueName, ref x, ref y, ref z);
+            if (ret != 0) { throw new Exception($"Error getting coordinate for joint with unique name {uniqueName}"); }
+            double[] coordinates = new double[3] { x, y, z };
+            return coordinates;
+        }
         #endregion
     }
     #endregion
@@ -966,7 +998,7 @@ namespace ExcelAddIn2
     public class EtabsFrame: GeneralEtabsObject
     {
         public string[] jointUN = new string[2];
-        eFrameDesignOrientation frameType;
+        public eFrameDesignOrientation frameType;
         public EtabsFrame(string uniqueName, string labelName, cSapModel sapModel = null) : base(uniqueName, labelName, 2)
         {
             // If sapModel provided, classify immediately
@@ -988,6 +1020,9 @@ namespace ExcelAddIn2
             throw new NotImplementedException();
         }
 
+
+        #region Get Details
+
         #region Joints
         List<EtabsJoint> joints;
         public List<EtabsJoint> GetJoints(cSapModel sapModel)
@@ -1006,6 +1041,50 @@ namespace ExcelAddIn2
             joints.Add(new EtabsJoint(point1, ""));
             joints.Add(new EtabsJoint(point2, ""));
             return joints;
+        }
+        public double[] coordinates = new double[6]; // x1, y1, z1, x2, y2, z2
+        public double[] GetCoordinates(cSapModel sapModel)
+        {
+            if (joints == null) { GetJoints(sapModel); }
+            if (joints.Count != 2) { throw new Exception($"Frame with unique name {uniqueName} has {joints.Count} joints. Unexpected result"); }
+
+            int i = 0;
+            foreach (EtabsJoint joint in joints)
+            {
+                double[] jointCoord = joint.GetCoordinates(sapModel);
+                foreach (double coord in jointCoord)
+                {
+                    coordinates[i] = coord;
+                    i += 1;
+                }
+            }
+            return coordinates;
+        }
+        #endregion
+        public string GetLabel(cSapModel sapModel)
+        {
+            sapModel.FrameObj.GetLabelFromName(uniqueName, ref labelName, ref storeyName);
+            return labelName;
+        }
+
+        public string sectionName = "";
+        public string GetSection(cSapModel sapModel)
+        {
+            string autoSelect = "";
+            sapModel.FrameObj.GetSection(uniqueName, ref sectionName, ref autoSelect);
+            return sectionName;
+        }
+
+        #endregion
+
+        #region Sets
+        public void SetUniqueName(cSapModel sapModel, string newName, bool setErrAsStatus = false)
+        {
+            int ret = sapModel.FrameObj.ChangeName(uniqueName, newName);
+            if (ret != 0)
+            {
+                throw new Exception($"Error changing name of frame from {uniqueName} to {newName}");
+            }
         }
         #endregion
     }
@@ -1081,14 +1160,14 @@ namespace ExcelAddIn2
         {
             switch (objectTypeInt)
             {
-                
+
                 case 1: //Point
                     {
                         return new EtabsJoint(uniqueName, "");
                     }
                 case 2: //Frame
                     {
-                       return new EtabsFrame(uniqueName, "", sapModel);
+                        return new EtabsFrame(uniqueName, "", sapModel);
                     }
 
                 case 3: //Cable
@@ -1123,7 +1202,7 @@ namespace ExcelAddIn2
         {
             (int[] objectTypeIds, string[] objectNames) = EtabsFunctions.GetGroupElementofType(sapModel, groupName, new HashSet<EtabsObjectType> { EtabsObjectType.Area, EtabsObjectType.Frame });
             //Dictionary<string, GeneralEtabsObject> colAndWallObjects = new Dictionary<string, GeneralEtabsObject>();
-            List< GeneralEtabsObject > colAndWallObjects = new List<GeneralEtabsObject>();
+            List<GeneralEtabsObject> colAndWallObjects = new List<GeneralEtabsObject>();
             for (int i = 0; i < objectTypeIds.Length; i++)
             {
                 GeneralEtabsObject obj = ClassifyEtabsObject(objectNames[i], objectTypeIds[i], sapModel);
@@ -1153,7 +1232,6 @@ namespace ExcelAddIn2
             }
             return colAndWallObjects;
         }
-
         static public Dictionary<string, GeneralEtabsObject> GetUniqueJointsFromElements(cSapModel sapModel, IEnumerable<GeneralEtabsObject> elements, bool throwWarningForUndefinedElements = true)
         {
             Dictionary<string, GeneralEtabsObject> jointsDict = new Dictionary<string, GeneralEtabsObject>();
@@ -1211,6 +1289,38 @@ namespace ExcelAddIn2
 
             return jointsDict;
         }
+        static public EtabsFrame[] GetSpecificFrameType(string[] frameUns, cSapModel sapModel, HashSet<eFrameDesignOrientation> targetFrameTypes)
+        {
+            List<EtabsFrame> targetFrameObjects = new List<EtabsFrame>();
+            foreach (string frameUn in frameUns)
+            {
+                EtabsFrame frameObj = new EtabsFrame(frameUn, "", sapModel);
+                bool isTarget = false;
+                if (targetFrameTypes.Count == 0) { isTarget = true; } // No target, get all
+                else if (targetFrameTypes.Contains(frameObj.frameType)) { isTarget = true; } // Is target type
+                if (isTarget) { targetFrameObjects.Add(frameObj); }
+            }
+            return targetFrameObjects.ToArray();
+        }
+
+        static public void GetFrameDetails(cSapModel sapModel, ref EtabsFrame frameObj, bool getLabel, bool getCoord, bool getSection)
+        {
+            if (getLabel)
+            {
+                frameObj.GetLabel(sapModel);
+            }
+
+            if (getCoord)
+            {
+                frameObj.GetCoordinates(sapModel);
+            }
+
+            if (getSection)
+            {
+                frameObj.GetSection(sapModel);
+            } 
+        }
+
     }
     public enum EtabsObjectType
     {

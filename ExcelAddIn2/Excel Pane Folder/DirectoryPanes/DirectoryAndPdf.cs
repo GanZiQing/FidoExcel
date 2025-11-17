@@ -1334,7 +1334,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             catch 
             {
                 // This is for bookmarks that are not detected by PDFsharp outlines
-                GeneralOutline generalOutline = new GeneralOutline((PdfDictionary)inputDocument.Internals.Catalog.Elements.GetObject("/Outlines"));
+                // GeneralOutline generalOutline = new GeneralOutline((PdfDictionary)inputDocument.Internals.Catalog.Elements.GetObject("/Outlines"));
                 //AddNestedBookmarksGeneral(inputDocument, outputDocument, inputPageTracker, parentOutline);
             }
         }

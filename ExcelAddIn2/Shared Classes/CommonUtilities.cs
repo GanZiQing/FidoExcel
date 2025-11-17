@@ -93,7 +93,7 @@ namespace ExcelAddIn2
             return output;
         }
 
-        public static double[] RemoveNaNFromDoubleArray(double[] inputArray)
+        public static double[] ReplaceNaNwithString(double[] inputArray)
         {            
             List<double> outputList = new List<double>();
             foreach (double value in inputArray)
@@ -106,6 +106,23 @@ namespace ExcelAddIn2
             }
 
             return outputList.ToArray();
+        }
+
+        public static void RemoveNaNFromArray(ref object[,] inputArray, string replacementString)
+        {
+            for (int rowNum = 0; rowNum < inputArray.GetLength(0); rowNum++)
+            {
+                for (int colNum = 0; colNum < inputArray.GetLength(1); colNum++)
+                {
+                    var item = inputArray[rowNum, colNum];
+
+                    if (!(item is double)) { continue; }
+                    else if (double.IsNaN((double)item))
+                    {
+                        inputArray[rowNum, colNum] = replacementString;
+                    }
+                }
+            }
         }
 
         //public static double GetDoubleFromObject(object item)
@@ -228,6 +245,11 @@ namespace ExcelAddIn2
             int startCol = selectedRange.Column;
             int endCol = selectedRange.Column + selectedRange.Columns.Count - 1;
             return (startRow, endRow, startCol, endCol);
+        }
+
+        public static Range GetSelectedExcelRange()
+        {
+            return Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
         }
 
         #endregion
@@ -1704,6 +1726,20 @@ namespace ExcelAddIn2
 
         #endregion
 
+        #region Await Caclulation
+        public static void AwaitExcelCalculation()
+        {
+            Globals.ThisAddIn.Application.Calculate();
+
+            while (Globals.ThisAddIn.Application.CalculationState != XlCalculationState.xlDone)
+            {
+                System.Windows.Forms.Application.DoEvents();
+
+                // Optional: briefly pause to avoid high CPU usage.
+                System.Threading.Thread.Sleep(100);
+            }
+        }
+        #endregion
     }
 
     static class TwoDArrayFunctions

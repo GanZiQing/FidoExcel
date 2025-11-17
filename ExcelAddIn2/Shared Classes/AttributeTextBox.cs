@@ -1414,7 +1414,7 @@ namespace ExcelAddIn2
             object cellValue = criteriaSourceRange.Value2;
             if (CommonUtilities.CheckIsExcelErr(cellValue)) { throw new Exception("Error value encountered"); }
             #endregion
-
+            
             string currentValue = criteriaSourceRange.Value2.ToString();
             string targetValue = criteriaValue.textBox.Text;
             string logicSymbol = this.logicSymbol.comboBox.Text;

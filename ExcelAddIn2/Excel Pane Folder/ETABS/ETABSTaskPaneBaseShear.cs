@@ -48,6 +48,9 @@ namespace ExcelAddIn2
 
             thisAtt = new ComboBoxAttribute("tableFormat_BaseShear", dispTableFormat, "Append Bottom");
             attributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new CheckBoxAttribute("outputMoments_BaseShear", printMomentsCheck, false);
+            attributeDic.Add(thisAtt.attName, thisAtt);
         }
         #endregion
 
@@ -94,11 +97,18 @@ namespace ExcelAddIn2
                         {
                             if (!basejointTracker.ContainsKey(jointUN)) { continue; } // Skip joints not in base reaction table
                             EtabsJoint joint = basejointTracker[jointUN];
+                            // Linear Superposition
                             double[] jointBaseReactions = joint.baseReactions[comboName];
                             for (int i = 0; i < 6; i++)
                             {
                                 totalBaseReactions[i] += jointBaseReactions[i];
                             }
+                            // Add moment
+                            if (!printMomentsCheck.Checked) { continue; }
+                            joint.GetMomentAboutPoint(sapModel, comboName, 0, 0);
+                            totalBaseReactions[3] += jointBaseReactions[6];
+                            totalBaseReactions[4] += jointBaseReactions[7];
+                            totalBaseReactions[5] += jointBaseReactions[8];
                         }
                         #endregion
 
@@ -220,7 +230,7 @@ namespace ExcelAddIn2
 
                     EtabsJoint joint = basejointTracker[uniqueName];
                     {
-                        joint.AddShearReaction(loadCase, i,
+                        joint.AddBaseReaction(loadCase, i,
                         double.Parse(tableDataDic["FX"][i]),
                         double.Parse(tableDataDic["FY"][i]),
                         double.Parse(tableDataDic["FZ"][i]),
@@ -272,7 +282,7 @@ namespace ExcelAddIn2
         private Range WriteBaseReaction_AppendBottom(string[] groupNames, string[]comboNames, Dictionary<string, object> mapGroupToComboReactions)
         {
             #region Find Write Object Size
-            int numDof = 3;
+            int numDof = printMomentsCheck.Checked ? 6 : 3;
             object[,] finalWriteArray = new object[groupNames.Length * comboNames.Length + 1, numDof + 2];
             #endregion
 
@@ -288,7 +298,13 @@ namespace ExcelAddIn2
                     headerArray[0, 1] = "Load Combo/Pattern";
                     headerArray[0, 2] = "FX";
                     headerArray[0, 3] = "FY";
-                    headerArray[0, 4] = "Fz";
+                    headerArray[0, 4] = "FZ";
+                    if (printMomentsCheck.Checked)
+                    {
+                        headerArray[0, 5] = "MX";
+                        headerArray[0, 6] = "MY";
+                        headerArray[0, 7] = "MZ";
+                    }
                 }
                 TwoDArrayFunctions.WriteArrayIntoArray(ref finalWriteArray, headerArray, 0, 0);
             }
@@ -320,15 +336,20 @@ namespace ExcelAddIn2
             }
             #endregion
             #endregion
+
+            RemoveNaNFromArray(ref finalWriteArray, "#NaN");
             Range writeRange = WriteObjectToExcelRange(null, 0, 0, true, finalWriteArray);
             return writeRange;
         }
 
         private Range WriteBaseReaction_AppendRight(string[] groupNames, string[] comboNames, Dictionary<string, object> mapGroupToComboReactions)
         {
-            #region Create Write Object
-            int numDof = 3;
+            #region Find Write Object Size
+            int numDof = printMomentsCheck.Checked ? 6 : 3;
             object[,] finalWriteArray = new object[groupNames.Length + 2, comboNames.Length * numDof + 1];
+            #endregion
+            
+            #region Create Write Object
             #region Header
             // Write Header Row
             {
@@ -387,11 +408,10 @@ namespace ExcelAddIn2
             object[,] writeArray = TwoDArrayFunctions.ConcatArraysBelow(groupReactions);
             TwoDArrayFunctions.WriteArrayIntoArray(ref finalWriteArray, writeArray, 2, 1);
             #endregion
-
-            Range writeRange = WriteObjectToExcelRange(null, 0, 0, true, finalWriteArray);
-
             #endregion
 
+            RemoveNaNFromArray(ref finalWriteArray, "#NaN");
+            Range writeRange = WriteObjectToExcelRange(null, 0, 0, true, finalWriteArray);
             return writeRange;
         }
         #endregion
@@ -666,4 +686,5 @@ namespace ExcelAddIn2
         #endregion
     }
 }
+
 

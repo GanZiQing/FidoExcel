@@ -63,6 +63,7 @@ namespace ExcelAddIn2
             attributeDic.Add(thisAtt.attName, thisAtt);
 
             CreateAttributesForBaseShear();
+            CreateAttributesForUtilities();
         }
 
         private void AddHeaders()
@@ -714,103 +715,6 @@ namespace ExcelAddIn2
         }
         #endregion
 
-        #region Get Wall
-        private void getWallUNBut_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
-                (int numSel, string[] objName) = GetSelectedElementsByType(sapModel, 5);
-                WriteToExcelRangeAsCol(null, 0, 0, false, objName);
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
-        }
-
-        private void getWallPierBut_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                throw new NotImplementedException("Not imiplemented");
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
-        }
-
-        private void setWallPierBut_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                #region Get Excel Info
-                Range activeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-                CheckRangeSize(activeRange, 0, 2, "Assign Pier Labels");
-                object[,] excelValues = GetContentsAsObject2DArray(activeRange);
-                string[] wallUNs = new string[excelValues.GetLength(0)];
-                string[] pierLabels = new string[excelValues.GetLength(0)];
-
-                for (int rowNum = 0; rowNum < excelValues.GetLength(0); rowNum++)
-                {
-                    wallUNs[rowNum] = excelValues[rowNum, 0].ToString();
-                    pierLabels[rowNum] = excelValues[rowNum, 1].ToString();
-                }
-                #endregion
-
-                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
-
-                #region Get all Pier Labels
-                int ret = 0;
-                HashSet<string> allPierLabels = new HashSet<string>();
-                {
-                    int numNames = 0;
-                    string[] pierLabelsETABS = new string[0];
-                    ret = sapModel.PierLabel.GetNameList(ref numNames, ref pierLabelsETABS);
-                    if (numNames == 0) { allPierLabels = pierLabelsETABS.ToHashSet(); }
-                }
-                #endregion
-
-                #region Assign To ETABS
-                bool allSuccess = true;
-                string[] status = new string[wallUNs.Length];
-                for (int rowNum = 0; rowNum < wallUNs.Length; rowNum++)
-                {
-                    try
-                    {
-                        // if pier does not exist add pier
-                        string wallUN = wallUNs[rowNum];
-                        string pierLabel = pierLabels[rowNum];
-                        if (!allPierLabels.Contains(pierLabel))
-                        {
-                            ret = sapModel.PierLabel.SetPier(pierLabel);
-                            if (ret == 0) { allPierLabels.Add(pierLabel); }
-                        }
-
-                        // Assign Pier to wall
-                        ret = sapModel.AreaObj.SetPier(wallUN, pierLabel);
-                        if (ret != 0) { status[rowNum] = $"Error encountered: Unknown"; allSuccess = false; }
-                        else { status[rowNum] = $"Completed"; }
-                    }
-                    catch (Exception ex)
-                    {
-                        status[rowNum] = $"Error encountered: {ex.Message}";
-                        allSuccess = false;
-                    }
-                }
-                #endregion
-
-                #region Write Status to ETABS
-                if (!allSuccess)
-                {
-                    WriteToExcelRangeAsCol(null, 0, 2, false, status);
-                    MessageBox.Show("One or more errors encountered, please see status column", "Warning");
-                }
-                else
-                {
-                    MessageBox.Show("Completed", "Completed");
-                }
-                #endregion
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
-        }
-        #endregion
-
         #region ETABS Error Analysis
         private string getAnalysisFile(cSapModel sapModel, string extension)
         {
@@ -1362,6 +1266,5 @@ namespace ExcelAddIn2
 
 
         #endregion
-
     }
 }

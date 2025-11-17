@@ -301,6 +301,9 @@
     <Compile Include="Excel Pane Folder\ETABS\ETABSTaskPaneBaseShear.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Excel Pane Folder\ETABS\ETABSTaskPaneUtilities.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Excel Pane Folder\HDB Design\WallCheckPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
