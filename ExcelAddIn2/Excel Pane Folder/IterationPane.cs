@@ -1,18 +1,19 @@
-﻿ using System;
+﻿using ExcelAddIn2.Excel_Pane_Folder;
+using ExcelAddIn2.Piling;
+using Microsoft.Office.Core;
+using Microsoft.Office.Interop.Excel;
+ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Core;
-using System.IO;
-using ExcelAddIn2.Excel_Pane_Folder;
 using static ExcelAddIn2.CommonUtilities;
-using ExcelAddIn2.Piling;
 using TextBox = System.Windows.Forms.TextBox;
 
 
@@ -996,7 +997,11 @@ namespace ExcelAddIn2
             // Get values
             foreach ((Range HeaderCell, string TargetAddress) in OutputHeaders)
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
                 AwaitExcelCalculation();
+                stopwatch.Stop();
+                timeSpentWaiting += stopwatch.Elapsed.TotalSeconds;
                 string SourceAddress = "";
                 try
                 {
@@ -1674,6 +1679,11 @@ namespace ExcelAddIn2
                 }
                 #endregion
 
+                #region Stopwatch
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                #endregion
+
                 #region Loop de loop
                 foreach (Range currentRow in InputRange.Rows)
                 {
@@ -1708,7 +1718,7 @@ namespace ExcelAddIn2
                         #endregion
 
                         #region Set and Get non-iteration values from input sheet to destination sheet
-                        bool success = GetandSetTrueValues(OutputHeaders, InputHeaders, RowstoRunRowNum, OGSheets);
+                        bool success = GetandSetTrueValues2(OutputHeaders, InputHeaders, RowstoRunRowNum, OGSheets);
                         if (!success)
                         {
                             return;
@@ -1897,9 +1907,15 @@ namespace ExcelAddIn2
                     #endregion
                 }
                 #endregion
-                MessageBox.Show("Multiple Iteration Completed", "Completed");
+                
+                #region Stopwatch
+                stopwatch.Stop();
+                new BetterMessageBox().Show($"Multiple Iteration Completed.\n" +
+                    $"Code took {stopwatch.Elapsed.TotalSeconds}s to iterate","Completed");
+                //MessageBox.Show("Multiple Iteration Completed", "Completed");
+                #endregion
+
                 ResetOGSheets(OGSheets);
-                ThisApplication.ScreenUpdating = true;
                 homeSheet.Activate();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
@@ -1918,6 +1934,448 @@ namespace ExcelAddIn2
             else
             {
                 OptimiseGroup.BackColor = Color.AliceBlue;
+            }
+        }
+
+
+        #endregion
+        #region Run Multiple v2
+
+        #region Helper
+        private bool OverwriteDestWithSourceV2(object[,] sourceData, int rowNum,Range destRange)
+        // Version 2 operates row by row on a 2D array instead of range by range
+        {
+            if (sourceData.GetLength(1) != destRange.Columns.Count)
+            {
+                MessageBox.Show($"Unable to replace source data with {sourceData.GetLength(1)} columns as target range has {destRange.Columns.Count} columns.\n " +
+                    $"They must must be of the same size.");
+                return false;
+            }
+
+            for (int col = 1; col <= sourceData.GetLength(1); col++)
+            {
+                destRange.Cells[1, col].Value2 = sourceData[rowNum, col - 1];
+            }
+            return true;
+        }
+
+        private bool GetandSetTrueValues2(
+           List<(Range, string)> OutputHeaders,
+           List<(Range, string)> InputHeaders,
+           int RowstoRunRowNum,
+           List<Worksheet> OGSheets)
+        {
+            
+            ThisApplication.Calculation = XlCalculation.xlCalculationManual;
+            // Set values
+            foreach ((Range HeaderCell, string TargetAddress) in InputHeaders)
+            {
+                string SourceAddress = "";
+                try
+                {
+                    Range sourceRange = HeaderCell.Worksheet.Cells[RowstoRunRowNum, HeaderCell.Column];
+                    SourceAddress = sourceRange.Worksheet.Name + "!" + sourceRange.Address[false, false];
+                    if (sourceRange.Text != "*NC")
+                    {
+                        string checktext = sourceRange.Text;
+                        Range targetRange = GetRangeFromAllAddress(TargetAddress);
+                        targetRange.Value2 = sourceRange.Value2;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to update target cell {TargetAddress} from source cell {SourceAddress}. \n" + ex);
+                    ResetOGSheets(OGSheets);
+                    return false;
+                }
+            }
+
+            ThisApplication.Calculation = XlCalculation.xlCalculationAutomatic;
+            // Get values
+            foreach ((Range HeaderCell, string TargetAddress) in OutputHeaders)
+            {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                AwaitExcelCalculation();
+                stopwatch.Stop();
+                timeSpentWaiting += stopwatch.Elapsed.TotalSeconds;
+                string SourceAddress = "";
+                try
+                {
+                    Range sourceRange = HeaderCell.Worksheet.Cells[RowstoRunRowNum, HeaderCell.Column];
+                    SourceAddress = sourceRange.Worksheet.Name + "!" + sourceRange.Address[false, false];
+                    if (sourceRange.Text != "*NC")
+                    {
+                        string checktext = sourceRange.Text;
+                        Range targetRange = GetRangeFromAllAddress(TargetAddress);
+                        sourceRange.Worksheet.Activate();
+                        sourceRange.Value2 = targetRange.Value2;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to update target cell {SourceAddress} from source cell {TargetAddress}. \n" + ex);
+                    ResetOGSheets(OGSheets);
+                    return false;
+                }
+            }
+            return true;
+        }
+        #endregion
+        double timeSpentWaiting = 0;
+        private void MultipleRunV2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Debug Settings
+                bool slowIteration = checkSlowOptimisation.Checked;
+                bool slowRow = checkDebugIteration.Checked;
+                bool debugMode = checkDebugMode.Checked;
+                int sleepDuration = 200;
+                if (debugMode || slowIteration || slowRow)
+                {
+                    ThisApplication.ScreenUpdating = true;
+                }
+                else
+                {
+                    ThisApplication.ScreenUpdating = false;
+                }
+
+                #endregion
+
+                #region Get Inputs
+                Worksheet homeSheet = ThisApplication.ActiveSheet;
+                // Universal Input
+                (Range headerRange, Range InputRange, Worksheet OutputSheet) = GetSingleRunInputs();
+                if (headerRange == null) { return; }
+
+                // Multiple Run Input
+                (Range iterSourceRange, Range iterDestColRange, Range CriteriaSourceRange, string logicSymbol, string CriteriaValue, Range statusCol, bool tryAll, bool isURDouble) = GetMultipleRunInputs();
+                if (iterSourceRange == null) { return; }
+
+                // Convert source range to data 
+                object[,] iterSourceData = GetContentsAsObject2DArray(iterSourceRange);
+
+                // Check if ranges Overlap
+                if (RangesOverlap(headerRange, statusCol, "col"))
+                {
+                    DialogResult result = MessageBox.Show("Header Row and Status Column Overlap, data might be overwritten. Continue?", "", MessageBoxButtons.YesNo);
+
+                    if (result == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                // Optimisation Input
+                Range optimiseColRange = null;
+                string optimisationType = null;
+                string optimisationTarget = null;
+                if (tryAll)
+                {
+                    (optimiseColRange, optimisationType, optimisationTarget) = GetOptimiseInputs();
+                }
+
+                // Convert header into list
+                (List<(Range, string)> OutputHeaders, List<(Range, string)> InputHeaders) = ConvertHeaders(headerRange);
+                if (OutputHeaders.Count == 0)
+                {
+                    throw new Exception("No valid headers found.");
+                }
+
+                // Get confirmation to proceed
+                DialogResult confirmation = MessageBox.Show($"Confirm to run iteration for {InputRange.Rows.Count} rows?\nAny existing values in result column will be deleted.", "Confirmation", MessageBoxButtons.YesNo);
+                if (confirmation == DialogResult.No) { return; }
+                #endregion
+
+                #region Rename Base Sheets
+                List<Worksheet> OGSheets = RenameBaseSheets();
+                if (OGSheets.Count == 0) { return; }
+                homeSheet.Activate();
+                #endregion
+
+                #region Reset Status Range
+                foreach (Range currentRow in InputRange.Rows)
+                {
+                    Range statusRange = statusCol.Worksheet.Cells[currentRow.Row, statusCol.Column];
+                    statusRange.Value = "Not started";
+                }
+                #endregion
+
+                #region Stopwatch
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                timeSpentWaiting = 0;
+                double timeSpentIterating = 0;
+                double timeSpentSetting1 = 0;
+                double timeSpentSetting2 = 0;
+                #endregion
+
+                #region Loop de loop
+                foreach (Range currentRow in InputRange.Rows)
+                {
+                    #region Check for Skips
+                    if (currentRow.Value2 == null)
+                    {
+                        statusCol.Worksheet.Cells[currentRow.Row, statusCol.Column].Value = "";
+                        continue;
+                    }
+                    #endregion
+
+                    int RowstoRunRowNum = currentRow.Row;
+                    bool targetReached = false;
+                    int iterRowNum = 1;
+                    double? bestTargetValue = null;
+                    int? bestRowNum = null;
+
+                    // Set status
+                    Range statusRange = statusCol.Worksheet.Cells[currentRow.Row, statusCol.Column];
+                    statusRange.Value = "Started Iteration";
+                    Range startCell;
+                    Range endCell;
+                    Range iterDestRange;
+
+                    Stopwatch stopwatchIter = new Stopwatch();
+                    stopwatchIter.Start();
+                    while (!targetReached && iterRowNum <= iterSourceRange.Rows.Count)
+                    {
+                        Stopwatch stopwatchGetSet1 = new Stopwatch();
+                        stopwatchGetSet1.Start();
+                        #region Get and set iteration values to input sheet
+                        startCell = headerRange.Worksheet.Cells[RowstoRunRowNum, iterDestColRange.Column];
+                        endCell = headerRange.Worksheet.Cells[RowstoRunRowNum, iterDestColRange.Column + iterDestColRange.Columns.Count - 1];
+                        iterDestRange = headerRange.Worksheet.Range[startCell, endCell];
+
+                        bool success2;
+                        if (itertypeCheck.Checked)
+                        {
+                            success2 = OverwriteDestWithSourceV2(iterSourceData, iterRowNum - 1, iterDestRange); // iterRowNum -1 as array is 0 indexed but current setup is for excel range
+                        }
+                        else
+                        {
+                            success2 = OverwriteDestWithSource(iterSourceRange.Rows[iterRowNum], iterDestRange);
+                        }
+
+                        if (!success2) { return; }
+                        #endregion
+                        stopwatchGetSet1.Stop();
+                        timeSpentSetting1 += stopwatchGetSet1.Elapsed.TotalSeconds;
+
+                        Stopwatch stopwatchGetSet2 = new Stopwatch();
+                        stopwatchGetSet2.Start();
+                        #region Set and Get non-iteration values from input sheet to destination sheet
+                        bool success = GetandSetTrueValues2(OutputHeaders, InputHeaders, RowstoRunRowNum, OGSheets);
+                        if (!success)
+                        {
+                            return;
+                        }
+                        #endregion
+                        stopwatchGetSet2.Stop();
+                        timeSpentSetting2 += stopwatchGetSet2.Elapsed.TotalSeconds;
+
+                        #region Check break condition
+                        Range thisURRange = CriteriaSourceRange.Worksheet.Cells[RowstoRunRowNum, CriteriaSourceRange.Column];
+                        bool fulfilCondition = false;
+                        try
+                        {
+                            fulfilCondition = CompareValues(thisURRange.Text, CriteriaValue, logicSymbol);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                            ResetOGSheets(OGSheets);
+                            homeSheet.Activate();
+                            return;
+                        }
+
+                        #region Debug Iteration
+                        if (slowIteration)
+                        {
+                            thisURRange.Worksheet.Activate();
+                            thisURRange.Select();
+                            if (debugMode)
+                            {
+                                DialogResult result = MessageBox.Show($"Value is: {thisURRange.Text}\nDoes it fulfil condition? {fulfilCondition}", "Pause", MessageBoxButtons.OKCancel);
+                                if (result == DialogResult.Cancel)
+                                {
+                                    ResetOGSheets(OGSheets);
+                                    homeSheet.Activate();
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                System.Threading.Thread.Sleep(sleepDuration);
+                            }
+                        }
+                        #endregion
+
+                        if (!fulfilCondition)
+                        {
+                            iterRowNum += 1;
+                            continue;
+                        }
+                        #endregion
+
+                        #region Replace value if condition is fulfilled 
+                        if (!tryAll) // If we break once condition is met
+                        {
+                            // Set best row and break
+                            bestRowNum = iterRowNum;
+                            targetReached = fulfilCondition;
+                        }
+                        else // If we want find optimum
+                        {
+                            Range thisOptimiseRange = optimiseColRange.Worksheet.Cells[RowstoRunRowNum, optimiseColRange.Column];
+                            if (bestTargetValue == null) // Set best value if it doesn't exist
+                            {
+                                try
+                                {
+                                    bestTargetValue = double.Parse(thisOptimiseRange.Text);
+                                }
+                                catch (Exception)
+                                {
+                                    MessageBox.Show("Error encountered. Run will be terminated.\nUnable to set best target value as {thisURRange.Text} cannot be converted to number.\nCheck iteration source col\n\n", "Error");
+                                    ResetOGSheets(OGSheets);
+                                    return;
+                                }
+                                bestRowNum = iterRowNum;
+                            }
+                            else // Compare to see if this value is better than best value
+                            {
+                                bool toReplace = IsCurrentValueBetter(thisOptimiseRange.Text, bestTargetValue.ToString(), optimisationType, optimisationTarget);
+                                #region Debug Iteration 2
+                                if (slowIteration)
+                                {
+                                    if (debugMode)
+                                    {
+                                        DialogResult result = MessageBox.Show($"Current Value: {thisOptimiseRange.Text}\nBest Value: {bestTargetValue}\nTo Replace Best Value?: {toReplace}", "Debugging", MessageBoxButtons.OKCancel);
+                                        if (result == DialogResult.Cancel)
+                                        {
+                                            ResetOGSheets(OGSheets);
+                                            homeSheet.Activate();
+                                            return;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        System.Threading.Thread.Sleep(sleepDuration);
+                                    }
+                                }
+                                #endregion
+                                if (toReplace)
+                                {
+                                    // If it is better, overwrite existing best 
+                                    bestTargetValue = double.Parse(thisOptimiseRange.Text);
+                                    bestRowNum = iterRowNum;
+                                }
+                            }
+                        }
+                        #endregion
+
+                        iterRowNum += 1; // for next iteration
+                    }
+                    stopwatchIter.Stop();
+                    timeSpentIterating += stopwatchIter.Elapsed.TotalSeconds;
+                    #region Overwite cell with optimum value (or remove)
+                    startCell = headerRange.Worksheet.Cells[RowstoRunRowNum, iterDestColRange.Column];
+                    endCell = headerRange.Worksheet.Cells[RowstoRunRowNum, iterDestColRange.Column + iterDestColRange.Columns.Count - 1];
+                    iterDestRange = headerRange.Worksheet.Range[startCell, endCell];
+                    if (bestRowNum == null) // No optimum found 
+                    {
+                        statusRange.Value = "No value found";
+                        // Remove input values
+                        //foreach (Range cell in iterDestRange)
+                        //{
+                        //    cell.ClearContents();
+                        //}
+                    }
+                    else
+                    {
+                        if (tryAll)
+                        {
+                            // Set status
+                            statusRange.Value = "Optimum value found";
+                            // Set values to optimum
+                            bool success2 = OverwriteDestWithSource(iterSourceRange.Rows[bestRowNum], iterDestRange);
+                            if (!success2) { return; }
+                            #region Set and Get Values in Destination 
+                            bool success = GetandSetTrueValues(OutputHeaders, InputHeaders, RowstoRunRowNum, OGSheets);
+                            if (!success)
+                            {
+                                return;
+                            }
+                            #endregion
+                        }
+                        else
+                        {
+                            statusRange.Value = "Target Reached";
+                        }
+
+                    }
+                    #endregion
+
+                    #region Rename Sheet and make new sheet if required 
+                    if (CreateNewSheetCheck.Checked)
+                    {
+                        // Rename Sheets To Append Name
+                        bool toContinue = RenameSheetsToSave(OGSheets, currentRow.Text);
+                        if (!toContinue)
+                        {
+                            ResetOGSheets(OGSheets);
+                            return;
+                        }
+
+                        // Copy new sheets
+                        foreach (Worksheet OGWorksheet in OGSheets)
+                        {
+                            string newName = OGWorksheet.Name.Substring(0, OGWorksheet.Name.Length - 3);
+                            Worksheet backUpSheet = CopyNewSheet(OGWorksheet, newName);
+                        }
+                    }
+                    #endregion
+
+                    #region Debug Row
+                    if (slowRow)
+                    {
+                        if (debugMode)
+                        {
+                            DialogResult result = MessageBox.Show($"Row {RowstoRunRowNum} completed. Continue?", "Pausing", MessageBoxButtons.YesNo);
+                            if (result == DialogResult.No)
+                            {
+                                ResetOGSheets(OGSheets);
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            System.Threading.Thread.Sleep(sleepDuration);
+                        }
+                    }
+                    #endregion
+                }
+                #endregion
+
+                #region Stopwatch
+                stopwatch.Stop();
+                MessageBox.Show($"Code took {stopwatch.Elapsed.TotalSeconds}s to run, \n" +
+                    $"time spent waiting is {timeSpentWaiting}s\n" +
+                    $"time spent iterating is {timeSpentIterating}s\n" +
+                    $"time spent setting 1 is {timeSpentSetting1}\n" +
+                    $"time spent setting 2 is {timeSpentSetting2}\n");
+
+                #endregion
+
+                MessageBox.Show("Multiple Iteration Completed", "Completed");
+                ResetOGSheets(OGSheets);
+                ThisApplication.ScreenUpdating = true;
+                homeSheet.Activate();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+            finally
+            {
+                ThisApplication.ScreenUpdating = true;
             }
         }
         #endregion
@@ -2946,6 +3404,11 @@ namespace ExcelAddIn2
         {
             try
             {
+                #region Set Screen
+                if (pauseScreenCheck.Checked) { this.ThisApplication.ScreenUpdating = false; }
+
+                #endregion
+
                 #region Get Inputs
                 // Selected Range for Cells to Update
                 Range selRange = ThisApplication.ActiveWindow.RangeSelection;
@@ -3034,10 +3497,13 @@ namespace ExcelAddIn2
                 }
                 WriteToExcelRangeAsCol(statusRange, 0, 0, false, status);
                 #endregion
+                MessageBox.Show("Completed", "Completed");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+            finally { this.ThisApplication.ScreenUpdating = true; }
         }
         #endregion
+
     }
 }
 

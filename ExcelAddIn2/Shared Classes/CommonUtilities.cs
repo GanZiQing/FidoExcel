@@ -4,6 +4,7 @@ using MigraDoc.Rendering;
 using PdfSharp.Pdf.Content.Objects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -1727,19 +1728,36 @@ namespace ExcelAddIn2
         #endregion
 
         #region Await Caclulation
-        public static void AwaitExcelCalculation()
+        public static void AwaitExcelCalculation(int waitDuration = 100)
         {
-            Globals.ThisAddIn.Application.Calculate();
+            //Globals.ThisAddIn.Application.Calculate();
+            Globals.ThisAddIn.Application.Calculation = XlCalculation.xlCalculationAutomatic;
 
             while (Globals.ThisAddIn.Application.CalculationState != XlCalculationState.xlDone)
             {
                 System.Windows.Forms.Application.DoEvents();
-
-                // Optional: briefly pause to avoid high CPU usage.
-                System.Threading.Thread.Sleep(100);
+                Globals.ThisAddIn.Application.Wait(DateTime.Now.AddMilliseconds(waitDuration));
             }
         }
+
+        public static double AwaitExcelCalculationTimer(int waitDuration = 100)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            //Globals.ThisAddIn.Application.Calculate();
+            Globals.ThisAddIn.Application.Calculation = XlCalculation.xlCalculationAutomatic;
+
+            while (Globals.ThisAddIn.Application.CalculationState != XlCalculationState.xlDone)
+            {
+                System.Windows.Forms.Application.DoEvents();
+                Globals.ThisAddIn.Application.Wait(DateTime.Now.AddMilliseconds(waitDuration));
+            }
+            stopwatch.Stop();
+            return stopwatch.Elapsed.TotalSeconds;
+        }
         #endregion
+
+
     }
 
     static class TwoDArrayFunctions
@@ -2161,6 +2179,38 @@ namespace ExcelAddIn2
         {
             dialog.InitialDirectory = folderPatth;
         }
+    }
+    class BetterMessageBox
+    {
+        #region Message Box
+        public void Show(string message)
+        {
+            // Create a new, invisible form to act as the owner
+            using (Form topMostForm = new Form { TopMost = true, Visible = false })
+            {
+                // Show the MessageBox, using the temporary form as its owner
+                MessageBox.Show(topMostForm, message);
+            }
+        }
+        public void Show(string message, string title)
+        {
+            // Create a new, invisible form to act as the owner
+            using (Form topMostForm = new Form { TopMost = true, Visible = false })
+            {
+                // Show the MessageBox, using the temporary form as its owner
+                MessageBox.Show(topMostForm, message, title);
+            }
+        }
+        public void Show(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon)
+        {
+            // Create a new, invisible form to act as the owner
+            using (Form topMostForm = new Form { TopMost = true, Visible = false })
+            {
+                // Show the MessageBox, using the temporary form as its owner
+                MessageBox.Show(topMostForm, message, title, buttons, icon);
+            }
+        }
+        #endregion
     }
 }
 

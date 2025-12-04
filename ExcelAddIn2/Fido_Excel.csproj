@@ -36,7 +36,7 @@
     <PublishUrl>C:\Users\epona\Documents\VSTO\01_Excel\Publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.33</ApplicationVersion>
+    <ApplicationVersion>1.0.0.35</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
@@ -515,6 +515,7 @@
     <None Include="app.config" />
     <None Include="ExcelAddIn2_1_TemporaryKey.pfx" />
     <None Include="ExcelAddIn2_TemporaryKey.pfx" />
+    <None Include="Fido_Excel_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -563,11 +564,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile>Fido_Excel_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6AC3C2F4C8FCCCF62B9E1070F5A6EEA5FEE95C7A</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>D9106D7DEA391C03BE4C16AEDAFF9D81BB0B41C2</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>

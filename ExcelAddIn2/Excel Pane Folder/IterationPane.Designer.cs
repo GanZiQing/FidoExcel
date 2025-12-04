@@ -63,6 +63,7 @@
             this.SetCellName = new System.Windows.Forms.Button();
             this.IsOutputCheck = new System.Windows.Forms.CheckBox();
             this.IterationPage = new System.Windows.Forms.TabPage();
+            this.MultipleRunV2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.DispItDataTable = new System.Windows.Forms.TextBox();
             this.SetItDataTable = new System.Windows.Forms.Button();
@@ -94,6 +95,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.Part2Page = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.pauseScreenCheck = new System.Windows.Forms.CheckBox();
             this.setStatusCol2 = new System.Windows.Forms.Button();
             this.dispStatusCol2 = new System.Windows.Forms.TextBox();
             this.dispCriteriaSource3 = new System.Windows.Forms.TextBox();
@@ -135,6 +137,7 @@
             this.DispCopySheet = new System.Windows.Forms.TextBox();
             this.SetCopySheet = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.itertypeCheck = new System.Windows.Forms.CheckBox();
             this.ExcelTabControl.SuspendLayout();
             this.SetupPage.SuspendLayout();
             this.RunSettings.SuspendLayout();
@@ -159,7 +162,7 @@
             this.ExcelTabControl.Controls.Add(this.Part2Page);
             this.ExcelTabControl.Cursor = System.Windows.Forms.Cursors.Default;
             this.ExcelTabControl.Location = new System.Drawing.Point(6, 6);
-            this.ExcelTabControl.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ExcelTabControl.Margin = new System.Windows.Forms.Padding(6);
             this.ExcelTabControl.Name = "ExcelTabControl";
             this.ExcelTabControl.SelectedIndex = 0;
             this.ExcelTabControl.Size = new System.Drawing.Size(539, 1957);
@@ -173,9 +176,9 @@
             this.SetupPage.Controls.Add(this.utilityGroup);
             this.SetupPage.Controls.Add(this.SetupTools);
             this.SetupPage.Location = new System.Drawing.Point(4, 33);
-            this.SetupPage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SetupPage.Margin = new System.Windows.Forms.Padding(4);
             this.SetupPage.Name = "SetupPage";
-            this.SetupPage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SetupPage.Padding = new System.Windows.Forms.Padding(4);
             this.SetupPage.Size = new System.Drawing.Size(531, 1920);
             this.SetupPage.TabIndex = 2;
             this.SetupPage.Text = "Setup";
@@ -185,9 +188,9 @@
             this.RunSettings.BackColor = System.Drawing.SystemColors.Control;
             this.RunSettings.Controls.Add(this.RunSingle);
             this.RunSettings.Location = new System.Drawing.Point(15, 687);
-            this.RunSettings.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.RunSettings.Margin = new System.Windows.Forms.Padding(6);
             this.RunSettings.Name = "RunSettings";
-            this.RunSettings.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.RunSettings.Padding = new System.Windows.Forms.Padding(6);
             this.RunSettings.Size = new System.Drawing.Size(502, 96);
             this.RunSettings.TabIndex = 22;
             this.RunSettings.TabStop = false;
@@ -197,7 +200,7 @@
             // 
             this.RunSingle.ForeColor = System.Drawing.SystemColors.WindowText;
             this.RunSingle.Location = new System.Drawing.Point(11, 35);
-            this.RunSingle.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.RunSingle.Margin = new System.Windows.Forms.Padding(6);
             this.RunSingle.Name = "RunSingle";
             this.RunSingle.Size = new System.Drawing.Size(480, 50);
             this.RunSingle.TabIndex = 17;
@@ -221,9 +224,9 @@
             this.SheetSettings.Controls.Add(this.DispInputR1);
             this.SheetSettings.Controls.Add(this.SetInRange1);
             this.SheetSettings.Location = new System.Drawing.Point(15, 292);
-            this.SheetSettings.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SheetSettings.Margin = new System.Windows.Forms.Padding(6);
             this.SheetSettings.Name = "SheetSettings";
-            this.SheetSettings.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SheetSettings.Padding = new System.Windows.Forms.Padding(6);
             this.SheetSettings.Size = new System.Drawing.Size(504, 382);
             this.SheetSettings.TabIndex = 21;
             this.SheetSettings.TabStop = false;
@@ -233,7 +236,7 @@
             // 
             this.delExistingSheetCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.delExistingSheetCheck.Location = new System.Drawing.Point(13, 347);
-            this.delExistingSheetCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.delExistingSheetCheck.Margin = new System.Windows.Forms.Padding(6);
             this.delExistingSheetCheck.Name = "delExistingSheetCheck";
             this.delExistingSheetCheck.Size = new System.Drawing.Size(422, 31);
             this.delExistingSheetCheck.TabIndex = 33;
@@ -244,7 +247,7 @@
             // 
             this.SetStatusCol.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetStatusCol.Location = new System.Drawing.Point(11, 207);
-            this.SetStatusCol.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetStatusCol.Margin = new System.Windows.Forms.Padding(6);
             this.SetStatusCol.Name = "SetStatusCol";
             this.SetStatusCol.Size = new System.Drawing.Size(183, 46);
             this.SetStatusCol.TabIndex = 31;
@@ -255,7 +258,7 @@
             // 
             this.DispStatusCol.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispStatusCol.Location = new System.Drawing.Point(205, 214);
-            this.DispStatusCol.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispStatusCol.Margin = new System.Windows.Forms.Padding(6);
             this.DispStatusCol.Name = "DispStatusCol";
             this.DispStatusCol.Size = new System.Drawing.Size(290, 29);
             this.DispStatusCol.TabIndex = 32;
@@ -266,9 +269,9 @@
             this.CreateNewSheetCheck.AutoSize = true;
             this.CreateNewSheetCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.CreateNewSheetCheck.Location = new System.Drawing.Point(13, 306);
-            this.CreateNewSheetCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.CreateNewSheetCheck.Margin = new System.Windows.Forms.Padding(6);
             this.CreateNewSheetCheck.Name = "CreateNewSheetCheck";
-            this.CreateNewSheetCheck.Size = new System.Drawing.Size(203, 28);
+            this.CreateNewSheetCheck.Size = new System.Drawing.Size(222, 29);
             this.CreateNewSheetCheck.TabIndex = 15;
             this.CreateNewSheetCheck.Text = "Create New Sheet(s)";
             this.CreateNewSheetCheck.UseVisualStyleBackColor = true;
@@ -277,7 +280,7 @@
             // 
             this.SetOutSheet1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetOutSheet1.Location = new System.Drawing.Point(11, 92);
-            this.SetOutSheet1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetOutSheet1.Margin = new System.Windows.Forms.Padding(6);
             this.SetOutSheet1.Name = "SetOutSheet1";
             this.SetOutSheet1.Size = new System.Drawing.Size(183, 46);
             this.SetOutSheet1.TabIndex = 9;
@@ -288,7 +291,7 @@
             // 
             this.SetDupeSheet.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetDupeSheet.Location = new System.Drawing.Point(248, 297);
-            this.SetDupeSheet.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetDupeSheet.Margin = new System.Windows.Forms.Padding(6);
             this.SetDupeSheet.Name = "SetDupeSheet";
             this.SetDupeSheet.Size = new System.Drawing.Size(249, 46);
             this.SetDupeSheet.TabIndex = 16;
@@ -299,7 +302,7 @@
             // 
             this.DispOutS1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispOutS1.Location = new System.Drawing.Point(205, 100);
-            this.DispOutS1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispOutS1.Margin = new System.Windows.Forms.Padding(6);
             this.DispOutS1.MaximumSize = new System.Drawing.Size(290, 25);
             this.DispOutS1.MinimumSize = new System.Drawing.Size(290, 25);
             this.DispOutS1.Name = "DispOutS1";
@@ -312,7 +315,7 @@
             // 
             this.OverrideInputCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.OverrideInputCheck.Location = new System.Drawing.Point(13, 264);
-            this.OverrideInputCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.OverrideInputCheck.Margin = new System.Windows.Forms.Padding(6);
             this.OverrideInputCheck.Name = "OverrideInputCheck";
             this.OverrideInputCheck.Size = new System.Drawing.Size(422, 31);
             this.OverrideInputCheck.TabIndex = 13;
@@ -323,7 +326,7 @@
             // 
             this.DispHeadR1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispHeadR1.Location = new System.Drawing.Point(205, 42);
-            this.DispHeadR1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispHeadR1.Margin = new System.Windows.Forms.Padding(6);
             this.DispHeadR1.Name = "DispHeadR1";
             this.DispHeadR1.Size = new System.Drawing.Size(290, 29);
             this.DispHeadR1.TabIndex = 10;
@@ -334,7 +337,7 @@
             // 
             this.SetHeadR1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetHeadR1.Location = new System.Drawing.Point(11, 35);
-            this.SetHeadR1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetHeadR1.Margin = new System.Windows.Forms.Padding(6);
             this.SetHeadR1.Name = "SetHeadR1";
             this.SetHeadR1.Size = new System.Drawing.Size(183, 46);
             this.SetHeadR1.TabIndex = 7;
@@ -345,7 +348,7 @@
             // 
             this.DispInputR1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispInputR1.Location = new System.Drawing.Point(205, 155);
-            this.DispInputR1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispInputR1.Margin = new System.Windows.Forms.Padding(6);
             this.DispInputR1.MaximumSize = new System.Drawing.Size(290, 25);
             this.DispInputR1.MinimumSize = new System.Drawing.Size(290, 25);
             this.DispInputR1.Name = "DispInputR1";
@@ -358,7 +361,7 @@
             // 
             this.SetInRange1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetInRange1.Location = new System.Drawing.Point(11, 148);
-            this.SetInRange1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetInRange1.Margin = new System.Windows.Forms.Padding(6);
             this.SetInRange1.Name = "SetInRange1";
             this.SetInRange1.Size = new System.Drawing.Size(183, 46);
             this.SetInRange1.TabIndex = 8;
@@ -375,9 +378,9 @@
             this.utilityGroup.Controls.Add(this.ClearOutput);
             this.utilityGroup.Controls.Add(this.DelSheets);
             this.utilityGroup.Location = new System.Drawing.Point(15, 796);
-            this.utilityGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.utilityGroup.Margin = new System.Windows.Forms.Padding(6);
             this.utilityGroup.Name = "utilityGroup";
-            this.utilityGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.utilityGroup.Padding = new System.Windows.Forms.Padding(6);
             this.utilityGroup.Size = new System.Drawing.Size(502, 183);
             this.utilityGroup.TabIndex = 20;
             this.utilityGroup.TabStop = false;
@@ -387,7 +390,7 @@
             // 
             this.clearIterationInputs.ForeColor = System.Drawing.SystemColors.WindowText;
             this.clearIterationInputs.Location = new System.Drawing.Point(13, 122);
-            this.clearIterationInputs.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.clearIterationInputs.Margin = new System.Windows.Forms.Padding(6);
             this.clearIterationInputs.Name = "clearIterationInputs";
             this.clearIterationInputs.Size = new System.Drawing.Size(147, 46);
             this.clearIterationInputs.TabIndex = 17;
@@ -399,7 +402,7 @@
             // 
             this.ImportUserInputs.ForeColor = System.Drawing.SystemColors.WindowText;
             this.ImportUserInputs.Location = new System.Drawing.Point(345, 122);
-            this.ImportUserInputs.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ImportUserInputs.Margin = new System.Windows.Forms.Padding(6);
             this.ImportUserInputs.Name = "ImportUserInputs";
             this.ImportUserInputs.Size = new System.Drawing.Size(147, 46);
             this.ImportUserInputs.TabIndex = 36;
@@ -415,7 +418,7 @@
             this.label10.Location = new System.Drawing.Point(16, 92);
             this.label10.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(95, 24);
+            this.label10.Size = new System.Drawing.Size(101, 25);
             this.label10.TabIndex = 35;
             this.label10.Text = "User Input";
             // 
@@ -423,7 +426,7 @@
             // 
             this.ExportUserInputs.ForeColor = System.Drawing.SystemColors.WindowText;
             this.ExportUserInputs.Location = new System.Drawing.Point(180, 122);
-            this.ExportUserInputs.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ExportUserInputs.Margin = new System.Windows.Forms.Padding(6);
             this.ExportUserInputs.Name = "ExportUserInputs";
             this.ExportUserInputs.Size = new System.Drawing.Size(147, 46);
             this.ExportUserInputs.TabIndex = 18;
@@ -435,7 +438,7 @@
             // 
             this.ClearOutput.ForeColor = System.Drawing.SystemColors.WindowText;
             this.ClearOutput.Location = new System.Drawing.Point(73, 35);
-            this.ClearOutput.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ClearOutput.Margin = new System.Windows.Forms.Padding(6);
             this.ClearOutput.Name = "ClearOutput";
             this.ClearOutput.Size = new System.Drawing.Size(183, 46);
             this.ClearOutput.TabIndex = 14;
@@ -447,7 +450,7 @@
             // 
             this.DelSheets.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DelSheets.Location = new System.Drawing.Point(268, 35);
-            this.DelSheets.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DelSheets.Margin = new System.Windows.Forms.Padding(6);
             this.DelSheets.Name = "DelSheets";
             this.DelSheets.Size = new System.Drawing.Size(187, 46);
             this.DelSheets.TabIndex = 15;
@@ -466,9 +469,9 @@
             this.SetupTools.Controls.Add(this.SetCellName);
             this.SetupTools.Controls.Add(this.IsOutputCheck);
             this.SetupTools.Location = new System.Drawing.Point(15, 9);
-            this.SetupTools.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetupTools.Margin = new System.Windows.Forms.Padding(6);
             this.SetupTools.Name = "SetupTools";
-            this.SetupTools.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetupTools.Padding = new System.Windows.Forms.Padding(6);
             this.SetupTools.Size = new System.Drawing.Size(502, 271);
             this.SetupTools.TabIndex = 19;
             this.SetupTools.TabStop = false;
@@ -478,7 +481,7 @@
             // 
             this.SetRangeName.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetRangeName.Location = new System.Drawing.Point(176, 35);
-            this.SetRangeName.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetRangeName.Margin = new System.Windows.Forms.Padding(6);
             this.SetRangeName.Name = "SetRangeName";
             this.SetRangeName.Size = new System.Drawing.Size(147, 46);
             this.SetRangeName.TabIndex = 7;
@@ -506,7 +509,7 @@
             "5 Reset font",
             "6 Reset fill and font"});
             this.FormatOptions.Location = new System.Drawing.Point(170, 207);
-            this.FormatOptions.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.FormatOptions.Margin = new System.Windows.Forms.Padding(6);
             this.FormatOptions.Name = "FormatOptions";
             this.FormatOptions.Size = new System.Drawing.Size(283, 32);
             this.FormatOptions.TabIndex = 6;
@@ -515,7 +518,7 @@
             // 
             this.FormatLinkCell.ForeColor = System.Drawing.SystemColors.WindowText;
             this.FormatLinkCell.Location = new System.Drawing.Point(13, 192);
-            this.FormatLinkCell.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.FormatLinkCell.Margin = new System.Windows.Forms.Padding(6);
             this.FormatLinkCell.Name = "FormatLinkCell";
             this.FormatLinkCell.Size = new System.Drawing.Size(147, 63);
             this.FormatLinkCell.TabIndex = 5;
@@ -528,9 +531,9 @@
             this.SetShtNmCheck.AutoSize = true;
             this.SetShtNmCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetShtNmCheck.Location = new System.Drawing.Point(139, 92);
-            this.SetShtNmCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetShtNmCheck.Margin = new System.Windows.Forms.Padding(6);
             this.SetShtNmCheck.Name = "SetShtNmCheck";
-            this.SetShtNmCheck.Size = new System.Drawing.Size(174, 28);
+            this.SetShtNmCheck.Size = new System.Drawing.Size(188, 29);
             this.SetShtNmCheck.TabIndex = 2;
             this.SetShtNmCheck.Text = "Add Sheet Name";
             this.SetShtNmCheck.UseVisualStyleBackColor = true;
@@ -542,9 +545,9 @@
             this.ReturnCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ReturnCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.ReturnCheck.Location = new System.Drawing.Point(170, 144);
-            this.ReturnCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ReturnCheck.Margin = new System.Windows.Forms.Padding(6);
             this.ReturnCheck.Name = "ReturnCheck";
-            this.ReturnCheck.Size = new System.Drawing.Size(85, 28);
+            this.ReturnCheck.Size = new System.Drawing.Size(95, 29);
             this.ReturnCheck.TabIndex = 4;
             this.ReturnCheck.Text = "Return";
             this.ReturnCheck.UseVisualStyleBackColor = true;
@@ -553,7 +556,7 @@
             // 
             this.ShowOutputCell.ForeColor = System.Drawing.SystemColors.WindowText;
             this.ShowOutputCell.Location = new System.Drawing.Point(13, 135);
-            this.ShowOutputCell.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ShowOutputCell.Margin = new System.Windows.Forms.Padding(6);
             this.ShowOutputCell.Name = "ShowOutputCell";
             this.ShowOutputCell.Size = new System.Drawing.Size(147, 46);
             this.ShowOutputCell.TabIndex = 3;
@@ -565,7 +568,7 @@
             // 
             this.SetCellName.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetCellName.Location = new System.Drawing.Point(11, 35);
-            this.SetCellName.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetCellName.Margin = new System.Windows.Forms.Padding(6);
             this.SetCellName.Name = "SetCellName";
             this.SetCellName.Size = new System.Drawing.Size(147, 46);
             this.SetCellName.TabIndex = 0;
@@ -578,9 +581,9 @@
             this.IsOutputCheck.AutoSize = true;
             this.IsOutputCheck.ForeColor = System.Drawing.SystemColors.WindowText;
             this.IsOutputCheck.Location = new System.Drawing.Point(13, 92);
-            this.IsOutputCheck.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.IsOutputCheck.Margin = new System.Windows.Forms.Padding(6);
             this.IsOutputCheck.Name = "IsOutputCheck";
-            this.IsOutputCheck.Size = new System.Drawing.Size(108, 28);
+            this.IsOutputCheck.Size = new System.Drawing.Size(122, 29);
             this.IsOutputCheck.TabIndex = 1;
             this.IsOutputCheck.Text = "Is Output ";
             this.IsOutputCheck.UseVisualStyleBackColor = true;
@@ -588,15 +591,29 @@
             // IterationPage
             // 
             this.IterationPage.BackColor = System.Drawing.SystemColors.Control;
+            this.IterationPage.Controls.Add(this.itertypeCheck);
+            this.IterationPage.Controls.Add(this.MultipleRunV2);
             this.IterationPage.Controls.Add(this.groupBox1);
             this.IterationPage.Controls.Add(this.IterationGroup);
             this.IterationPage.Location = new System.Drawing.Point(4, 33);
-            this.IterationPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.IterationPage.Margin = new System.Windows.Forms.Padding(6);
             this.IterationPage.Name = "IterationPage";
-            this.IterationPage.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.IterationPage.Padding = new System.Windows.Forms.Padding(6);
             this.IterationPage.Size = new System.Drawing.Size(531, 1920);
             this.IterationPage.TabIndex = 0;
             this.IterationPage.Text = "Iteration Tools";
+            // 
+            // MultipleRunV2
+            // 
+            this.MultipleRunV2.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.MultipleRunV2.Location = new System.Drawing.Point(25, 1203);
+            this.MultipleRunV2.Margin = new System.Windows.Forms.Padding(6);
+            this.MultipleRunV2.Name = "MultipleRunV2";
+            this.MultipleRunV2.Size = new System.Drawing.Size(480, 50);
+            this.MultipleRunV2.TabIndex = 20;
+            this.MultipleRunV2.Text = "Run Iteration (single criteria) v2";
+            this.MultipleRunV2.UseVisualStyleBackColor = true;
+            this.MultipleRunV2.Click += new System.EventHandler(this.MultipleRunV2_Click);
             // 
             // groupBox1
             // 
@@ -605,9 +622,9 @@
             this.groupBox1.Controls.Add(this.SetItDataTable);
             this.groupBox1.Controls.Add(this.GetMultiIteration);
             this.groupBox1.Location = new System.Drawing.Point(13, 772);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
             this.groupBox1.Size = new System.Drawing.Size(502, 166);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
@@ -618,7 +635,7 @@
             this.DispItDataTable.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispItDataTable.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.DispItDataTable.Location = new System.Drawing.Point(229, 54);
-            this.DispItDataTable.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispItDataTable.Margin = new System.Windows.Forms.Padding(6);
             this.DispItDataTable.MaximumSize = new System.Drawing.Size(235, 25);
             this.DispItDataTable.MinimumSize = new System.Drawing.Size(15, 10);
             this.DispItDataTable.Name = "DispItDataTable";
@@ -630,7 +647,7 @@
             // 
             this.SetItDataTable.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetItDataTable.Location = new System.Drawing.Point(16, 35);
-            this.SetItDataTable.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetItDataTable.Margin = new System.Windows.Forms.Padding(6);
             this.SetItDataTable.Name = "SetItDataTable";
             this.SetItDataTable.Size = new System.Drawing.Size(202, 66);
             this.SetItDataTable.TabIndex = 45;
@@ -641,7 +658,7 @@
             // 
             this.GetMultiIteration.ForeColor = System.Drawing.SystemColors.WindowText;
             this.GetMultiIteration.Location = new System.Drawing.Point(116, 113);
-            this.GetMultiIteration.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.GetMultiIteration.Margin = new System.Windows.Forms.Padding(6);
             this.GetMultiIteration.Name = "GetMultiIteration";
             this.GetMultiIteration.Size = new System.Drawing.Size(284, 41);
             this.GetMultiIteration.TabIndex = 44;
@@ -672,9 +689,9 @@
             this.IterationGroup.Controls.Add(this.label7);
             this.IterationGroup.Controls.Add(this.label5);
             this.IterationGroup.Location = new System.Drawing.Point(13, 11);
-            this.IterationGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.IterationGroup.Margin = new System.Windows.Forms.Padding(6);
             this.IterationGroup.Name = "IterationGroup";
-            this.IterationGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.IterationGroup.Padding = new System.Windows.Forms.Padding(6);
             this.IterationGroup.Size = new System.Drawing.Size(502, 748);
             this.IterationGroup.TabIndex = 16;
             this.IterationGroup.TabStop = false;
@@ -689,9 +706,9 @@
             this.OptimiseGroup.Controls.Add(this.DispOptimiseType);
             this.OptimiseGroup.Controls.Add(this.DispOptimiseTarget);
             this.OptimiseGroup.Location = new System.Drawing.Point(4, 378);
-            this.OptimiseGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.OptimiseGroup.Margin = new System.Windows.Forms.Padding(6);
             this.OptimiseGroup.Name = "OptimiseGroup";
-            this.OptimiseGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.OptimiseGroup.Padding = new System.Windows.Forms.Padding(6);
             this.OptimiseGroup.Size = new System.Drawing.Size(502, 201);
             this.OptimiseGroup.TabIndex = 0;
             this.OptimiseGroup.TabStop = false;
@@ -701,7 +718,7 @@
             // 
             this.DispOptimiseCol.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispOptimiseCol.Location = new System.Drawing.Point(205, 42);
-            this.DispOptimiseCol.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispOptimiseCol.Margin = new System.Windows.Forms.Padding(6);
             this.DispOptimiseCol.MaximumSize = new System.Drawing.Size(290, 25);
             this.DispOptimiseCol.MinimumSize = new System.Drawing.Size(180, 25);
             this.DispOptimiseCol.Name = "DispOptimiseCol";
@@ -713,7 +730,7 @@
             // 
             this.SetOptimiseCol.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetOptimiseCol.Location = new System.Drawing.Point(11, 35);
-            this.SetOptimiseCol.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetOptimiseCol.Margin = new System.Windows.Forms.Padding(6);
             this.SetOptimiseCol.Name = "SetOptimiseCol";
             this.SetOptimiseCol.Size = new System.Drawing.Size(183, 46);
             this.SetOptimiseCol.TabIndex = 42;
@@ -741,7 +758,7 @@
             "2 Maximise",
             "3 As close to target as possible"});
             this.DispOptimiseType.Location = new System.Drawing.Point(11, 92);
-            this.DispOptimiseType.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispOptimiseType.Margin = new System.Windows.Forms.Padding(6);
             this.DispOptimiseType.Name = "DispOptimiseType";
             this.DispOptimiseType.Size = new System.Drawing.Size(479, 32);
             this.DispOptimiseType.TabIndex = 40;
@@ -750,7 +767,7 @@
             // 
             this.DispOptimiseTarget.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispOptimiseTarget.Location = new System.Drawing.Point(202, 150);
-            this.DispOptimiseTarget.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispOptimiseTarget.Margin = new System.Windows.Forms.Padding(6);
             this.DispOptimiseTarget.Name = "DispOptimiseTarget";
             this.DispOptimiseTarget.Size = new System.Drawing.Size(279, 29);
             this.DispOptimiseTarget.TabIndex = 39;
@@ -761,9 +778,9 @@
             this.checkDebugMode.AutoSize = true;
             this.checkDebugMode.ForeColor = System.Drawing.SystemColors.WindowText;
             this.checkDebugMode.Location = new System.Drawing.Point(324, 650);
-            this.checkDebugMode.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.checkDebugMode.Margin = new System.Windows.Forms.Padding(6);
             this.checkDebugMode.Name = "checkDebugMode";
-            this.checkDebugMode.Size = new System.Drawing.Size(140, 28);
+            this.checkDebugMode.Size = new System.Drawing.Size(151, 29);
             this.checkDebugMode.TabIndex = 44;
             this.checkDebugMode.Text = "Debug Mode";
             this.checkDebugMode.UseVisualStyleBackColor = true;
@@ -773,9 +790,9 @@
             this.checkDebugIteration.AutoSize = true;
             this.checkDebugIteration.ForeColor = System.Drawing.SystemColors.WindowText;
             this.checkDebugIteration.Location = new System.Drawing.Point(11, 607);
-            this.checkDebugIteration.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.checkDebugIteration.Margin = new System.Windows.Forms.Padding(6);
             this.checkDebugIteration.Name = "checkDebugIteration";
-            this.checkDebugIteration.Size = new System.Drawing.Size(205, 28);
+            this.checkDebugIteration.Size = new System.Drawing.Size(221, 29);
             this.checkDebugIteration.TabIndex = 37;
             this.checkDebugIteration.Text = "Pause after each row";
             this.checkDebugIteration.UseVisualStyleBackColor = true;
@@ -785,9 +802,9 @@
             this.checkSlowOptimisation.AutoSize = true;
             this.checkSlowOptimisation.ForeColor = System.Drawing.SystemColors.WindowText;
             this.checkSlowOptimisation.Location = new System.Drawing.Point(11, 650);
-            this.checkSlowOptimisation.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.checkSlowOptimisation.Margin = new System.Windows.Forms.Padding(6);
             this.checkSlowOptimisation.Name = "checkSlowOptimisation";
-            this.checkSlowOptimisation.Size = new System.Drawing.Size(239, 28);
+            this.checkSlowOptimisation.Size = new System.Drawing.Size(258, 29);
             this.checkSlowOptimisation.TabIndex = 36;
             this.checkSlowOptimisation.Text = "Pause after each iteration";
             this.checkSlowOptimisation.UseVisualStyleBackColor = true;
@@ -797,7 +814,7 @@
             this.DispCriteriaSource.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispCriteriaSource.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.DispCriteriaSource.Location = new System.Drawing.Point(11, 268);
-            this.DispCriteriaSource.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispCriteriaSource.Margin = new System.Windows.Forms.Padding(6);
             this.DispCriteriaSource.MaximumSize = new System.Drawing.Size(235, 25);
             this.DispCriteriaSource.MinimumSize = new System.Drawing.Size(15, 10);
             this.DispCriteriaSource.Name = "DispCriteriaSource";
@@ -809,7 +826,7 @@
             // 
             this.SetCriteriaSource.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetCriteriaSource.Location = new System.Drawing.Point(11, 205);
-            this.SetCriteriaSource.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetCriteriaSource.Margin = new System.Windows.Forms.Padding(6);
             this.SetCriteriaSource.Name = "SetCriteriaSource";
             this.SetCriteriaSource.Size = new System.Drawing.Size(202, 66);
             this.SetCriteriaSource.TabIndex = 31;
@@ -841,7 +858,7 @@
             ">=",
             "!="});
             this.DispLogicSymbol.Location = new System.Drawing.Point(218, 233);
-            this.DispLogicSymbol.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispLogicSymbol.Margin = new System.Windows.Forms.Padding(6);
             this.DispLogicSymbol.Name = "DispLogicSymbol";
             this.DispLogicSymbol.Size = new System.Drawing.Size(61, 32);
             this.DispLogicSymbol.TabIndex = 27;
@@ -850,7 +867,7 @@
             // 
             this.DispCriteriaValue.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispCriteriaValue.Location = new System.Drawing.Point(290, 268);
-            this.DispCriteriaValue.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispCriteriaValue.Margin = new System.Windows.Forms.Padding(6);
             this.DispCriteriaValue.Name = "DispCriteriaValue";
             this.DispCriteriaValue.Size = new System.Drawing.Size(198, 29);
             this.DispCriteriaValue.TabIndex = 26;
@@ -865,7 +882,7 @@
             "1 Stop when condition met",
             "2 Find optimum"});
             this.DispIterationMode.Location = new System.Drawing.Point(4, 334);
-            this.DispIterationMode.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispIterationMode.Margin = new System.Windows.Forms.Padding(6);
             this.DispIterationMode.Name = "DispIterationMode";
             this.DispIterationMode.Size = new System.Drawing.Size(477, 32);
             this.DispIterationMode.TabIndex = 23;
@@ -878,7 +895,7 @@
             this.label4.Location = new System.Drawing.Point(235, 111);
             this.label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(29, 24);
+            this.label4.Size = new System.Drawing.Size(32, 25);
             this.label4.TabIndex = 22;
             this.label4.Text = "→";
             // 
@@ -886,7 +903,7 @@
             // 
             this.RunMultiple.ForeColor = System.Drawing.SystemColors.WindowText;
             this.RunMultiple.Location = new System.Drawing.Point(13, 690);
-            this.RunMultiple.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.RunMultiple.Margin = new System.Windows.Forms.Padding(6);
             this.RunMultiple.Name = "RunMultiple";
             this.RunMultiple.Size = new System.Drawing.Size(480, 50);
             this.RunMultiple.TabIndex = 18;
@@ -899,7 +916,7 @@
             this.DispItDest.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispItDest.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.DispItDest.Location = new System.Drawing.Point(290, 124);
-            this.DispItDest.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispItDest.Margin = new System.Windows.Forms.Padding(6);
             this.DispItDest.MaximumSize = new System.Drawing.Size(290, 25);
             this.DispItDest.MinimumSize = new System.Drawing.Size(15, 10);
             this.DispItDest.Name = "DispItDest";
@@ -911,7 +928,7 @@
             // 
             this.SetItDest.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetItDest.Location = new System.Drawing.Point(290, 61);
-            this.SetItDest.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetItDest.Margin = new System.Windows.Forms.Padding(6);
             this.SetItDest.Name = "SetItDest";
             this.SetItDest.Size = new System.Drawing.Size(202, 66);
             this.SetItDest.TabIndex = 20;
@@ -923,7 +940,7 @@
             this.DispItSource.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispItSource.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.DispItSource.Location = new System.Drawing.Point(11, 124);
-            this.DispItSource.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispItSource.Margin = new System.Windows.Forms.Padding(6);
             this.DispItSource.MaximumSize = new System.Drawing.Size(235, 25);
             this.DispItSource.MinimumSize = new System.Drawing.Size(15, 10);
             this.DispItSource.Name = "DispItSource";
@@ -935,7 +952,7 @@
             // 
             this.SetItSource.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetItSource.Location = new System.Drawing.Point(11, 61);
-            this.SetItSource.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetItSource.Margin = new System.Windows.Forms.Padding(6);
             this.SetItSource.Name = "SetItSource";
             this.SetItSource.Size = new System.Drawing.Size(202, 66);
             this.SetItSource.TabIndex = 18;
@@ -950,7 +967,7 @@
             this.label8.Location = new System.Drawing.Point(11, 30);
             this.label8.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(127, 24);
+            this.label8.Size = new System.Drawing.Size(138, 25);
             this.label8.TabIndex = 34;
             this.label8.Text = "Data to iterate:";
             // 
@@ -962,7 +979,7 @@
             this.label7.Location = new System.Drawing.Point(11, 175);
             this.label7.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(140, 24);
+            this.label7.Size = new System.Drawing.Size(150, 25);
             this.label7.TabIndex = 33;
             this.label7.Text = "Criteria to Meet:";
             // 
@@ -985,15 +1002,16 @@
             this.Part2Page.Controls.Add(this.miscGroup);
             this.Part2Page.Controls.Add(this.sheetGroupBox);
             this.Part2Page.Location = new System.Drawing.Point(4, 33);
-            this.Part2Page.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Part2Page.Margin = new System.Windows.Forms.Padding(6);
             this.Part2Page.Name = "Part2Page";
-            this.Part2Page.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Part2Page.Padding = new System.Windows.Forms.Padding(6);
             this.Part2Page.Size = new System.Drawing.Size(531, 1920);
             this.Part2Page.TabIndex = 1;
             this.Part2Page.Text = "Others";
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.pauseScreenCheck);
             this.groupBox2.Controls.Add(this.setStatusCol2);
             this.groupBox2.Controls.Add(this.dispStatusCol2);
             this.groupBox2.Controls.Add(this.dispCriteriaSource3);
@@ -1009,19 +1027,31 @@
             this.groupBox2.Controls.Add(this.dispIncrement2);
             this.groupBox2.Controls.Add(this.increaseValRange);
             this.groupBox2.Location = new System.Drawing.Point(13, 858);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
             this.groupBox2.Size = new System.Drawing.Size(502, 513);
             this.groupBox2.TabIndex = 41;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Range Cell Iteration";
             // 
+            // pauseScreenCheck
+            // 
+            this.pauseScreenCheck.AutoSize = true;
+            this.pauseScreenCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.pauseScreenCheck.Location = new System.Drawing.Point(15, 383);
+            this.pauseScreenCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.pauseScreenCheck.Name = "pauseScreenCheck";
+            this.pauseScreenCheck.Size = new System.Drawing.Size(162, 29);
+            this.pauseScreenCheck.TabIndex = 43;
+            this.pauseScreenCheck.Text = "Pause Screen";
+            this.pauseScreenCheck.UseVisualStyleBackColor = true;
+            // 
             // setStatusCol2
             // 
             this.setStatusCol2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setStatusCol2.Location = new System.Drawing.Point(11, 325);
-            this.setStatusCol2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.setStatusCol2.Margin = new System.Windows.Forms.Padding(6);
             this.setStatusCol2.Name = "setStatusCol2";
             this.setStatusCol2.Size = new System.Drawing.Size(183, 46);
             this.setStatusCol2.TabIndex = 41;
@@ -1032,7 +1062,7 @@
             // 
             this.dispStatusCol2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispStatusCol2.Location = new System.Drawing.Point(205, 332);
-            this.dispStatusCol2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispStatusCol2.Margin = new System.Windows.Forms.Padding(6);
             this.dispStatusCol2.MaximumSize = new System.Drawing.Size(290, 25);
             this.dispStatusCol2.MinimumSize = new System.Drawing.Size(290, 25);
             this.dispStatusCol2.Name = "dispStatusCol2";
@@ -1046,7 +1076,7 @@
             this.dispCriteriaSource3.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispCriteriaSource3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.dispCriteriaSource3.Location = new System.Drawing.Point(11, 98);
-            this.dispCriteriaSource3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispCriteriaSource3.Margin = new System.Windows.Forms.Padding(6);
             this.dispCriteriaSource3.MaximumSize = new System.Drawing.Size(235, 25);
             this.dispCriteriaSource3.MinimumSize = new System.Drawing.Size(15, 10);
             this.dispCriteriaSource3.Name = "dispCriteriaSource3";
@@ -1058,7 +1088,7 @@
             // 
             this.setCriteriaSource3.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setCriteriaSource3.Location = new System.Drawing.Point(11, 35);
-            this.setCriteriaSource3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.setCriteriaSource3.Margin = new System.Windows.Forms.Padding(6);
             this.setCriteriaSource3.Name = "setCriteriaSource3";
             this.setCriteriaSource3.Size = new System.Drawing.Size(202, 66);
             this.setCriteriaSource3.TabIndex = 39;
@@ -1090,7 +1120,7 @@
             ">=",
             "!="});
             this.dispLogicSymbol3.Location = new System.Drawing.Point(218, 63);
-            this.dispLogicSymbol3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispLogicSymbol3.Margin = new System.Windows.Forms.Padding(6);
             this.dispLogicSymbol3.Name = "dispLogicSymbol3";
             this.dispLogicSymbol3.Size = new System.Drawing.Size(61, 32);
             this.dispLogicSymbol3.TabIndex = 37;
@@ -1099,7 +1129,7 @@
             // 
             this.dispCriteriaValue3.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispCriteriaValue3.Location = new System.Drawing.Point(290, 98);
-            this.dispCriteriaValue3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispCriteriaValue3.Margin = new System.Windows.Forms.Padding(6);
             this.dispCriteriaValue3.Name = "dispCriteriaValue3";
             this.dispCriteriaValue3.Size = new System.Drawing.Size(198, 29);
             this.dispCriteriaValue3.TabIndex = 36;
@@ -1109,7 +1139,7 @@
             // 
             this.decreaseValRange.ForeColor = System.Drawing.SystemColors.WindowText;
             this.decreaseValRange.Location = new System.Drawing.Point(251, 268);
-            this.decreaseValRange.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.decreaseValRange.Margin = new System.Windows.Forms.Padding(6);
             this.decreaseValRange.Name = "decreaseValRange";
             this.decreaseValRange.Size = new System.Drawing.Size(238, 46);
             this.decreaseValRange.TabIndex = 33;
@@ -1145,7 +1175,7 @@
             // 
             this.dispLoopNum2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispLoopNum2.Location = new System.Drawing.Point(251, 183);
-            this.dispLoopNum2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispLoopNum2.Margin = new System.Windows.Forms.Padding(6);
             this.dispLoopNum2.Name = "dispLoopNum2";
             this.dispLoopNum2.Size = new System.Drawing.Size(235, 29);
             this.dispLoopNum2.TabIndex = 30;
@@ -1168,7 +1198,7 @@
             // 
             this.dispIncrement2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispIncrement2.Location = new System.Drawing.Point(9, 183);
-            this.dispIncrement2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispIncrement2.Margin = new System.Windows.Forms.Padding(6);
             this.dispIncrement2.Name = "dispIncrement2";
             this.dispIncrement2.Size = new System.Drawing.Size(235, 29);
             this.dispIncrement2.TabIndex = 20;
@@ -1179,7 +1209,7 @@
             // 
             this.increaseValRange.ForeColor = System.Drawing.SystemColors.WindowText;
             this.increaseValRange.Location = new System.Drawing.Point(9, 268);
-            this.increaseValRange.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.increaseValRange.Margin = new System.Windows.Forms.Padding(6);
             this.increaseValRange.Name = "increaseValRange";
             this.increaseValRange.Size = new System.Drawing.Size(238, 46);
             this.increaseValRange.TabIndex = 19;
@@ -1202,9 +1232,9 @@
             this.simpleIter.Controls.Add(this.dispIncrement);
             this.simpleIter.Controls.Add(this.increaseValCell);
             this.simpleIter.Location = new System.Drawing.Point(13, 511);
-            this.simpleIter.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.simpleIter.Margin = new System.Windows.Forms.Padding(6);
             this.simpleIter.Name = "simpleIter";
-            this.simpleIter.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.simpleIter.Padding = new System.Windows.Forms.Padding(6);
             this.simpleIter.Size = new System.Drawing.Size(502, 336);
             this.simpleIter.TabIndex = 16;
             this.simpleIter.TabStop = false;
@@ -1215,7 +1245,7 @@
             this.dispCriteriaSource2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispCriteriaSource2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.dispCriteriaSource2.Location = new System.Drawing.Point(11, 98);
-            this.dispCriteriaSource2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispCriteriaSource2.Margin = new System.Windows.Forms.Padding(6);
             this.dispCriteriaSource2.MaximumSize = new System.Drawing.Size(235, 25);
             this.dispCriteriaSource2.MinimumSize = new System.Drawing.Size(15, 10);
             this.dispCriteriaSource2.Name = "dispCriteriaSource2";
@@ -1227,7 +1257,7 @@
             // 
             this.setCriteriaSource2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setCriteriaSource2.Location = new System.Drawing.Point(11, 35);
-            this.setCriteriaSource2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.setCriteriaSource2.Margin = new System.Windows.Forms.Padding(6);
             this.setCriteriaSource2.Name = "setCriteriaSource2";
             this.setCriteriaSource2.Size = new System.Drawing.Size(202, 66);
             this.setCriteriaSource2.TabIndex = 39;
@@ -1259,7 +1289,7 @@
             ">=",
             "!="});
             this.dispLogicSymbol2.Location = new System.Drawing.Point(218, 63);
-            this.dispLogicSymbol2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispLogicSymbol2.Margin = new System.Windows.Forms.Padding(6);
             this.dispLogicSymbol2.Name = "dispLogicSymbol2";
             this.dispLogicSymbol2.Size = new System.Drawing.Size(61, 32);
             this.dispLogicSymbol2.TabIndex = 37;
@@ -1268,7 +1298,7 @@
             // 
             this.dispCriteriaValue2.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispCriteriaValue2.Location = new System.Drawing.Point(290, 98);
-            this.dispCriteriaValue2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispCriteriaValue2.Margin = new System.Windows.Forms.Padding(6);
             this.dispCriteriaValue2.Name = "dispCriteriaValue2";
             this.dispCriteriaValue2.Size = new System.Drawing.Size(198, 29);
             this.dispCriteriaValue2.TabIndex = 36;
@@ -1278,7 +1308,7 @@
             // 
             this.decreaseValCell.ForeColor = System.Drawing.SystemColors.WindowText;
             this.decreaseValCell.Location = new System.Drawing.Point(253, 268);
-            this.decreaseValCell.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.decreaseValCell.Margin = new System.Windows.Forms.Padding(6);
             this.decreaseValCell.Name = "decreaseValCell";
             this.decreaseValCell.Size = new System.Drawing.Size(238, 46);
             this.decreaseValCell.TabIndex = 33;
@@ -1314,7 +1344,7 @@
             // 
             this.dispLoopNum.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispLoopNum.Location = new System.Drawing.Point(253, 183);
-            this.dispLoopNum.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispLoopNum.Margin = new System.Windows.Forms.Padding(6);
             this.dispLoopNum.Name = "dispLoopNum";
             this.dispLoopNum.Size = new System.Drawing.Size(235, 29);
             this.dispLoopNum.TabIndex = 30;
@@ -1337,7 +1367,7 @@
             // 
             this.dispIncrement.ForeColor = System.Drawing.SystemColors.WindowText;
             this.dispIncrement.Location = new System.Drawing.Point(11, 183);
-            this.dispIncrement.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dispIncrement.Margin = new System.Windows.Forms.Padding(6);
             this.dispIncrement.Name = "dispIncrement";
             this.dispIncrement.Size = new System.Drawing.Size(235, 29);
             this.dispIncrement.TabIndex = 20;
@@ -1348,7 +1378,7 @@
             // 
             this.increaseValCell.ForeColor = System.Drawing.SystemColors.WindowText;
             this.increaseValCell.Location = new System.Drawing.Point(11, 268);
-            this.increaseValCell.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.increaseValCell.Margin = new System.Windows.Forms.Padding(6);
             this.increaseValCell.Name = "increaseValCell";
             this.increaseValCell.Size = new System.Drawing.Size(238, 46);
             this.increaseValCell.TabIndex = 19;
@@ -1362,9 +1392,9 @@
             this.miscGroup.Controls.Add(this.shiftValuesDown);
             this.miscGroup.Controls.Add(this.convertToValue);
             this.miscGroup.Location = new System.Drawing.Point(11, 343);
-            this.miscGroup.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.miscGroup.Margin = new System.Windows.Forms.Padding(6);
             this.miscGroup.Name = "miscGroup";
-            this.miscGroup.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.miscGroup.Padding = new System.Windows.Forms.Padding(6);
             this.miscGroup.Size = new System.Drawing.Size(502, 155);
             this.miscGroup.TabIndex = 15;
             this.miscGroup.TabStop = false;
@@ -1375,9 +1405,9 @@
             this.checkClearNewCell.AutoSize = true;
             this.checkClearNewCell.ForeColor = System.Drawing.SystemColors.WindowText;
             this.checkClearNewCell.Location = new System.Drawing.Point(260, 102);
-            this.checkClearNewCell.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.checkClearNewCell.Margin = new System.Windows.Forms.Padding(6);
             this.checkClearNewCell.Name = "checkClearNewCell";
-            this.checkClearNewCell.Size = new System.Drawing.Size(148, 28);
+            this.checkClearNewCell.Size = new System.Drawing.Size(160, 29);
             this.checkClearNewCell.TabIndex = 16;
             this.checkClearNewCell.Text = "Clear new cell";
             this.checkClearNewCell.UseVisualStyleBackColor = true;
@@ -1386,7 +1416,7 @@
             // 
             this.shiftValuesDown.ForeColor = System.Drawing.SystemColors.WindowText;
             this.shiftValuesDown.Location = new System.Drawing.Point(11, 92);
-            this.shiftValuesDown.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.shiftValuesDown.Margin = new System.Windows.Forms.Padding(6);
             this.shiftValuesDown.Name = "shiftValuesDown";
             this.shiftValuesDown.Size = new System.Drawing.Size(238, 46);
             this.shiftValuesDown.TabIndex = 14;
@@ -1398,7 +1428,7 @@
             // 
             this.convertToValue.ForeColor = System.Drawing.SystemColors.WindowText;
             this.convertToValue.Location = new System.Drawing.Point(11, 35);
-            this.convertToValue.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.convertToValue.Margin = new System.Windows.Forms.Padding(6);
             this.convertToValue.Name = "convertToValue";
             this.convertToValue.Size = new System.Drawing.Size(238, 46);
             this.convertToValue.TabIndex = 15;
@@ -1417,9 +1447,9 @@
             this.sheetGroupBox.Controls.Add(this.DispCopySheet);
             this.sheetGroupBox.Controls.Add(this.SetCopySheet);
             this.sheetGroupBox.Location = new System.Drawing.Point(11, 11);
-            this.sheetGroupBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.sheetGroupBox.Margin = new System.Windows.Forms.Padding(6);
             this.sheetGroupBox.Name = "sheetGroupBox";
-            this.sheetGroupBox.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.sheetGroupBox.Padding = new System.Windows.Forms.Padding(6);
             this.sheetGroupBox.Size = new System.Drawing.Size(502, 321);
             this.sheetGroupBox.TabIndex = 0;
             this.sheetGroupBox.TabStop = false;
@@ -1429,7 +1459,7 @@
             // 
             this.reorderSheets.ForeColor = System.Drawing.SystemColors.WindowText;
             this.reorderSheets.Location = new System.Drawing.Point(11, 258);
-            this.reorderSheets.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.reorderSheets.Margin = new System.Windows.Forms.Padding(6);
             this.reorderSheets.Name = "reorderSheets";
             this.reorderSheets.Size = new System.Drawing.Size(238, 46);
             this.reorderSheets.TabIndex = 43;
@@ -1441,7 +1471,7 @@
             // 
             this.setSheetNames.ForeColor = System.Drawing.SystemColors.WindowText;
             this.setSheetNames.Location = new System.Drawing.Point(253, 201);
-            this.setSheetNames.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.setSheetNames.Margin = new System.Windows.Forms.Padding(6);
             this.setSheetNames.Name = "setSheetNames";
             this.setSheetNames.Size = new System.Drawing.Size(238, 46);
             this.setSheetNames.TabIndex = 42;
@@ -1453,7 +1483,7 @@
             // 
             this.getSheetNames.ForeColor = System.Drawing.SystemColors.WindowText;
             this.getSheetNames.Location = new System.Drawing.Point(11, 201);
-            this.getSheetNames.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.getSheetNames.Margin = new System.Windows.Forms.Padding(6);
             this.getSheetNames.Name = "getSheetNames";
             this.getSheetNames.Size = new System.Drawing.Size(238, 46);
             this.getSheetNames.TabIndex = 41;
@@ -1489,7 +1519,7 @@
             // 
             this.duplicateSheets.ForeColor = System.Drawing.SystemColors.WindowText;
             this.duplicateSheets.Location = new System.Drawing.Point(253, 72);
-            this.duplicateSheets.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.duplicateSheets.Margin = new System.Windows.Forms.Padding(6);
             this.duplicateSheets.Name = "duplicateSheets";
             this.duplicateSheets.Size = new System.Drawing.Size(238, 46);
             this.duplicateSheets.TabIndex = 13;
@@ -1501,7 +1531,7 @@
             // 
             this.DispCopySheet.ForeColor = System.Drawing.SystemColors.WindowText;
             this.DispCopySheet.Location = new System.Drawing.Point(11, 116);
-            this.DispCopySheet.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DispCopySheet.Margin = new System.Windows.Forms.Padding(6);
             this.DispCopySheet.Name = "DispCopySheet";
             this.DispCopySheet.Size = new System.Drawing.Size(235, 29);
             this.DispCopySheet.TabIndex = 12;
@@ -1512,12 +1542,24 @@
             // 
             this.SetCopySheet.ForeColor = System.Drawing.SystemColors.WindowText;
             this.SetCopySheet.Location = new System.Drawing.Point(11, 72);
-            this.SetCopySheet.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SetCopySheet.Margin = new System.Windows.Forms.Padding(6);
             this.SetCopySheet.Name = "SetCopySheet";
             this.SetCopySheet.Size = new System.Drawing.Size(238, 46);
             this.SetCopySheet.TabIndex = 11;
             this.SetCopySheet.Text = "Set Sheet";
             this.SetCopySheet.UseVisualStyleBackColor = true;
+            // 
+            // itertypeCheck
+            // 
+            this.itertypeCheck.AutoSize = true;
+            this.itertypeCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.itertypeCheck.Location = new System.Drawing.Point(71, 1265);
+            this.itertypeCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.itertypeCheck.Name = "itertypeCheck";
+            this.itertypeCheck.Size = new System.Drawing.Size(179, 51);
+            this.itertypeCheck.TabIndex = 45;
+            this.itertypeCheck.Text = "Itertype";
+            this.itertypeCheck.UseVisualStyleBackColor = true;
             // 
             // IterationPane
             // 
@@ -1525,7 +1567,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.Controls.Add(this.ExcelTabControl);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "IterationPane";
             this.Size = new System.Drawing.Size(550, 1968);
             this.ExcelTabControl.ResumeLayout(false);
@@ -1538,6 +1580,7 @@
             this.SetupTools.ResumeLayout(false);
             this.SetupTools.PerformLayout();
             this.IterationPage.ResumeLayout(false);
+            this.IterationPage.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.IterationGroup.ResumeLayout(false);
@@ -1665,5 +1708,8 @@
         private System.Windows.Forms.Button increaseValRange;
         private System.Windows.Forms.Button setStatusCol2;
         private System.Windows.Forms.TextBox dispStatusCol2;
+        private System.Windows.Forms.CheckBox pauseScreenCheck;
+        private System.Windows.Forms.Button MultipleRunV2;
+        private System.Windows.Forms.CheckBox itertypeCheck;
     }
 }
