@@ -1,6 +1,5 @@
 ﻿using ETABSv1;
 using ExcelAddIn2.Excel_Pane_Folder.HDB_Design;
-using PdfSharp.BigGustave;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -589,6 +588,27 @@ namespace ExcelAddIn2
 
             return (storeyToElevationMap, elevationToStoreyMap);
         }
+
+        public static string[] GetStoreyNames(cSapModel sapModel)
+        {
+            int ret = 0;
+            double BaseElevation = 0;
+            int NumberStories = 0;
+            string[] storyNames = new string[0];
+            double[] storyElevations = new double[0];
+            double[] storyHeights = new double[0];
+            bool[] isMasterStory = new bool[0];
+            string[] similarToStory = new string[0];
+            bool[] spliceAbove = new bool[0];
+            double[] spliceHeight = new double[0];
+            int[] color = new int[0];
+
+            ret = sapModel.Story.GetStories_2(ref BaseElevation, ref NumberStories, ref storyNames, ref storyElevations, ref storyHeights, ref isMasterStory, ref similarToStory, ref spliceAbove, ref spliceHeight, ref color);
+            if (ret != 0) { throw new Exception("Unable to get story info"); }
+
+            return storyNames;
+        }
+
         #endregion
 
         #region Init
@@ -1084,6 +1104,15 @@ namespace ExcelAddIn2
             if (ret != 0)
             {
                 throw new Exception($"Error changing name of frame from {uniqueName} to {newName}");
+            }
+        }
+
+        public void SetSection(cSapModel sapModel, string section, bool setErrAsStatus = false)
+        {
+            int ret = sapModel.FrameObj.SetSection(uniqueName, section);
+            if (ret != 0)
+            {
+                throw new Exception($"Error changing section of frame to {section}");
             }
         }
         #endregion

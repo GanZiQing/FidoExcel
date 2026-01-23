@@ -1116,7 +1116,17 @@ namespace ExcelAddIn2
             foreach (string sheet in PrintSheets)
             {
                 Worksheet newSheet = ThisWorkBook.Sheets[sheet];
-                string newName = newSheet.Name + " " + nameToAppend;
+
+                string newName;
+                if (PrintSheets.Count == 1)
+                {
+                    newName = nameToAppend;
+                }
+                else
+                {
+                    newName = newSheet.Name + " " + nameToAppend;
+                }
+
                 if (delExistingSheetCheck.Checked) { DelExistingSheet(newName); }
                 // Try to rename, if unable to find name, reset OG sheets and return 
                 try
@@ -3367,9 +3377,11 @@ namespace ExcelAddIn2
             }
             #endregion
 
+            
             for (int iterNum = 0; iterNum <maxIter; iterNum++)
             {
                 selRange.Value2 = selRange.Value2 + increment;
+                selRange.Worksheet.Activate();
                 AwaitExcelCalculation();
                 if (criteria.CriteriaMet())
                 {
@@ -3467,6 +3479,7 @@ namespace ExcelAddIn2
                         for (int iterNum = 0; iterNum < maxIter; iterNum++)
                         {
                             cell.Value2 = cell.Value2 + increment;
+                            cell.Worksheet.Activate();
                             AwaitExcelCalculation();
                             if (criteria.CriteriaMet())
                             {

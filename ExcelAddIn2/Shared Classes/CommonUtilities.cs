@@ -235,7 +235,6 @@ namespace ExcelAddIn2
             return rangeArray;
         }
 
-
         #endregion
 
         public static (int, int, int, int) GetRangeDetails(Range selectedRange)
@@ -1730,13 +1729,25 @@ namespace ExcelAddIn2
         #region Await Caclulation
         public static void AwaitExcelCalculation(int waitDuration = 100)
         {
-            //Globals.ThisAddIn.Application.Calculate();
+            var app = Globals.ThisAddIn.Application;
             Globals.ThisAddIn.Application.Calculation = XlCalculation.xlCalculationAutomatic;
+            Globals.ThisAddIn.Application.Calculate();
 
-            while (Globals.ThisAddIn.Application.CalculationState != XlCalculationState.xlDone)
+            int retryCount = 0;
+            int maxRetryCount = 60000 / waitDuration; // Max wait time of 60 seconds
+            while (Globals.ThisAddIn.Application.CalculationState != XlCalculationState.xlDone && retryCount < maxRetryCount)
             {
                 System.Windows.Forms.Application.DoEvents();
-                Globals.ThisAddIn.Application.Wait(DateTime.Now.AddMilliseconds(waitDuration));
+                app.StatusBar = "Calculating... " + retryCount.ToString();
+                System.Threading.Thread.Sleep(waitDuration);
+                retryCount += 1;
+                //Globals.ThisAddIn.Application.Wait(DateTime.Now.AddMilliseconds(waitDuration));
+            }
+            app.StatusBar = false;
+
+            if (retryCount > maxRetryCount)
+            {
+                throw new Exception("Excel calculation taking too long, terminated.");
             }
         }
 
@@ -1744,13 +1755,15 @@ namespace ExcelAddIn2
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            //Globals.ThisAddIn.Application.Calculate();
+            
             Globals.ThisAddIn.Application.Calculation = XlCalculation.xlCalculationAutomatic;
+            Globals.ThisAddIn.Application.Calculate();
 
             while (Globals.ThisAddIn.Application.CalculationState != XlCalculationState.xlDone)
             {
                 System.Windows.Forms.Application.DoEvents();
-                Globals.ThisAddIn.Application.Wait(DateTime.Now.AddMilliseconds(waitDuration));
+                System.Threading.Thread.Sleep(waitDuration);
+                //Globals.ThisAddIn.Application.Wait(DateTime.Now.AddMilliseconds(waitDuration));
             }
             stopwatch.Stop();
             return stopwatch.Elapsed.TotalSeconds;

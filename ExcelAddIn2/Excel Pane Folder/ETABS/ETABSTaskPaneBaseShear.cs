@@ -499,13 +499,14 @@ namespace ExcelAddIn2
             try
             {
                 // Probably more efficient way to do this but I'm reusing code from above for now
-                #region Get Input from Excel
-                ((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).CheckRangeSize(0, 1);
-                string[] comboNames = ((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).GetContentsAsStringArray(true);
-                #endregion
+                //#region Get Input from Excel
+                //((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).CheckRangeSize(0, 1);
+                //string[] comboNames = ((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).GetContentsAsStringArray(true);
+                //#endregion
 
                 InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
-                (_, HashSet<string> allUniqueLcNames) = GetAllJointReaction(comboNames, sapModel, false);
+
+                (_, HashSet<string> allUniqueLcNames) = GetAllJointReaction(new string[0], sapModel, false);
                 string[] sortedLcNames = allUniqueLcNames.ToArray();
                 Array.Sort(sortedLcNames);
                 WriteToExcelRangeAsCol(null, 0, 0, true, sortedLcNames);
@@ -518,10 +519,10 @@ namespace ExcelAddIn2
             try
             {
                 // Probably more efficient way to do this but I'm reusing code from above for now
-                #region Get Input from Excel
-                ((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).CheckRangeSize(0, 1);
-                string[] comboNames = ((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).GetContentsAsStringArray(true);
-                #endregion
+                //#region Get Input from Excel
+                //((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).CheckRangeSize(0, 1);
+                //string[] comboNames = ((RangeTextBox)attributeDic["loadComboRange_BaseShear"]).GetContentsAsStringArray(true);
+                //#endregion
 
                 InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
 

@@ -5,6 +5,7 @@ using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Office.Tools.Ribbon;
 using Microsoft.VisualStudio.Tools.Applications.Runtime;
+using MigraDoc.Rendering;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -57,6 +58,15 @@ namespace ExcelAddIn2
             thisAttBox.SetDefaultValue("1");
             thisAttBox.type = "int";
             attributeDic.Add(thisAttBox.attName, thisAttBox);
+        }
+        private void AddToolTipsForUtilities()
+        {
+            toolTip1.SetToolTip(setFrameSection,
+                "Select 1 column of UN, sections to be provided in column n, error output will be printed in column n+1\n" +
+                "Where n is the UN column + no. columns defined in \"OffsetColumns\"");
+            toolTip1.SetToolTip(setFrameUn,
+                "Select 1 column of UN, new unique name to be provided in column n, error output will be printed in column n+1\n" +
+                "Where n is the UN column + no. columns defined in \"OffsetColumns\"");
         }
         #endregion
 
@@ -179,6 +189,7 @@ namespace ExcelAddIn2
                 #endregion
 
                 #region Create Write If Error
+                sapModel.View.RefreshView();
                 if (!errEncountered)
                 {
                     MessageBox.Show("All Frame Unique Names were successfully changed.", "Success");
@@ -188,7 +199,93 @@ namespace ExcelAddIn2
                 {
                     MessageBox.Show("Errors encountered, please check status", "Success");
                 }
-                    WriteToExcelRangeAsCol(newNameRange, 0, 1, true, status);
+                newNameRange.Offset[0, 1].Select();
+                WriteToExcelRangeAsCol(newNameRange, 0, 1, true, status);
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+
+        private (string[], string[], Range) getFrameInputsFromExcel()
+        {
+            #region Get Excel Input
+            Range selectedRange = GetSelectedExcelRange();
+            string[] uNs = GetContentsAsStringArray(selectedRange, false);
+            CheckRangeSize(selectedRange, 0, 1, "Frame Unique Names");
+
+            int offsetColNum = ((AttributeTextBox)attributeDic["frameUnOffsetColNum_EtabsUtil"]).GetIntFromTextBox();
+            if (offsetColNum == 0) { throw new Exception("Offset Column Number cannot be 0"); }
+
+            Range newInputRange = selectedRange.Offset[0, offsetColNum];
+            string[] newInput = GetContentsAsStringArray(newInputRange, false);
+            #endregion
+
+            #region Check Inputs
+            List<string> emptyNewInput = new List<string>();
+            for (int i = 0; i < uNs.Length; i++)
+            {
+                if (string.IsNullOrEmpty(uNs[i])) { continue; }
+                if (string.IsNullOrEmpty(newInput[i])) { emptyNewInput.Add(uNs[i]); }
+            }
+            if (emptyNewInput.Count > 0)
+            {
+                string errorMessage = "The following Frame Unique Names have empty Input Values:\n";
+                foreach (string frameUn in emptyNewInput)
+                {
+                    errorMessage += $"- {frameUn}\n";
+                }
+                throw new Exception(errorMessage);
+            }
+            #endregion
+            return (uNs, newInput, newInputRange);
+        }
+        
+        private void setFrameSection_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Input
+                (string[] uNs, string[] newInput, Range newInputRange) = getFrameInputsFromExcel();
+                #endregion
+
+                #region Initalise ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                #endregion
+
+                #region Change Section
+                EtabsFrame[] allFrames = new EtabsFrame[uNs.Length];
+                string[] status = new string[uNs.Length];
+                bool errEncountered = false;
+                for (int i = 0; i < uNs.Length; i++)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(uNs[i])) { continue; }
+                        EtabsFrame frame = new EtabsFrame(uNs[i], "");
+                        frame.SetSection(sapModel, newInput[i], true);
+                        allFrames[i] = frame;
+                    }
+                    catch (Exception ex)
+                    {
+                        status[i] = ex.Message;
+                        errEncountered = true;
+                    }
+                }
+                #endregion
+
+                #region Create Write If Error
+                sapModel.View.RefreshView();
+                if (!errEncountered)
+                {
+                    MessageBox.Show("All Frame sections were successfully changed.", "Success");
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Errors encountered, please check status", "Success");
+                }
+                newInputRange.Offset[0, 1].Select();
+                WriteToExcelRangeAsCol(newInputRange, 0, 1, true, status);
                 #endregion
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
@@ -328,6 +425,125 @@ namespace ExcelAddIn2
                 targetFrameTypes.Add(eFrameDesignOrientation.Other);
             }
             return targetFrameTypes; 
+        }
+        #endregion
+
+        #region Shell Selects
+        private (bool, string) FindAndSelAreaByLabel(cSapModel sapModel, string label, string storeyName)
+        {
+            try
+            {
+                string areaUn = "";
+                int ret;
+                ret = sapModel.AreaObj.GetNameFromLabel(label, storeyName, ref areaUn);
+                if (ret != 0) { throw new Exception("Unable to find label"); }
+
+                ret = sapModel.AreaObj.SetSelected(areaUn, true);
+                if (ret != 0) { throw new Exception("Unable to select area"); }
+                return (true, areaUn);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        private void areaSelByIDButt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                Range activeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                HashSet<string> areaLabels = GetContentsAsStringHash(activeRange);
+                if (areaLabels.Count == 0) { throw new Exception("No area selected in Excel"); }
+                #endregion
+
+                #region Select in ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                string[] allStoryNames = GetStoreyNames(sapModel);
+                int ret = -1;
+
+                List<string> areaNotFound = new List<string>();
+
+                foreach (string area in areaLabels)
+                {
+                    int successCount = 0;
+                    foreach (string story in allStoryNames)
+                    {
+                        (bool success, _) = FindAndSelAreaByLabel(sapModel, area, story);
+                        if (success) { successCount += 1; }
+                    }
+                    if (successCount == 0)
+                    {
+                        areaNotFound.Add(area);
+                    }
+                }
+
+                #endregion
+
+                #region Report Status
+                if (areaNotFound.Count == 0)
+                {
+                    MessageBox.Show("All Areas Selected Successfully", "Success");
+                }
+                else
+                {
+                    string errorMessage = "The following Areas could not be found:\n";
+                    foreach (string area in areaNotFound)
+                    {
+                        errorMessage += $"- {area}\n";
+                    }
+                    MessageBox.Show(errorMessage, "Warning");
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+
+        private void areaSelByUNButt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                Range activeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                HashSet<string> areaUNs = GetContentsAsStringHash(activeRange);
+                if (areaUNs.Count == 0) { throw new Exception("No area selected in Excel"); }
+                #endregion
+
+                #region Select in ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                string[] allStoryNames = GetStoreyNames(sapModel);
+                int ret = -1;
+
+                List<string> areaNotFound = new List<string>();
+
+                foreach (string uN in areaUNs)
+                {
+                    ret = sapModel.AreaObj.SetSelected(uN, true);
+                    if (ret != 0)
+                    {
+                        areaNotFound.Add(uN);
+                    }
+                }
+                #endregion
+
+                #region Report Status
+                if (areaNotFound.Count == 0)
+                {
+                    MessageBox.Show("All Areas Selected Successfully", "Success");
+                }
+                else
+                {
+                    string errorMessage = "The following Areas could not be found:\n";
+                    foreach (string area in areaNotFound)
+                    {
+                        errorMessage += $"- {area}\n";
+                    }
+                    MessageBox.Show(errorMessage, "Warning");
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
         #endregion
     }
