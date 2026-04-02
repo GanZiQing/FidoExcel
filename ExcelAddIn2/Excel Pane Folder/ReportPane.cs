@@ -869,6 +869,100 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
         #endregion
 
+        #region ETABS Save Graphics
+        private void saveEtabsGraphics_Click(object sender, EventArgs e)
+        {
+            ProgressHelper.RunWithProgress((worker, progressTracker) =>
+            {
+                try
+                {
+                    #region Get Attributes
+                    int loadDelay;
+                    int startDelay;
+                    try
+                    {
+                        double startDelayD = textBoxAttributeDic["startDelay_report"].GetDoubleFromTextBox();
+                        startDelay = Convert.ToInt32(startDelayD * 1000); // Convert from seconds
+
+                        double loadDelayD = textBoxAttributeDic["loadDelay_report"].GetDoubleFromTextBox();
+                        loadDelay = Convert.ToInt32(loadDelayD * 1000); // Convert from seconds
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error getting Attributes: {ex.Message}");
+                    }
+                    #endregion
+
+                    #region Get Excel Data
+                    Range runRange;
+                    try
+                    {
+                        runRange = ((RangeTextBox)textBoxAttributeDic["etabsRunRange_report"]).GetRangeForCurrentSheet();
+                        CheckRangeSize(runRange, 0, 2, "etabsRunRange_report");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error getting excel data: {ex.Message}");
+                    }
+                    string[] toPrint = GetContentsAsStringArray(runRange.Columns[1].Cells, false);
+                    string[] fileNames = GetContentsAsStringArray(runRange.Columns[2].Cells, false);
+
+                    #endregion
+
+                    #region Check
+                    progressTracker.UpdateStatus($"Warning Message");
+
+                    DialogResult result = progressTracker.ShowMessageBox(
+                    "WARNING: This will trigger a series of keyboard inputs, even in other softwares.\n" +
+                    $"Do you want to proceed?\nYou have {startDelay / 1000}s to go to the right software.",
+                    "Warning", MessageBoxButtons.YesNo);
+
+                    if (result == DialogResult.No) { return; }
+                    progressTracker.UpdateStatus($"Pause for {startDelay / 1000}s");
+                    System.Threading.Thread.Sleep(startDelay); // Wait for 5 seconds
+                    #endregion
+
+                    #region Loop
+                    for (int rowNum = 0; rowNum < toPrint.Length; rowNum++)
+                    {
+                        progressTracker.UpdateStatus($"Processing {fileNames[rowNum]}");
+                        if (toPrint[rowNum] == "1")
+                        {
+                            string fileName = fileNames[rowNum];
+                            printGraphics(fileName, loadDelay);
+                        }
+                        SendKeys.SendWait("{PGUP}"); // Page Up
+                        System.Threading.Thread.Sleep(loadDelay); // Wait
+
+                        worker.ReportProgress(ConvertToProgress(rowNum + 1, toPrint.Length));
+                        if (worker.CancellationPending)
+                        {
+                            return;
+                        }
+                    }
+                    #endregion
+
+                    BringExcelToFront();
+                    progressTracker.ShowMessageBox("Completed", "Completed");
+                }
+                catch (Exception ex) { BringExcelToFront(); progressTracker.ShowMessageBox(ex.Message, "Error"); }
+            });
+        }
+
+        private void printGraphics(string fileName, int loadDelay)
+        {
+            SendKeys.SendWait("^p"); 
+            System.Threading.Thread.Sleep(loadDelay); // Wait to load
+            SendKeys.SendWait(" ");
+            System.Threading.Thread.Sleep(loadDel); // Wait to load
+            SendKeys.SendWait(fileName);
+            System.Threading.Thread.Sleep(loadDelay/2); // Wait to load
+            SendKeys.SendWait("{ENTER}");
+            System.Threading.Thread.Sleep(loadDelay/2); // Wait to load
+            SendKeys.SendWait("{ESC}");
+        }
+        #endregion
+
         #region Screenshot Boundary
         private void launchScreenshotApp_Click(object sender, EventArgs e)
         {
@@ -994,6 +1088,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             captureBitmap.Save(filePath, ImageFormat.Png);
         }
         #endregion
+
 
     }
 }

@@ -58,6 +58,14 @@ namespace ExcelAddIn2
             thisAttBox.SetDefaultValue("1");
             thisAttBox.type = "int";
             attributeDic.Add(thisAttBox.attName, thisAttBox);
+
+            #region Run And Design
+            // Not used 
+            //thisAtt = new CheckBoxAttribute("designFrame_EtabsUtil", designFrameCheck, false);
+            //attributeDic.Add(thisAtt.attName, thisAtt);
+            //thisAtt = new CheckBoxAttribute("designWall_EtabsUtil", designWallCheck, false);
+            //attributeDic.Add(thisAtt.attName, thisAtt);
+            #endregion
         }
         private void AddToolTipsForUtilities()
         {
@@ -546,5 +554,53 @@ namespace ExcelAddIn2
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
         #endregion
+
+        #region Run and Design
+        private void runAndDesign_Click(object sender, EventArgs e)
+        {
+            // Not used because it locks up excel during process
+            // To be reused if we run it as a standalone ETABS plugin maybe
+            //try
+            //{
+            //    #region Initalise ETABS
+            //    InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+            //    #endregion
+
+            //    #region Confirmation
+            //    if (sapModel.GetModelIsLocked())
+            //    {
+            //        throw new Exception("Model is already locked");
+            //    }
+
+            //    string fullPath = sapModel.GetModelFilename();
+                
+            //    string msg = $"Run and analayse for model named {Path.GetFileName(fullPath)} saved at {Path.GetDirectoryName(fullPath)}?";
+            //    DialogResult res = MessageBox.Show(msg, "Confirmation", MessageBoxButtons.OKCancel);
+            //    if (res != DialogResult.OK) { throw new Exception("Process terminated by user"); }
+            //    #endregion
+
+            //    #region Analysis and Design
+            //    int ret;
+            //    ret = sapModel.Analyze.RunAnalysis();
+            //    if (ret != 0) { throw new Exception("Error running model"); }
+
+            //    if (designFrameCheck.Checked)
+            //    {
+            //        ret = sapModel.DesignConcrete.StartDesign();
+            //    }
+
+            //    if (designWallCheck.Checked)
+            //    {
+            //        //ret = sapModel.DesignShearWall.
+            //        throw new Exception("Shear wall design not implemented. ETABS API incomplete :(");
+            //    }
+
+            //    #endregion
+            //    MessageBox.Show($"Completed analysis for {Path.GetFileName(fullPath)}", "Completed");
+            //}
+            //catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
+
     }
 }

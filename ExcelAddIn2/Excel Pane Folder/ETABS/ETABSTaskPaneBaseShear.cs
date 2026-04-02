@@ -248,6 +248,7 @@ namespace ExcelAddIn2
         }
         private void CheckComboNames(string[] comboNames, HashSet<string> allUniqueLcNames, cSapModel sapModel)
         {
+            if (allUniqueLcNames.Count() == 0) { throw new Exception("No valid load cases/combos found in output."); }
             int ret = -1;
             int numberNames = 0;
             string[] myName = new string[0];

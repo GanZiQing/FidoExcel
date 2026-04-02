@@ -130,11 +130,11 @@
             this.EtabsTabGroup.Controls.Add(this.windLoadPage);
             this.EtabsTabGroup.Controls.Add(this.baseShearPage);
             this.EtabsTabGroup.Controls.Add(this.utilitiesPage);
-            this.EtabsTabGroup.Location = new System.Drawing.Point(5, 6);
-            this.EtabsTabGroup.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.EtabsTabGroup.Location = new System.Drawing.Point(4, 5);
+            this.EtabsTabGroup.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.EtabsTabGroup.Name = "EtabsTabGroup";
             this.EtabsTabGroup.SelectedIndex = 0;
-            this.EtabsTabGroup.Size = new System.Drawing.Size(539, 1488);
+            this.EtabsTabGroup.Size = new System.Drawing.Size(441, 1449);
             this.EtabsTabGroup.TabIndex = 4;
             // 
             // windLoadPage
@@ -143,11 +143,10 @@
             this.windLoadPage.Controls.Add(this.groupBox2);
             this.windLoadPage.Controls.Add(this.groupBox1);
             this.windLoadPage.Controls.Add(this.groupBox3);
-            this.windLoadPage.Location = new System.Drawing.Point(4, 33);
-            this.windLoadPage.Margin = new System.Windows.Forms.Padding(4);
+            this.windLoadPage.Location = new System.Drawing.Point(4, 29);
             this.windLoadPage.Name = "windLoadPage";
-            this.windLoadPage.Padding = new System.Windows.Forms.Padding(4);
-            this.windLoadPage.Size = new System.Drawing.Size(531, 1451);
+            this.windLoadPage.Padding = new System.Windows.Forms.Padding(3);
+            this.windLoadPage.Size = new System.Drawing.Size(433, 1416);
             this.windLoadPage.TabIndex = 1;
             this.windLoadPage.Text = "Wind Load";
             // 
@@ -158,11 +157,11 @@
             this.groupBox2.Controls.Add(this.setJointDataRange);
             this.groupBox2.Controls.Add(this.dispJointDataRange);
             this.groupBox2.Controls.Add(this.assignWL);
-            this.groupBox2.Location = new System.Drawing.Point(10, 430);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.groupBox2.Location = new System.Drawing.Point(8, 358);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.groupBox2.Size = new System.Drawing.Size(501, 186);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.groupBox2.Size = new System.Drawing.Size(410, 155);
             this.groupBox2.TabIndex = 41;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assign Wind Load";
@@ -171,10 +170,9 @@
             // 
             this.replaceLoadCheck.AutoSize = true;
             this.replaceLoadCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.replaceLoadCheck.Location = new System.Drawing.Point(244, 109);
-            this.replaceLoadCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.replaceLoadCheck.Location = new System.Drawing.Point(200, 91);
             this.replaceLoadCheck.Name = "replaceLoadCheck";
-            this.replaceLoadCheck.Size = new System.Drawing.Size(158, 29);
+            this.replaceLoadCheck.Size = new System.Drawing.Size(134, 24);
             this.replaceLoadCheck.TabIndex = 40;
             this.replaceLoadCheck.Text = "Replace Load";
             this.replaceLoadCheck.UseVisualStyleBackColor = true;
@@ -183,10 +181,9 @@
             // 
             this.refreshViewCheck.AutoSize = true;
             this.refreshViewCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.refreshViewCheck.Location = new System.Drawing.Point(244, 148);
-            this.refreshViewCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.refreshViewCheck.Location = new System.Drawing.Point(200, 123);
             this.refreshViewCheck.Name = "refreshViewCheck";
-            this.refreshViewCheck.Size = new System.Drawing.Size(153, 29);
+            this.refreshViewCheck.Size = new System.Drawing.Size(130, 24);
             this.refreshViewCheck.TabIndex = 40;
             this.refreshViewCheck.Text = "Refresh View";
             this.refreshViewCheck.UseVisualStyleBackColor = true;
@@ -194,10 +191,10 @@
             // setJointDataRange
             // 
             this.setJointDataRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setJointDataRange.Location = new System.Drawing.Point(5, 41);
-            this.setJointDataRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.setJointDataRange.Location = new System.Drawing.Point(4, 34);
+            this.setJointDataRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setJointDataRange.Name = "setJointDataRange";
-            this.setJointDataRange.Size = new System.Drawing.Size(230, 46);
+            this.setJointDataRange.Size = new System.Drawing.Size(188, 38);
             this.setJointDataRange.TabIndex = 42;
             this.setJointDataRange.Text = "Set Joint Data Range";
             this.setJointDataRange.UseVisualStyleBackColor = true;
@@ -205,20 +202,20 @@
             // dispJointDataRange
             // 
             this.dispJointDataRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispJointDataRange.Location = new System.Drawing.Point(244, 50);
-            this.dispJointDataRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.dispJointDataRange.Location = new System.Drawing.Point(200, 42);
+            this.dispJointDataRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dispJointDataRange.Name = "dispJointDataRange";
-            this.dispJointDataRange.Size = new System.Drawing.Size(246, 29);
+            this.dispJointDataRange.Size = new System.Drawing.Size(202, 26);
             this.dispJointDataRange.TabIndex = 43;
             this.dispJointDataRange.WordWrap = false;
             // 
             // assignWL
             // 
             this.assignWL.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.assignWL.Location = new System.Drawing.Point(5, 100);
-            this.assignWL.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.assignWL.Location = new System.Drawing.Point(4, 83);
+            this.assignWL.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.assignWL.Name = "assignWL";
-            this.assignWL.Size = new System.Drawing.Size(230, 46);
+            this.assignWL.Size = new System.Drawing.Size(188, 38);
             this.assignWL.TabIndex = 41;
             this.assignWL.Text = "Assign WL";
             this.assignWL.UseVisualStyleBackColor = true;
@@ -231,11 +228,9 @@
             this.groupBox1.Controls.Add(this.dispJointSortOrder);
             this.groupBox1.Controls.Add(this.getJointCoordinates);
             this.groupBox1.Controls.Add(this.dispStorySortOrder);
-            this.groupBox1.Location = new System.Drawing.Point(7, 7);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(502, 206);
+            this.groupBox1.Size = new System.Drawing.Size(411, 172);
             this.groupBox1.TabIndex = 34;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Get ETABS Info";
@@ -243,10 +238,10 @@
             // getLoadPatterns
             // 
             this.getLoadPatterns.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getLoadPatterns.Location = new System.Drawing.Point(10, 148);
-            this.getLoadPatterns.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getLoadPatterns.Location = new System.Drawing.Point(8, 123);
+            this.getLoadPatterns.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getLoadPatterns.Name = "getLoadPatterns";
-            this.getLoadPatterns.Size = new System.Drawing.Size(230, 46);
+            this.getLoadPatterns.Size = new System.Drawing.Size(188, 38);
             this.getLoadPatterns.TabIndex = 34;
             this.getLoadPatterns.Text = "Get Load Patterns";
             this.getLoadPatterns.UseVisualStyleBackColor = true;
@@ -255,10 +250,10 @@
             // getStoryData
             // 
             this.getStoryData.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getStoryData.Location = new System.Drawing.Point(10, 31);
-            this.getStoryData.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getStoryData.Location = new System.Drawing.Point(8, 26);
+            this.getStoryData.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getStoryData.Name = "getStoryData";
-            this.getStoryData.Size = new System.Drawing.Size(230, 46);
+            this.getStoryData.Size = new System.Drawing.Size(188, 38);
             this.getStoryData.TabIndex = 30;
             this.getStoryData.Text = "Get Story Data";
             this.getStoryData.UseVisualStyleBackColor = true;
@@ -275,19 +270,18 @@
             "X, Z, Y",
             "Y, X, Z",
             "Y, Z, X"});
-            this.dispJointSortOrder.Location = new System.Drawing.Point(247, 98);
-            this.dispJointSortOrder.Margin = new System.Windows.Forms.Padding(4);
+            this.dispJointSortOrder.Location = new System.Drawing.Point(202, 82);
             this.dispJointSortOrder.Name = "dispJointSortOrder";
-            this.dispJointSortOrder.Size = new System.Drawing.Size(246, 32);
+            this.dispJointSortOrder.Size = new System.Drawing.Size(202, 28);
             this.dispJointSortOrder.TabIndex = 32;
             // 
             // getJointCoordinates
             // 
             this.getJointCoordinates.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getJointCoordinates.Location = new System.Drawing.Point(10, 89);
-            this.getJointCoordinates.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getJointCoordinates.Location = new System.Drawing.Point(8, 74);
+            this.getJointCoordinates.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getJointCoordinates.Name = "getJointCoordinates";
-            this.getJointCoordinates.Size = new System.Drawing.Size(230, 46);
+            this.getJointCoordinates.Size = new System.Drawing.Size(188, 38);
             this.getJointCoordinates.TabIndex = 29;
             this.getJointCoordinates.Text = "Get Joint Coordinates";
             this.getJointCoordinates.UseVisualStyleBackColor = true;
@@ -300,10 +294,9 @@
             this.dispStorySortOrder.Items.AddRange(new object[] {
             "Top to Bottom",
             "Bottom to Top"});
-            this.dispStorySortOrder.Location = new System.Drawing.Point(247, 44);
-            this.dispStorySortOrder.Margin = new System.Windows.Forms.Padding(4);
+            this.dispStorySortOrder.Location = new System.Drawing.Point(202, 37);
             this.dispStorySortOrder.Name = "dispStorySortOrder";
-            this.dispStorySortOrder.Size = new System.Drawing.Size(246, 32);
+            this.dispStorySortOrder.Size = new System.Drawing.Size(202, 28);
             this.dispStorySortOrder.TabIndex = 33;
             // 
             // groupBox3
@@ -313,11 +306,9 @@
             this.groupBox3.Controls.Add(this.calAWL);
             this.groupBox3.Controls.Add(this.setStoryRange);
             this.groupBox3.Controls.Add(this.dispStoryRange);
-            this.groupBox3.Location = new System.Drawing.Point(7, 222);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox3.Location = new System.Drawing.Point(6, 185);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox3.Size = new System.Drawing.Size(502, 199);
+            this.groupBox3.Size = new System.Drawing.Size(411, 166);
             this.groupBox3.TabIndex = 29;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Calculate WL";
@@ -329,19 +320,18 @@
             this.dispWindLoadDir.Items.AddRange(new object[] {
             "X",
             "Y"});
-            this.dispWindLoadDir.Location = new System.Drawing.Point(247, 98);
-            this.dispWindLoadDir.Margin = new System.Windows.Forms.Padding(4);
+            this.dispWindLoadDir.Location = new System.Drawing.Point(202, 82);
             this.dispWindLoadDir.Name = "dispWindLoadDir";
-            this.dispWindLoadDir.Size = new System.Drawing.Size(246, 32);
+            this.dispWindLoadDir.Size = new System.Drawing.Size(202, 28);
             this.dispWindLoadDir.TabIndex = 36;
             // 
             // label1
             // 
             this.label1.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label1.Location = new System.Drawing.Point(48, 94);
-            this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label1.Location = new System.Drawing.Point(39, 78);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(147, 37);
+            this.label1.Size = new System.Drawing.Size(120, 31);
             this.label1.TabIndex = 35;
             this.label1.Text = "Wind Load Dir. ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -349,10 +339,10 @@
             // calAWL
             // 
             this.calAWL.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.calAWL.Location = new System.Drawing.Point(136, 138);
-            this.calAWL.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.calAWL.Location = new System.Drawing.Point(111, 115);
+            this.calAWL.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.calAWL.Name = "calAWL";
-            this.calAWL.Size = new System.Drawing.Size(230, 46);
+            this.calAWL.Size = new System.Drawing.Size(188, 38);
             this.calAWL.TabIndex = 31;
             this.calAWL.Text = "Calculate AWL";
             this.calAWL.UseVisualStyleBackColor = true;
@@ -361,10 +351,10 @@
             // setStoryRange
             // 
             this.setStoryRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setStoryRange.Location = new System.Drawing.Point(10, 31);
-            this.setStoryRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.setStoryRange.Location = new System.Drawing.Point(8, 26);
+            this.setStoryRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setStoryRange.Name = "setStoryRange";
-            this.setStoryRange.Size = new System.Drawing.Size(230, 46);
+            this.setStoryRange.Size = new System.Drawing.Size(188, 38);
             this.setStoryRange.TabIndex = 27;
             this.setStoryRange.Text = "Set Story Range";
             this.setStoryRange.UseVisualStyleBackColor = true;
@@ -372,10 +362,10 @@
             // dispStoryRange
             // 
             this.dispStoryRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispStoryRange.Location = new System.Drawing.Point(247, 38);
-            this.dispStoryRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.dispStoryRange.Location = new System.Drawing.Point(202, 32);
+            this.dispStoryRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dispStoryRange.Name = "dispStoryRange";
-            this.dispStoryRange.Size = new System.Drawing.Size(246, 29);
+            this.dispStoryRange.Size = new System.Drawing.Size(202, 26);
             this.dispStoryRange.TabIndex = 28;
             this.dispStoryRange.WordWrap = false;
             // 
@@ -386,11 +376,10 @@
             this.baseShearPage.Controls.Add(this.label3);
             this.baseShearPage.Controls.Add(this.groupBox7);
             this.baseShearPage.Controls.Add(this.groupBox5);
-            this.baseShearPage.Location = new System.Drawing.Point(4, 33);
-            this.baseShearPage.Margin = new System.Windows.Forms.Padding(4);
+            this.baseShearPage.Location = new System.Drawing.Point(4, 29);
             this.baseShearPage.Name = "baseShearPage";
-            this.baseShearPage.Padding = new System.Windows.Forms.Padding(4);
-            this.baseShearPage.Size = new System.Drawing.Size(531, 1451);
+            this.baseShearPage.Padding = new System.Windows.Forms.Padding(3);
+            this.baseShearPage.Size = new System.Drawing.Size(433, 1416);
             this.baseShearPage.TabIndex = 3;
             this.baseShearPage.Text = "Base Shear";
             // 
@@ -400,11 +389,9 @@
             this.groupBox6.Controls.Add(this.printMomentsCheck);
             this.groupBox6.Controls.Add(this.dispTableFormat);
             this.groupBox6.Controls.Add(this.label4);
-            this.groupBox6.Location = new System.Drawing.Point(7, 548);
-            this.groupBox6.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox6.Location = new System.Drawing.Point(6, 457);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox6.Size = new System.Drawing.Size(502, 210);
+            this.groupBox6.Size = new System.Drawing.Size(411, 175);
             this.groupBox6.TabIndex = 43;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Settings";
@@ -414,12 +401,12 @@
             this.textBox4.BackColor = System.Drawing.SystemColors.Control;
             this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox4.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.textBox4.Location = new System.Drawing.Point(15, 116);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.textBox4.Location = new System.Drawing.Point(12, 97);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox4.Multiline = true;
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(480, 82);
+            this.textBox4.Size = new System.Drawing.Size(393, 68);
             this.textBox4.TabIndex = 44;
             this.textBox4.Text = "Note: \r\nOutput Moment is experimental. It is calculated about global point (0,0) " +
     "ignoring contribution of elevation";
@@ -428,10 +415,9 @@
             // 
             this.printMomentsCheck.AutoSize = true;
             this.printMomentsCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printMomentsCheck.Location = new System.Drawing.Point(15, 76);
-            this.printMomentsCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printMomentsCheck.Location = new System.Drawing.Point(12, 63);
             this.printMomentsCheck.Name = "printMomentsCheck";
-            this.printMomentsCheck.Size = new System.Drawing.Size(183, 29);
+            this.printMomentsCheck.Size = new System.Drawing.Size(154, 24);
             this.printMomentsCheck.TabIndex = 41;
             this.printMomentsCheck.Text = "Output Moments";
             this.printMomentsCheck.UseVisualStyleBackColor = true;
@@ -443,19 +429,18 @@
             this.dispTableFormat.Items.AddRange(new object[] {
             "Append Right",
             "Append Bottom"});
-            this.dispTableFormat.Location = new System.Drawing.Point(246, 34);
-            this.dispTableFormat.Margin = new System.Windows.Forms.Padding(4);
+            this.dispTableFormat.Location = new System.Drawing.Point(201, 28);
             this.dispTableFormat.Name = "dispTableFormat";
-            this.dispTableFormat.Size = new System.Drawing.Size(246, 32);
+            this.dispTableFormat.Size = new System.Drawing.Size(202, 28);
             this.dispTableFormat.TabIndex = 40;
             // 
             // label4
             // 
             this.label4.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label4.Location = new System.Drawing.Point(10, 26);
-            this.label4.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label4.Location = new System.Drawing.Point(8, 22);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(230, 46);
+            this.label4.Size = new System.Drawing.Size(188, 38);
             this.label4.TabIndex = 39;
             this.label4.Text = "Table Format";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -463,10 +448,10 @@
             // label3
             // 
             this.label3.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label3.Location = new System.Drawing.Point(10, 470);
-            this.label3.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label3.Location = new System.Drawing.Point(8, 392);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(501, 76);
+            this.label3.Size = new System.Drawing.Size(410, 63);
             this.label3.TabIndex = 39;
             this.label3.Text = "Note: \r\nEnsure that desired load cases/combos are selected in ETABS Table \"Choose" +
     " Tables For Display\"";
@@ -478,11 +463,9 @@
             this.groupBox7.Controls.Add(this.getAllReactionsButt);
             this.groupBox7.Controls.Add(this.testGetObjButt);
             this.groupBox7.Controls.Add(this.getActiveLoadComboButt);
-            this.groupBox7.Location = new System.Drawing.Point(7, 264);
-            this.groupBox7.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox7.Location = new System.Drawing.Point(6, 220);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox7.Size = new System.Drawing.Size(502, 205);
+            this.groupBox7.Size = new System.Drawing.Size(411, 171);
             this.groupBox7.TabIndex = 38;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Checks";
@@ -490,10 +473,10 @@
             // getGroupNames
             // 
             this.getGroupNames.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getGroupNames.Location = new System.Drawing.Point(22, 31);
-            this.getGroupNames.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getGroupNames.Location = new System.Drawing.Point(18, 26);
+            this.getGroupNames.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getGroupNames.Name = "getGroupNames";
-            this.getGroupNames.Size = new System.Drawing.Size(230, 46);
+            this.getGroupNames.Size = new System.Drawing.Size(188, 38);
             this.getGroupNames.TabIndex = 43;
             this.getGroupNames.Text = "Get Group Names";
             this.getGroupNames.UseVisualStyleBackColor = true;
@@ -502,10 +485,10 @@
             // checkObjectsAreUnique
             // 
             this.checkObjectsAreUnique.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.checkObjectsAreUnique.Location = new System.Drawing.Point(22, 148);
-            this.checkObjectsAreUnique.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.checkObjectsAreUnique.Location = new System.Drawing.Point(18, 123);
+            this.checkObjectsAreUnique.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.checkObjectsAreUnique.Name = "checkObjectsAreUnique";
-            this.checkObjectsAreUnique.Size = new System.Drawing.Size(230, 46);
+            this.checkObjectsAreUnique.Size = new System.Drawing.Size(188, 38);
             this.checkObjectsAreUnique.TabIndex = 42;
             this.checkObjectsAreUnique.Text = "Check Col/Wall Unique";
             this.checkObjectsAreUnique.UseVisualStyleBackColor = true;
@@ -514,10 +497,10 @@
             // getAllReactionsButt
             // 
             this.getAllReactionsButt.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getAllReactionsButt.Location = new System.Drawing.Point(22, 89);
-            this.getAllReactionsButt.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getAllReactionsButt.Location = new System.Drawing.Point(18, 74);
+            this.getAllReactionsButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getAllReactionsButt.Name = "getAllReactionsButt";
-            this.getAllReactionsButt.Size = new System.Drawing.Size(230, 46);
+            this.getAllReactionsButt.Size = new System.Drawing.Size(188, 38);
             this.getAllReactionsButt.TabIndex = 41;
             this.getAllReactionsButt.Text = "Get All Reactions";
             this.getAllReactionsButt.UseVisualStyleBackColor = true;
@@ -526,10 +509,10 @@
             // testGetObjButt
             // 
             this.testGetObjButt.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.testGetObjButt.Location = new System.Drawing.Point(262, 89);
-            this.testGetObjButt.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.testGetObjButt.Location = new System.Drawing.Point(214, 74);
+            this.testGetObjButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.testGetObjButt.Name = "testGetObjButt";
-            this.testGetObjButt.Size = new System.Drawing.Size(230, 46);
+            this.testGetObjButt.Size = new System.Drawing.Size(188, 38);
             this.testGetObjButt.TabIndex = 39;
             this.testGetObjButt.Text = "Get Joints Considered";
             this.testGetObjButt.UseVisualStyleBackColor = true;
@@ -538,10 +521,10 @@
             // getActiveLoadComboButt
             // 
             this.getActiveLoadComboButt.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getActiveLoadComboButt.Location = new System.Drawing.Point(262, 31);
-            this.getActiveLoadComboButt.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getActiveLoadComboButt.Location = new System.Drawing.Point(214, 26);
+            this.getActiveLoadComboButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getActiveLoadComboButt.Name = "getActiveLoadComboButt";
-            this.getActiveLoadComboButt.Size = new System.Drawing.Size(230, 46);
+            this.getActiveLoadComboButt.Size = new System.Drawing.Size(188, 38);
             this.getActiveLoadComboButt.TabIndex = 40;
             this.getActiveLoadComboButt.Text = "Get Active Load Combos";
             this.getActiveLoadComboButt.UseVisualStyleBackColor = true;
@@ -556,11 +539,9 @@
             this.groupBox5.Controls.Add(this.dispLcRange);
             this.groupBox5.Controls.Add(this.setGroupRange);
             this.groupBox5.Controls.Add(this.dispGroupRange);
-            this.groupBox5.Location = new System.Drawing.Point(7, 7);
-            this.groupBox5.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox5.Location = new System.Drawing.Point(6, 6);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox5.Size = new System.Drawing.Size(502, 250);
+            this.groupBox5.Size = new System.Drawing.Size(411, 208);
             this.groupBox5.TabIndex = 36;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Settings";
@@ -568,10 +549,10 @@
             // getBaseReactionButt
             // 
             this.getBaseReactionButt.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getBaseReactionButt.Location = new System.Drawing.Point(147, 192);
-            this.getBaseReactionButt.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getBaseReactionButt.Location = new System.Drawing.Point(120, 160);
+            this.getBaseReactionButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getBaseReactionButt.Name = "getBaseReactionButt";
-            this.getBaseReactionButt.Size = new System.Drawing.Size(230, 46);
+            this.getBaseReactionButt.Size = new System.Drawing.Size(188, 38);
             this.getBaseReactionButt.TabIndex = 29;
             this.getBaseReactionButt.Text = "Get Base Reaction";
             this.getBaseReactionButt.UseVisualStyleBackColor = true;
@@ -584,19 +565,18 @@
             this.dispGetForcesObj.Items.AddRange(new object[] {
             "Column & Wall",
             "Joints"});
-            this.dispGetForcesObj.Location = new System.Drawing.Point(246, 150);
-            this.dispGetForcesObj.Margin = new System.Windows.Forms.Padding(4);
+            this.dispGetForcesObj.Location = new System.Drawing.Point(201, 125);
             this.dispGetForcesObj.Name = "dispGetForcesObj";
-            this.dispGetForcesObj.Size = new System.Drawing.Size(246, 32);
+            this.dispGetForcesObj.Size = new System.Drawing.Size(202, 28);
             this.dispGetForcesObj.TabIndex = 38;
             // 
             // label2
             // 
             this.label2.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label2.Location = new System.Drawing.Point(10, 142);
-            this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label2.Location = new System.Drawing.Point(8, 118);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(230, 46);
+            this.label2.Size = new System.Drawing.Size(188, 38);
             this.label2.TabIndex = 37;
             this.label2.Text = "Get Forces From";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -604,10 +584,10 @@
             // setLcRange
             // 
             this.setLcRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setLcRange.Location = new System.Drawing.Point(10, 90);
-            this.setLcRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.setLcRange.Location = new System.Drawing.Point(8, 75);
+            this.setLcRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setLcRange.Name = "setLcRange";
-            this.setLcRange.Size = new System.Drawing.Size(230, 46);
+            this.setLcRange.Size = new System.Drawing.Size(188, 38);
             this.setLcRange.TabIndex = 31;
             this.setLcRange.Text = "Set Load Combo Range";
             this.setLcRange.UseVisualStyleBackColor = true;
@@ -615,20 +595,20 @@
             // dispLcRange
             // 
             this.dispLcRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispLcRange.Location = new System.Drawing.Point(246, 98);
-            this.dispLcRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.dispLcRange.Location = new System.Drawing.Point(201, 82);
+            this.dispLcRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dispLcRange.Name = "dispLcRange";
-            this.dispLcRange.Size = new System.Drawing.Size(246, 29);
+            this.dispLcRange.Size = new System.Drawing.Size(202, 26);
             this.dispLcRange.TabIndex = 32;
             this.dispLcRange.WordWrap = false;
             // 
             // setGroupRange
             // 
             this.setGroupRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setGroupRange.Location = new System.Drawing.Point(10, 31);
-            this.setGroupRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.setGroupRange.Location = new System.Drawing.Point(8, 26);
+            this.setGroupRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setGroupRange.Name = "setGroupRange";
-            this.setGroupRange.Size = new System.Drawing.Size(230, 46);
+            this.setGroupRange.Size = new System.Drawing.Size(188, 38);
             this.setGroupRange.TabIndex = 29;
             this.setGroupRange.Text = "Set Group Range";
             this.setGroupRange.UseVisualStyleBackColor = true;
@@ -636,10 +616,10 @@
             // dispGroupRange
             // 
             this.dispGroupRange.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispGroupRange.Location = new System.Drawing.Point(247, 41);
-            this.dispGroupRange.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.dispGroupRange.Location = new System.Drawing.Point(202, 34);
+            this.dispGroupRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dispGroupRange.Name = "dispGroupRange";
-            this.dispGroupRange.Size = new System.Drawing.Size(246, 29);
+            this.dispGroupRange.Size = new System.Drawing.Size(202, 26);
             this.dispGroupRange.TabIndex = 30;
             this.dispGroupRange.WordWrap = false;
             // 
@@ -651,11 +631,10 @@
             this.utilitiesPage.Controls.Add(this.selectGroupBox);
             this.utilitiesPage.Controls.Add(this.errorGroupBox);
             this.utilitiesPage.Controls.Add(this.groupBox4);
-            this.utilitiesPage.Location = new System.Drawing.Point(4, 33);
-            this.utilitiesPage.Margin = new System.Windows.Forms.Padding(4);
+            this.utilitiesPage.Location = new System.Drawing.Point(4, 29);
             this.utilitiesPage.Name = "utilitiesPage";
-            this.utilitiesPage.Padding = new System.Windows.Forms.Padding(4);
-            this.utilitiesPage.Size = new System.Drawing.Size(531, 1451);
+            this.utilitiesPage.Padding = new System.Windows.Forms.Padding(3);
+            this.utilitiesPage.Size = new System.Drawing.Size(433, 1416);
             this.utilitiesPage.TabIndex = 2;
             this.utilitiesPage.Text = "Utilities";
             // 
@@ -663,11 +642,9 @@
             // 
             this.groupBox9.Controls.Add(this.areaSelByUNButt);
             this.groupBox9.Controls.Add(this.areaSelByIDButt);
-            this.groupBox9.Location = new System.Drawing.Point(17, 1160);
-            this.groupBox9.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox9.Location = new System.Drawing.Point(14, 967);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox9.Size = new System.Drawing.Size(491, 97);
+            this.groupBox9.Size = new System.Drawing.Size(402, 81);
             this.groupBox9.TabIndex = 60;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Shell";
@@ -675,10 +652,10 @@
             // areaSelByUNButt
             // 
             this.areaSelByUNButt.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.areaSelByUNButt.Location = new System.Drawing.Point(252, 37);
-            this.areaSelByUNButt.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.areaSelByUNButt.Location = new System.Drawing.Point(206, 31);
+            this.areaSelByUNButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.areaSelByUNButt.Name = "areaSelByUNButt";
-            this.areaSelByUNButt.Size = new System.Drawing.Size(230, 46);
+            this.areaSelByUNButt.Size = new System.Drawing.Size(188, 38);
             this.areaSelByUNButt.TabIndex = 48;
             this.areaSelByUNButt.Text = "Sel. by UN";
             this.areaSelByUNButt.UseVisualStyleBackColor = true;
@@ -687,10 +664,10 @@
             // areaSelByIDButt
             // 
             this.areaSelByIDButt.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.areaSelByIDButt.Location = new System.Drawing.Point(11, 37);
-            this.areaSelByIDButt.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.areaSelByIDButt.Location = new System.Drawing.Point(9, 31);
+            this.areaSelByIDButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.areaSelByIDButt.Name = "areaSelByIDButt";
-            this.areaSelByIDButt.Size = new System.Drawing.Size(230, 46);
+            this.areaSelByIDButt.Size = new System.Drawing.Size(188, 38);
             this.areaSelByIDButt.TabIndex = 47;
             this.areaSelByIDButt.Text = "Sel. by ID";
             this.areaSelByIDButt.UseVisualStyleBackColor = true;
@@ -713,11 +690,11 @@
             this.groupBox8.Controls.Add(this.printFrameSectionCheck);
             this.groupBox8.Controls.Add(this.printFrameCoordCheck);
             this.groupBox8.Controls.Add(this.setFrameUn);
-            this.groupBox8.Location = new System.Drawing.Point(7, 724);
-            this.groupBox8.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.groupBox8.Location = new System.Drawing.Point(6, 603);
+            this.groupBox8.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Padding = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.groupBox8.Size = new System.Drawing.Size(501, 427);
+            this.groupBox8.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.groupBox8.Size = new System.Drawing.Size(410, 356);
             this.groupBox8.TabIndex = 48;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Frame Tools";
@@ -725,10 +702,10 @@
             // setFrameSection
             // 
             this.setFrameSection.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setFrameSection.Location = new System.Drawing.Point(262, 322);
-            this.setFrameSection.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.setFrameSection.Location = new System.Drawing.Point(214, 268);
+            this.setFrameSection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setFrameSection.Name = "setFrameSection";
-            this.setFrameSection.Size = new System.Drawing.Size(230, 46);
+            this.setFrameSection.Size = new System.Drawing.Size(188, 38);
             this.setFrameSection.TabIndex = 60;
             this.setFrameSection.Text = "Set Section";
             this.setFrameSection.UseVisualStyleBackColor = true;
@@ -737,20 +714,20 @@
             // dispFrameUnOffsetColNum
             // 
             this.dispFrameUnOffsetColNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispFrameUnOffsetColNum.Location = new System.Drawing.Point(242, 382);
-            this.dispFrameUnOffsetColNum.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.dispFrameUnOffsetColNum.Location = new System.Drawing.Point(198, 318);
+            this.dispFrameUnOffsetColNum.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dispFrameUnOffsetColNum.Name = "dispFrameUnOffsetColNum";
-            this.dispFrameUnOffsetColNum.Size = new System.Drawing.Size(246, 29);
+            this.dispFrameUnOffsetColNum.Size = new System.Drawing.Size(202, 26);
             this.dispFrameUnOffsetColNum.TabIndex = 49;
             this.dispFrameUnOffsetColNum.WordWrap = false;
             // 
             // label5
             // 
             this.label5.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label5.Location = new System.Drawing.Point(11, 373);
-            this.label5.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label5.Location = new System.Drawing.Point(9, 311);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(220, 46);
+            this.label5.Size = new System.Drawing.Size(180, 38);
             this.label5.TabIndex = 50;
             this.label5.Text = "Offset Columns";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -758,10 +735,9 @@
             // getOtherFrameCheck
             // 
             this.getOtherFrameCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getOtherFrameCheck.Location = new System.Drawing.Point(252, 281);
-            this.getOtherFrameCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.getOtherFrameCheck.Location = new System.Drawing.Point(206, 234);
             this.getOtherFrameCheck.Name = "getOtherFrameCheck";
-            this.getOtherFrameCheck.Size = new System.Drawing.Size(230, 31);
+            this.getOtherFrameCheck.Size = new System.Drawing.Size(188, 26);
             this.getOtherFrameCheck.TabIndex = 59;
             this.getOtherFrameCheck.Text = "Other";
             this.getOtherFrameCheck.UseVisualStyleBackColor = true;
@@ -769,10 +745,9 @@
             // getNullFrameCheck
             // 
             this.getNullFrameCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getNullFrameCheck.Location = new System.Drawing.Point(252, 242);
-            this.getNullFrameCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.getNullFrameCheck.Location = new System.Drawing.Point(206, 202);
             this.getNullFrameCheck.Name = "getNullFrameCheck";
-            this.getNullFrameCheck.Size = new System.Drawing.Size(230, 31);
+            this.getNullFrameCheck.Size = new System.Drawing.Size(188, 26);
             this.getNullFrameCheck.TabIndex = 58;
             this.getNullFrameCheck.Text = "Null";
             this.getNullFrameCheck.UseVisualStyleBackColor = true;
@@ -780,10 +755,9 @@
             // getBraceCheck
             // 
             this.getBraceCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getBraceCheck.Location = new System.Drawing.Point(252, 203);
-            this.getBraceCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.getBraceCheck.Location = new System.Drawing.Point(206, 169);
             this.getBraceCheck.Name = "getBraceCheck";
-            this.getBraceCheck.Size = new System.Drawing.Size(230, 31);
+            this.getBraceCheck.Size = new System.Drawing.Size(188, 26);
             this.getBraceCheck.TabIndex = 57;
             this.getBraceCheck.Text = "Brace";
             this.getBraceCheck.UseVisualStyleBackColor = true;
@@ -792,11 +766,11 @@
             // 
             this.textBox6.BackColor = System.Drawing.SystemColors.Control;
             this.textBox6.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox6.Location = new System.Drawing.Point(252, 92);
-            this.textBox6.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.textBox6.Location = new System.Drawing.Point(206, 77);
+            this.textBox6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
-            this.textBox6.Size = new System.Drawing.Size(183, 22);
+            this.textBox6.Size = new System.Drawing.Size(150, 19);
             this.textBox6.TabIndex = 56;
             this.textBox6.TabStop = false;
             this.textBox6.Text = "Filters";
@@ -804,10 +778,9 @@
             // getBeamCheck
             // 
             this.getBeamCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getBeamCheck.Location = new System.Drawing.Point(252, 164);
-            this.getBeamCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.getBeamCheck.Location = new System.Drawing.Point(206, 137);
             this.getBeamCheck.Name = "getBeamCheck";
-            this.getBeamCheck.Size = new System.Drawing.Size(230, 31);
+            this.getBeamCheck.Size = new System.Drawing.Size(188, 26);
             this.getBeamCheck.TabIndex = 55;
             this.getBeamCheck.Text = "Beam";
             this.getBeamCheck.UseVisualStyleBackColor = true;
@@ -815,10 +788,9 @@
             // getColCheck
             // 
             this.getColCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getColCheck.Location = new System.Drawing.Point(252, 126);
-            this.getColCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.getColCheck.Location = new System.Drawing.Point(206, 105);
             this.getColCheck.Name = "getColCheck";
-            this.getColCheck.Size = new System.Drawing.Size(230, 31);
+            this.getColCheck.Size = new System.Drawing.Size(188, 26);
             this.getColCheck.TabIndex = 54;
             this.getColCheck.Text = "Column";
             this.getColCheck.UseVisualStyleBackColor = true;
@@ -827,10 +799,9 @@
             // 
             this.printFrameLabelCheck.AutoSize = true;
             this.printFrameLabelCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printFrameLabelCheck.Location = new System.Drawing.Point(15, 126);
-            this.printFrameLabelCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printFrameLabelCheck.Location = new System.Drawing.Point(12, 105);
             this.printFrameLabelCheck.Name = "printFrameLabelCheck";
-            this.printFrameLabelCheck.Size = new System.Drawing.Size(96, 29);
+            this.printFrameLabelCheck.Size = new System.Drawing.Size(82, 24);
             this.printFrameLabelCheck.TabIndex = 53;
             this.printFrameLabelCheck.Text = "Labels";
             this.printFrameLabelCheck.UseVisualStyleBackColor = true;
@@ -839,11 +810,11 @@
             // 
             this.textBox5.BackColor = System.Drawing.SystemColors.Control;
             this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox5.Location = new System.Drawing.Point(11, 92);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.textBox5.Location = new System.Drawing.Point(9, 77);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(183, 22);
+            this.textBox5.Size = new System.Drawing.Size(150, 19);
             this.textBox5.TabIndex = 52;
             this.textBox5.TabStop = false;
             this.textBox5.Text = "Active Fields";
@@ -851,10 +822,10 @@
             // getColUn
             // 
             this.getColUn.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getColUn.Location = new System.Drawing.Point(11, 35);
-            this.getColUn.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getColUn.Location = new System.Drawing.Point(9, 29);
+            this.getColUn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getColUn.Name = "getColUn";
-            this.getColUn.Size = new System.Drawing.Size(230, 46);
+            this.getColUn.Size = new System.Drawing.Size(188, 38);
             this.getColUn.TabIndex = 47;
             this.getColUn.Text = "Get UN";
             this.getColUn.UseVisualStyleBackColor = true;
@@ -864,10 +835,9 @@
             // 
             this.printFrameSectionCheck.AutoSize = true;
             this.printFrameSectionCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printFrameSectionCheck.Location = new System.Drawing.Point(15, 203);
-            this.printFrameSectionCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printFrameSectionCheck.Location = new System.Drawing.Point(12, 169);
             this.printFrameSectionCheck.Name = "printFrameSectionCheck";
-            this.printFrameSectionCheck.Size = new System.Drawing.Size(171, 29);
+            this.printFrameSectionCheck.Size = new System.Drawing.Size(143, 24);
             this.printFrameSectionCheck.TabIndex = 50;
             this.printFrameSectionCheck.Text = "Section Names";
             this.printFrameSectionCheck.UseVisualStyleBackColor = true;
@@ -876,10 +846,9 @@
             // 
             this.printFrameCoordCheck.AutoSize = true;
             this.printFrameCoordCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printFrameCoordCheck.Location = new System.Drawing.Point(15, 164);
-            this.printFrameCoordCheck.Margin = new System.Windows.Forms.Padding(4);
+            this.printFrameCoordCheck.Location = new System.Drawing.Point(12, 137);
             this.printFrameCoordCheck.Name = "printFrameCoordCheck";
-            this.printFrameCoordCheck.Size = new System.Drawing.Size(144, 29);
+            this.printFrameCoordCheck.Size = new System.Drawing.Size(121, 24);
             this.printFrameCoordCheck.TabIndex = 48;
             this.printFrameCoordCheck.Text = "Coordinates";
             this.printFrameCoordCheck.UseVisualStyleBackColor = true;
@@ -887,10 +856,10 @@
             // setFrameUn
             // 
             this.setFrameUn.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setFrameUn.Location = new System.Drawing.Point(11, 322);
-            this.setFrameUn.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.setFrameUn.Location = new System.Drawing.Point(9, 268);
+            this.setFrameUn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setFrameUn.Name = "setFrameUn";
-            this.setFrameUn.Size = new System.Drawing.Size(230, 46);
+            this.setFrameUn.Size = new System.Drawing.Size(188, 38);
             this.setFrameUn.TabIndex = 49;
             this.setFrameUn.Text = "Set UN";
             this.setFrameUn.UseVisualStyleBackColor = true;
@@ -902,11 +871,11 @@
             this.selectGroupBox.Controls.Add(this.getWallUNBut);
             this.selectGroupBox.Controls.Add(this.getWallPierBut);
             this.selectGroupBox.Controls.Add(this.setWallPierBut);
-            this.selectGroupBox.Location = new System.Drawing.Point(7, 498);
-            this.selectGroupBox.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.selectGroupBox.Location = new System.Drawing.Point(6, 415);
+            this.selectGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.selectGroupBox.Name = "selectGroupBox";
-            this.selectGroupBox.Padding = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.selectGroupBox.Size = new System.Drawing.Size(501, 214);
+            this.selectGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.selectGroupBox.Size = new System.Drawing.Size(410, 178);
             this.selectGroupBox.TabIndex = 47;
             this.selectGroupBox.TabStop = false;
             this.selectGroupBox.Text = "Get, Select, Sets";
@@ -914,10 +883,10 @@
             // getPilingForces
             // 
             this.getPilingForces.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getPilingForces.Location = new System.Drawing.Point(252, 35);
-            this.getPilingForces.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getPilingForces.Location = new System.Drawing.Point(206, 29);
+            this.getPilingForces.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getPilingForces.Name = "getPilingForces";
-            this.getPilingForces.Size = new System.Drawing.Size(230, 46);
+            this.getPilingForces.Size = new System.Drawing.Size(188, 38);
             this.getPilingForces.TabIndex = 46;
             this.getPilingForces.Text = "Get Piling Forces";
             this.getPilingForces.UseVisualStyleBackColor = true;
@@ -926,10 +895,10 @@
             // getWallUNBut
             // 
             this.getWallUNBut.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getWallUNBut.Location = new System.Drawing.Point(11, 35);
-            this.getWallUNBut.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getWallUNBut.Location = new System.Drawing.Point(9, 29);
+            this.getWallUNBut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getWallUNBut.Name = "getWallUNBut";
-            this.getWallUNBut.Size = new System.Drawing.Size(230, 46);
+            this.getWallUNBut.Size = new System.Drawing.Size(188, 38);
             this.getWallUNBut.TabIndex = 43;
             this.getWallUNBut.Text = "Get Wall UN";
             this.getWallUNBut.UseVisualStyleBackColor = true;
@@ -938,10 +907,10 @@
             // getWallPierBut
             // 
             this.getWallPierBut.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getWallPierBut.Location = new System.Drawing.Point(11, 94);
-            this.getWallPierBut.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.getWallPierBut.Location = new System.Drawing.Point(9, 78);
+            this.getWallPierBut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getWallPierBut.Name = "getWallPierBut";
-            this.getWallPierBut.Size = new System.Drawing.Size(230, 46);
+            this.getWallPierBut.Size = new System.Drawing.Size(188, 38);
             this.getWallPierBut.TabIndex = 44;
             this.getWallPierBut.Text = "Get Wall Pier";
             this.getWallPierBut.UseVisualStyleBackColor = true;
@@ -950,10 +919,10 @@
             // setWallPierBut
             // 
             this.setWallPierBut.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setWallPierBut.Location = new System.Drawing.Point(11, 151);
-            this.setWallPierBut.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.setWallPierBut.Location = new System.Drawing.Point(9, 126);
+            this.setWallPierBut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setWallPierBut.Name = "setWallPierBut";
-            this.setWallPierBut.Size = new System.Drawing.Size(230, 46);
+            this.setWallPierBut.Size = new System.Drawing.Size(188, 38);
             this.setWallPierBut.TabIndex = 45;
             this.setWallPierBut.Text = "Set Wall Pier";
             this.setWallPierBut.UseVisualStyleBackColor = true;
@@ -969,11 +938,11 @@
             this.errorGroupBox.Controls.Add(this.openLog);
             this.errorGroupBox.Controls.Add(this.textBox1);
             this.errorGroupBox.Controls.Add(this.textBox3);
-            this.errorGroupBox.Location = new System.Drawing.Point(7, 170);
-            this.errorGroupBox.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.errorGroupBox.Location = new System.Drawing.Point(6, 142);
+            this.errorGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.errorGroupBox.Name = "errorGroupBox";
-            this.errorGroupBox.Padding = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.errorGroupBox.Size = new System.Drawing.Size(501, 318);
+            this.errorGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.errorGroupBox.Size = new System.Drawing.Size(410, 265);
             this.errorGroupBox.TabIndex = 46;
             this.errorGroupBox.TabStop = false;
             this.errorGroupBox.Text = "Error Checking";
@@ -981,10 +950,10 @@
             // groupAndImportLog
             // 
             this.groupAndImportLog.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.groupAndImportLog.Location = new System.Drawing.Point(11, 162);
-            this.groupAndImportLog.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.groupAndImportLog.Location = new System.Drawing.Point(9, 135);
+            this.groupAndImportLog.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupAndImportLog.Name = "groupAndImportLog";
-            this.groupAndImportLog.Size = new System.Drawing.Size(230, 46);
+            this.groupAndImportLog.Size = new System.Drawing.Size(188, 38);
             this.groupAndImportLog.TabIndex = 43;
             this.groupAndImportLog.Text = "Import .LOG";
             this.groupAndImportLog.UseVisualStyleBackColor = true;
@@ -993,10 +962,10 @@
             // findSlantedWalls
             // 
             this.findSlantedWalls.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.findSlantedWalls.Location = new System.Drawing.Point(11, 254);
-            this.findSlantedWalls.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.findSlantedWalls.Location = new System.Drawing.Point(9, 212);
+            this.findSlantedWalls.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.findSlantedWalls.Name = "findSlantedWalls";
-            this.findSlantedWalls.Size = new System.Drawing.Size(230, 46);
+            this.findSlantedWalls.Size = new System.Drawing.Size(188, 38);
             this.findSlantedWalls.TabIndex = 44;
             this.findSlantedWalls.Text = "Find Slanted Walls";
             this.findSlantedWalls.UseVisualStyleBackColor = true;
@@ -1006,11 +975,11 @@
             // 
             this.textBox2.BackColor = System.Drawing.SystemColors.Control;
             this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.Location = new System.Drawing.Point(11, 220);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.textBox2.Location = new System.Drawing.Point(9, 183);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(183, 22);
+            this.textBox2.Size = new System.Drawing.Size(150, 19);
             this.textBox2.TabIndex = 51;
             this.textBox2.TabStop = false;
             this.textBox2.Text = "Others";
@@ -1018,10 +987,10 @@
             // openWRN
             // 
             this.openWRN.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.openWRN.Location = new System.Drawing.Point(260, 70);
-            this.openWRN.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.openWRN.Location = new System.Drawing.Point(213, 58);
+            this.openWRN.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.openWRN.Name = "openWRN";
-            this.openWRN.Size = new System.Drawing.Size(230, 46);
+            this.openWRN.Size = new System.Drawing.Size(188, 38);
             this.openWRN.TabIndex = 50;
             this.openWRN.Text = "Open Wrn";
             this.openWRN.UseVisualStyleBackColor = true;
@@ -1030,10 +999,10 @@
             // groupAndImportWrn
             // 
             this.groupAndImportWrn.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.groupAndImportWrn.Location = new System.Drawing.Point(11, 70);
-            this.groupAndImportWrn.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.groupAndImportWrn.Location = new System.Drawing.Point(9, 58);
+            this.groupAndImportWrn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupAndImportWrn.Name = "groupAndImportWrn";
-            this.groupAndImportWrn.Size = new System.Drawing.Size(230, 46);
+            this.groupAndImportWrn.Size = new System.Drawing.Size(188, 38);
             this.groupAndImportWrn.TabIndex = 49;
             this.groupAndImportWrn.Text = "Import .WRN";
             this.groupAndImportWrn.UseVisualStyleBackColor = true;
@@ -1042,10 +1011,10 @@
             // openLog
             // 
             this.openLog.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.openLog.Location = new System.Drawing.Point(260, 162);
-            this.openLog.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.openLog.Location = new System.Drawing.Point(213, 135);
+            this.openLog.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.openLog.Name = "openLog";
-            this.openLog.Size = new System.Drawing.Size(230, 46);
+            this.openLog.Size = new System.Drawing.Size(188, 38);
             this.openLog.TabIndex = 48;
             this.openLog.Text = "Open Log";
             this.openLog.UseVisualStyleBackColor = true;
@@ -1055,11 +1024,11 @@
             // 
             this.textBox1.BackColor = System.Drawing.SystemColors.Control;
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Location = new System.Drawing.Point(11, 127);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.textBox1.Location = new System.Drawing.Point(9, 106);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(220, 22);
+            this.textBox1.Size = new System.Drawing.Size(180, 19);
             this.textBox1.TabIndex = 47;
             this.textBox1.TabStop = false;
             this.textBox1.Text = "Analysis Errors (.LOG)";
@@ -1068,11 +1037,11 @@
             // 
             this.textBox3.BackColor = System.Drawing.SystemColors.Control;
             this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox3.Location = new System.Drawing.Point(11, 35);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.textBox3.Location = new System.Drawing.Point(9, 29);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(220, 22);
+            this.textBox3.Size = new System.Drawing.Size(180, 19);
             this.textBox3.TabIndex = 46;
             this.textBox3.TabStop = false;
             this.textBox3.Text = "Check Model (.WRN)";
@@ -1081,11 +1050,9 @@
             // 
             this.groupBox4.Controls.Add(this.replicateBySpacingDisp);
             this.groupBox4.Controls.Add(this.replicateByDispBut);
-            this.groupBox4.Location = new System.Drawing.Point(7, 7);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox4.Location = new System.Drawing.Point(6, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox4.Size = new System.Drawing.Size(502, 154);
+            this.groupBox4.Size = new System.Drawing.Size(411, 128);
             this.groupBox4.TabIndex = 35;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Replicate";
@@ -1093,10 +1060,10 @@
             // replicateBySpacingDisp
             // 
             this.replicateBySpacingDisp.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.replicateBySpacingDisp.Location = new System.Drawing.Point(10, 89);
-            this.replicateBySpacingDisp.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.replicateBySpacingDisp.Location = new System.Drawing.Point(8, 74);
+            this.replicateBySpacingDisp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.replicateBySpacingDisp.Name = "replicateBySpacingDisp";
-            this.replicateBySpacingDisp.Size = new System.Drawing.Size(230, 46);
+            this.replicateBySpacingDisp.Size = new System.Drawing.Size(188, 38);
             this.replicateBySpacingDisp.TabIndex = 42;
             this.replicateBySpacingDisp.Text = "Replicate by Spacing";
             this.replicateBySpacingDisp.UseVisualStyleBackColor = true;
@@ -1105,10 +1072,10 @@
             // replicateByDispBut
             // 
             this.replicateByDispBut.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.replicateByDispBut.Location = new System.Drawing.Point(10, 31);
-            this.replicateByDispBut.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.replicateByDispBut.Location = new System.Drawing.Point(8, 26);
+            this.replicateByDispBut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.replicateByDispBut.Name = "replicateByDispBut";
-            this.replicateByDispBut.Size = new System.Drawing.Size(230, 46);
+            this.replicateByDispBut.Size = new System.Drawing.Size(188, 38);
             this.replicateByDispBut.TabIndex = 30;
             this.replicateByDispBut.Text = "Replicate by Disp.";
             this.replicateByDispBut.UseVisualStyleBackColor = true;
@@ -1116,13 +1083,13 @@
             // 
             // ETABSTaskPane
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.Controls.Add(this.EtabsTabGroup);
-            this.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "ETABSTaskPane";
-            this.Size = new System.Drawing.Size(550, 1499);
+            this.Size = new System.Drawing.Size(450, 1459);
             this.EtabsTabGroup.ResumeLayout(false);
             this.windLoadPage.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
