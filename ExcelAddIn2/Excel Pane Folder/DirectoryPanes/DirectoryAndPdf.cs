@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Microsoft.Office.Interop.Excel;
+﻿using ExcelAddIn2.Excel_Pane_Folder;
 using Microsoft.Office.Core;
-using System.IO;
-using ExcelAddIn2.Excel_Pane_Folder;
-using System.Threading;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
-using PdfSharp.Drawing;
-using PdfSharp.Drawing.Layout;
+using Microsoft.Office.Interop.Excel;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering;
-using static ExcelAddIn2.CommonUtilities;
-using TextBox = System.Windows.Forms.TextBox;
-using Application = Microsoft.Office.Interop.Excel.Application;
-using System.Runtime.CompilerServices;
+using PdfSharp.Drawing;
+using PdfSharp.Drawing.Layout;
+using PdfSharp.Fonts;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
-using System.Xml.Linq;
-using static System.Net.WebRequestMethods;
-using File = System.IO.File;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml.Linq;
+using static ExcelAddIn2.CommonUtilities;
+using static System.Net.WebRequestMethods;
+using Application = Microsoft.Office.Interop.Excel.Application;
+using File = System.IO.File;
+using TextBox = System.Windows.Forms.TextBox;
 
 
 namespace ExcelAddIn2.Excel_Pane_Folder
@@ -49,6 +50,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             CreateAttributes();
             AddToolTips();
             AddHeaders();
+            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
         }
 
         private void AddHeaders()

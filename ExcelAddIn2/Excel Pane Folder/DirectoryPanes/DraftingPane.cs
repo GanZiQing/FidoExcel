@@ -34,8 +34,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             CreateAttributes();
             AddToolTips();
             AddHeaders();
-        }     
-        
+        }
+
         private void AddHeaders()
         {
             //List<string> headers = new List<string>

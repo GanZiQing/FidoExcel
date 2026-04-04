@@ -954,7 +954,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             SendKeys.SendWait("^p"); 
             System.Threading.Thread.Sleep(loadDelay); // Wait to load
             SendKeys.SendWait(" ");
-            System.Threading.Thread.Sleep(loadDel); // Wait to load
+            System.Threading.Thread.Sleep(loadDelay); // Wait to load
             SendKeys.SendWait(fileName);
             System.Threading.Thread.Sleep(loadDelay/2); // Wait to load
             SendKeys.SendWait("{ENTER}");
