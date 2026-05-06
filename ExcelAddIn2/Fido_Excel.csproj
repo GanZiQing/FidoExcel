@@ -317,6 +317,12 @@
     <Compile Include="Excel Pane Folder\ETABS\ETABSTaskPaneUtilities.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Excel Pane Folder\HDB Design\BeamCheck.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Excel Pane Folder\HDB Design\BeamCheck.Designer.cs">
+      <DependentUpon>BeamCheck.cs</DependentUpon>
+    </Compile>
     <Compile Include="Excel Pane Folder\HDB Design\WallCheckPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -459,6 +465,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\DirectoryPanes\DraftingPane.resx">
       <DependentUpon>DraftingPane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Excel Pane Folder\HDB Design\BeamCheck.resx">
+      <DependentUpon>BeamCheck.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Excel Pane Folder\HDB Design\WallCheckPane.resx">
       <DependentUpon>WallCheckPane.cs</DependentUpon>

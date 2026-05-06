@@ -35,6 +35,7 @@ namespace ExcelAddIn2
             InitializeComponent();
             CreateAttributes();
             AddHeaders();
+            AddHeadersUtilities();
             AddToolTips();
         }
 
@@ -1263,6 +1264,9 @@ namespace ExcelAddIn2
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
         }
+
+
+
 
 
 

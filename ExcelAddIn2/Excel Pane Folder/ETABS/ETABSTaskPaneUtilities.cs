@@ -18,6 +18,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -66,6 +67,11 @@ namespace ExcelAddIn2
             //thisAtt = new CheckBoxAttribute("designWall_EtabsUtil", designWallCheck, false);
             //attributeDic.Add(thisAtt.attName, thisAtt);
             #endregion
+
+            #region Set Group
+            thisAtt = new CheckBoxAttribute("gpFirstStyOnlyCheck_EtabsUtil", gpFirstStyOnlyCheck, false);
+            attributeDic.Add(thisAtt.attName, thisAtt);
+            #endregion
         }
         private void AddToolTipsForUtilities()
         {
@@ -75,7 +81,29 @@ namespace ExcelAddIn2
             toolTip1.SetToolTip(setFrameUn,
                 "Select 1 column of UN, new unique name to be provided in column n, error output will be printed in column n+1\n" +
                 "Where n is the UN column + no. columns defined in \"OffsetColumns\"");
+
+            #region Group Assign
+            toolTip1.SetToolTip(setFrameGroup,
+                "Select 1 column of UN, group name to be provided in column n, error output will be copied to clipboard\n" +
+                "Where n is the UN column + no. columns defined in \"OffsetColumns\"");
+
+            toolTip1.SetToolTip(setAreaGroup,
+                "Select 1 column of UN, group name to be provided in column n, error output will be copied to clipboard\n" +
+                "Where n is the UN column + no. columns defined in \"OffsetColumns\"");
+            
+            toolTip1.SetToolTip(setPierLabelGroup,
+                "Select 1 column of Pier Label, group name to be provided in column n, error output will be copied to clipboard\n" +
+                "Where n is the UN column + no. columns defined in \"OffsetColumns\"");
+            
+            toolTip1.SetToolTip(gpFirstStyOnlyCheck,
+                "If checked, group by will only group objects on first storey");
+            #endregion
         }
+        private void AddHeadersUtilities()
+        {
+
+        }
+
         #endregion
 
         #region Frame Tools
@@ -492,11 +520,11 @@ namespace ExcelAddIn2
                 #region Report Status
                 if (areaNotFound.Count == 0)
                 {
-                    MessageBox.Show("All Areas Selected Successfully", "Success");
+                    MessageBox.Show($"All {areaLabels.Count()} area(s) selected successfully", "Success");
                 }
                 else
                 {
-                    string errorMessage = "The following Areas could not be found:\n";
+                    string errorMessage = "The following area(s) could not be found:\n";
                     foreach (string area in areaNotFound)
                     {
                         errorMessage += $"- {area}\n";
@@ -520,7 +548,6 @@ namespace ExcelAddIn2
 
                 #region Select in ETABS
                 InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
-                string[] allStoryNames = GetStoreyNames(sapModel);
                 int ret = -1;
 
                 List<string> areaNotFound = new List<string>();
@@ -538,11 +565,11 @@ namespace ExcelAddIn2
                 #region Report Status
                 if (areaNotFound.Count == 0)
                 {
-                    MessageBox.Show("All Areas Selected Successfully", "Success");
+                    MessageBox.Show($"All {areaUNs.Count()} area(s) selected successfully", "Success");
                 }
                 else
                 {
-                    string errorMessage = "The following Areas could not be found:\n";
+                    string errorMessage = "The following area(s) could not be found:\n";
                     foreach (string area in areaNotFound)
                     {
                         errorMessage += $"- {area}\n";
@@ -555,7 +582,124 @@ namespace ExcelAddIn2
         }
         #endregion
 
+        #region Frame Selects
+        private (bool, string) FindAndSelFrameByLabel(cSapModel sapModel, string label, string storeyName)
+        {
+            try
+            {
+                string un = "";
+                int ret;
+                ret = sapModel.FrameObj.GetNameFromLabel(label, storeyName, ref un);
+                if (ret != 0) { throw new Exception("Unable to find label"); }
+
+                ret = sapModel.FrameObj.SetSelected(un, true);
+                if (ret != 0) { throw new Exception("Unable to select frame"); }
+                return (true, un);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+        private void frameSelByIDButt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                Range activeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                HashSet<string> labels = GetContentsAsStringHash(activeRange);
+                if (labels.Count == 0) { throw new Exception("No frame selected in Excel"); }
+                #endregion
+
+                #region Select in ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                string[] allStoryNames = GetStoreyNames(sapModel);
+
+                List<string> notFound = new List<string>();
+
+                foreach (string label in labels)
+                {
+                    int successCount = 0;
+                    foreach (string story in allStoryNames)
+                    {
+                        (bool success, _) = FindAndSelFrameByLabel(sapModel, label, story);
+                        if (success) { successCount += 1; }
+                    }
+                    if (successCount == 0)
+                    {
+                        notFound.Add(label);
+                    }
+                }
+
+                #endregion
+
+                #region Report Status
+                if (notFound.Count == 0)
+                {
+                    MessageBox.Show($"All {labels.Count()} frame lable(s) selected successfully", "Success");
+                }
+                else
+                {
+                    string errorMessage = "The following Areas could not be found:\n";
+                    foreach (string frame in notFound)
+                    {
+                        errorMessage += $"- {frame}\n";
+                    }
+                    MessageBox.Show(errorMessage, "Warning");
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        private void frameSelByUNButt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                Range activeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                HashSet<string> uNs = GetContentsAsStringHash(activeRange);
+                if (uNs.Count == 0) { throw new Exception("No frame selected in Excel"); }
+                #endregion
+
+                #region Select in ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                string[] allStoryNames = GetStoreyNames(sapModel);
+                int ret = -1;
+
+                List<string> notFound = new List<string>();
+
+                foreach (string uN in uNs)
+                {
+                    ret = sapModel.FrameObj.SetSelected(uN, true);
+                    if (ret != 0)
+                    {
+                        notFound.Add(uN);
+                    }
+                }
+                #endregion
+
+                #region Report Status
+                if (notFound.Count == 0)
+                {
+                    MessageBox.Show($"All {uNs.Count()} frame(s) selected successfully", "Success");
+                }
+                else
+                {
+                    string errorMessage = "The following frames could not be found:\n";
+                    foreach (string area in notFound)
+                    {
+                        errorMessage += $"- {area}\n";
+                    }
+                    MessageBox.Show(errorMessage, "Warning");
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
+
         #region Run and Design
+        // Not Used
         private void runAndDesign_Click(object sender, EventArgs e)
         {
             // Not used because it locks up excel during process
@@ -573,7 +717,7 @@ namespace ExcelAddIn2
             //    }
 
             //    string fullPath = sapModel.GetModelFilename();
-                
+
             //    string msg = $"Run and analayse for model named {Path.GetFileName(fullPath)} saved at {Path.GetDirectoryName(fullPath)}?";
             //    DialogResult res = MessageBox.Show(msg, "Confirmation", MessageBoxButtons.OKCancel);
             //    if (res != DialogResult.OK) { throw new Exception("Process terminated by user"); }
@@ -602,5 +746,223 @@ namespace ExcelAddIn2
         }
         #endregion
 
+        #region Set Groups
+
+        private void setFrameGroup_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                string[] labels;
+                string[] groups;
+                {
+                    Range labelRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                    Range groupRange = labelRange.Offset[0, 1];
+                    CheckRangeSize(labelRange, 0, 1, "Group Assign");
+
+                    int offsetColNum = ((AttributeTextBox)attributeDic["frameUnOffsetColNum_EtabsUtil"]).GetIntFromTextBox();
+                    if (offsetColNum < 1) { throw new Exception("Offset Column Number must be greater than or equal to 1."); }
+
+                    labels = GetContentsAsStringArray(labelRange, false);
+                    groups = GetContentsAsStringArray(groupRange, false);
+                }
+                string[] status = new string[labels.Length];
+                
+                #endregion
+
+                #region ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                CreateGroupIfNotExist(sapModel, groups);
+                int failed = 0;
+
+                for (int i = 0; i < labels.Length; i++)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(labels[i])) { continue; }
+                        string label = labels[i];
+                        string group = groups[i];
+                        int ret = sapModel.FrameObj.SetGroupAssign(label, group);
+                        if (ret != 0) { throw new Exception($"Error setting group for frame with label {label}"); }
+                    }
+                    catch (Exception ex)
+                    {
+                        status[i] = $"Error: {ex.Message}";
+                        failed += 1;
+                    }
+                }
+                #endregion
+                #region Report Status
+                if (failed == 0)
+                {
+                    MessageBox.Show($"All {labels.Count()} groups assigned successfully.", "Success");
+                }
+                else
+                {
+                    
+                    string errorMessage = $"Failed to assign groups for {failed} objects\nCopy status to clipboard?";
+                    DialogResult res = MessageBox.Show(errorMessage, "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if (res == DialogResult.Yes)
+                    {
+                        string textToCopy = string.Join(Environment.NewLine, status);
+                        Clipboard.SetText(textToCopy);
+                    }
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+
+        private void setAreaGroup_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                string[] labels;
+                string[] groups;
+                {
+                    Range labelRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                    Range groupRange = labelRange.Offset[0, 1];
+                    CheckRangeSize(labelRange, 0, 1, "Group Assign");
+
+                    int offsetColNum = ((AttributeTextBox)attributeDic["frameUnOffsetColNum_EtabsUtil"]).GetIntFromTextBox();
+                    if (offsetColNum < 1) { throw new Exception("Offset Column Number must be greater than or equal to 1."); }
+
+                    labels = GetContentsAsStringArray(labelRange, false);
+                    groups = GetContentsAsStringArray(groupRange, false);
+                }
+                string[] status = new string[labels.Length];
+
+                #endregion
+
+                #region ETABS
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+                CreateGroupIfNotExist(sapModel, groups);
+                int failed = 0;
+
+                for (int i = 0; i < labels.Length; i++)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(labels[i])) { continue; }
+                        string label = labels[i];
+                        string group = groups[i];
+                        int ret = sapModel.AreaObj.SetGroupAssign(label, group);
+                        if (ret != 0) { throw new Exception($"Error setting group for frame with label {label}"); }
+                    }
+                    catch (Exception ex)
+                    {
+                        status[i] = $"Error: {ex.Message}";
+                        failed += 1;
+                    }
+                }
+                #endregion
+                #region Report Status
+                if (failed == 0)
+                {
+                    MessageBox.Show($"All {labels.Count()} groups assigned successfully.", "Success");
+                }
+                else
+                {
+
+                    string errorMessage = $"Failed to assign groups for {failed} objects\nCopy status to clipboard?";
+                    DialogResult res = MessageBox.Show(errorMessage, "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if (res == DialogResult.Yes)
+                    {
+                        string textToCopy = string.Join(Environment.NewLine, status);
+                        Clipboard.SetText(textToCopy);
+                    }
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+
+        private void setPierLabelGroup_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                string[] labels;
+                string[] groups;
+                {
+                    Range labelRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                    Range groupRange = labelRange.Offset[0, 1];
+                    CheckRangeSize(labelRange, 0, 1, "Group Assign");
+
+                    int offsetColNum = ((AttributeTextBox)attributeDic["frameUnOffsetColNum_EtabsUtil"]).GetIntFromTextBox();
+                    if (offsetColNum < 1) { throw new Exception("Offset Column Number must be greater than or equal to 1."); }
+
+                    labels = GetContentsAsStringArray(labelRange, false);
+                    groups = GetContentsAsStringArray(groupRange, false);
+                }
+                string[] status = new string[labels.Length];
+
+                #endregion
+
+                #region ETABS Get Wall UN in Pier Labels
+                InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
+
+                Dictionary<string, List<string>> labelToUnMap;
+                int ret;
+                if (gpFirstStyOnlyCheck.Checked)
+                {
+                    string firstStorey = GetFirstStoreyName(sapModel);
+                    //ret = sapModel.AreaObj.GetNameListOnStory(pierLabel, ref int numNames, ref string[] names);
+                    labelToUnMap = GetWallUNFromPierLabel(sapModel, labels, firstStorey);
+                }
+                else
+                {
+                    labelToUnMap = GetWallUNFromPierLabel(sapModel, labels);
+                }
+
+                    #endregion
+
+                    #region Assign Group
+                    CreateGroupIfNotExist(sapModel, groups);
+                int failed = 0;
+
+                for (int i = 0; i < labels.Length; i++)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(labels[i])) { continue; }
+                        string pierLabel = labels[i];
+                        string group = groups[i];
+
+                        foreach (string un in labelToUnMap[pierLabel])
+                        {
+                            int ret2 = sapModel.AreaObj.SetGroupAssign(un, groups[i]);
+                            if (ret2 != 0) { throw new Exception($"Error setting group for wall with UN {un} in pier with label {labels[i]}"); }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        status[i] = $"Error: {ex.Message}";
+                        failed += 1;
+                    }
+                }
+                #endregion
+
+                #region Report Status
+                if (failed == 0)
+                {
+                    MessageBox.Show($"All {labels.Count()} groups assigned successfully.", "Success");
+                }
+                else
+                {
+                    string errorMessage = $"Failed to assign groups for {failed} objects\nCopy status to clipboard?";
+                    DialogResult res = MessageBox.Show(errorMessage, "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if (res == DialogResult.Yes)
+                    {
+                        string textToCopy = string.Join(Environment.NewLine, status);
+                        Clipboard.SetText(textToCopy);
+                    }
+                }
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
     }
 }

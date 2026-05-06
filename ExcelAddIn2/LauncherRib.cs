@@ -366,6 +366,29 @@ namespace ExcelAddIn2
         }
         #endregion
 
+        #region Beam Design 2
+        private List<CustomTaskPane> beamCheckList = new List<CustomTaskPane>();
+        private void beamDesign2_Click(object sender, RibbonControlEventArgs e)
+        {
+            int NumPanes = 1;
+            List<CustomTaskPane> thisPaneList = beamCheckList;
+            string title = "Beam Check Tools";
+
+            #region Default Code - Replace Task Pane Type
+            List<CustomTaskPane> windowTaskPane = GetWindowPanes(ref thisPaneList);
+
+            if (windowTaskPane.Count < NumPanes) // add new panes to list 
+            {
+                AddPane<BeamCheck>(ref thisPaneList, title);
+            }
+            else // Start toggling visibility of lists
+            {
+                TogglePaneVisibility(windowTaskPane, NumPanes);
+            }
+            #endregion
+        }
+        #endregion
+
         #region AutoCAD
 
         private List<CustomTaskPane> autoCadList = new List<CustomTaskPane>();
@@ -389,6 +412,5 @@ namespace ExcelAddIn2
             #endregion
         }
         #endregion
-
     }
 }

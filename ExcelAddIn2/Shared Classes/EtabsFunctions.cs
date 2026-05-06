@@ -609,6 +609,25 @@ namespace ExcelAddIn2
             return storyNames;
         }
 
+        public static string GetFirstStoreyName(cSapModel sapModel)
+        {
+            int ret = 0;
+            double BaseElevation = 0;
+            int NumberStories = 0;
+            string[] storyNames = new string[0];
+            double[] storyElevations = new double[0];
+            double[] storyHeights = new double[0];
+            bool[] isMasterStory = new bool[0];
+            string[] similarToStory = new string[0];
+            bool[] spliceAbove = new bool[0];
+            double[] spliceHeight = new double[0];
+            int[] color = new int[0];
+            
+            ret = sapModel.Story.GetStories_2(ref BaseElevation, ref NumberStories, ref storyNames, ref storyElevations, ref storyHeights, ref isMasterStory, ref similarToStory, ref spliceAbove, ref spliceHeight, ref color);
+            if (ret != 0) { throw new Exception("Unable to get story info"); }
+            return storyNames[0];
+            
+        }
         #endregion
 
         #region Init
@@ -839,6 +858,80 @@ namespace ExcelAddIn2
                 string undefinedGroupStr = string.Join(", ", undefinedGroups);
                 throw new Exception($"The following ETABS groups do not exist: {undefinedGroupStr}");
             }
+        }
+        public static void CreateGroupIfNotExist(cSapModel sapModel, string[] groupNames)
+        {
+            HashSet<string> groupNameSet = GetExistingEtabsGroup(sapModel, false);
+            List<string> undefinedGroups = new List<string>();
+            foreach (string groupName in groupNames)
+            {
+
+                if (groupNameSet.Contains(groupName)) { continue; }
+                undefinedGroups.Add(groupName);
+                sapModel.GroupDef.SetGroup(groupName);
+            }
+        }
+        #endregion
+
+        #region Get UN from Pier Label
+        public static Dictionary<string, List<string>> GetWallUNFromPierLabel(cSapModel sapModel, string[] labels, string targetSty = "")
+        {
+            #region Init Return Dictionary
+            Dictionary<string, List<string>> pierLabeltoUnMap = new Dictionary<string, List<string>>();
+            foreach (string pierLabel in labels)
+            {
+                if (string.IsNullOrEmpty(pierLabel)) { continue; }
+                pierLabeltoUnMap.Add(pierLabel, new List<string>());
+            }
+            #endregion
+
+            #region Get all Pier Labels
+            HashSet<string> allPierLabels;
+            {
+                string[] allPierLabelsString = new string[0];
+                int numberNames = 0;
+
+                int ret = sapModel.PierLabel.GetNameList(ref numberNames, ref allPierLabelsString);
+                allPierLabels = new HashSet<string>(allPierLabelsString);
+            }
+            #endregion
+
+            #region Get all Walls
+            string[] allAreaNames = new string[0];
+            {
+                int numberNames = 0;
+                allAreaNames = new string[0];
+                if (targetSty != "")
+                {
+                    int ret = sapModel.AreaObj.GetNameListOnStory(targetSty, ref numberNames, ref allAreaNames);
+                }
+                else
+                {
+                    int ret = sapModel.AreaObj.GetNameList(ref numberNames, ref allAreaNames);
+                }
+            }
+            #endregion
+
+            #region Add UN to target Pier Labels
+            foreach (string areaUn in allAreaNames)
+            {
+                try
+                {
+                    string pierLabel = "";
+                    int ret = sapModel.AreaObj.GetPier(areaUn, ref pierLabel);
+                    if (pierLabeltoUnMap.ContainsKey(pierLabel))
+                    {
+                        pierLabeltoUnMap[pierLabel].Add(areaUn);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Error getting pier label for area {areaUn}: {ex.Message}");
+                }
+            }
+            #endregion
+
+            return pierLabeltoUnMap;
         }
         #endregion
     }

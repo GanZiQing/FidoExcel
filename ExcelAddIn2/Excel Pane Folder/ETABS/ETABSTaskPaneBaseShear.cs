@@ -51,6 +51,9 @@ namespace ExcelAddIn2
 
             thisAtt = new CheckBoxAttribute("outputMoments_BaseShear", printMomentsCheck, false);
             attributeDic.Add(thisAtt.attName, thisAtt);
+
+            thisAtt = new CheckBoxAttribute("printHeader_BaseShear", printHeaderCheck, true);
+            attributeDic.Add(thisAtt.attName, thisAtt);
         }
         #endregion
 
@@ -199,6 +202,7 @@ namespace ExcelAddIn2
                 else
                 {
                     tableDataDic.Add("UniqueLcName", tableDataDic["OutputCase"]);
+                    allUniqueLcNames = tableDataDic["OutputCase"].ToHashSet();
                 }
             }
             #endregion
@@ -290,6 +294,7 @@ namespace ExcelAddIn2
             #region Create Write Object
 
             #region Header
+            if (printHeaderCheck.Checked)
             {
                 object[,] headerArray;
                 {
@@ -313,8 +318,16 @@ namespace ExcelAddIn2
 
             #region Contents
             List<object[,]> groupReactions = new List<object[,]>();
+            int rowNum;
+            if (printHeaderCheck.Checked)
+            {
+                rowNum = 1;
+            }
+            else
+            {
+                rowNum = 0;
+            }
 
-            int rowNum = 1;
             foreach (string groupName in groupNames)
             {
                 Dictionary<string, double[]> mapComboToReactions = (Dictionary<string, double[]>)mapGroupToComboReactions[groupName];
@@ -383,7 +396,7 @@ namespace ExcelAddIn2
                     loadCaseArray[i, 0] = groupName;
                     i += 1;
                 }
-                TwoDArrayFunctions.WriteArrayIntoArray(ref finalWriteArray, loadCaseArray, 2, 0);
+                TwoDArrayFunctions.WriteArrayIntoArray(ref finalWriteArray, loadCaseArray, 2, 0);6
             }
             #endregion
 

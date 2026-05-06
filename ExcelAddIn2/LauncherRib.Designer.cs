@@ -54,6 +54,7 @@
             this.Misc = this.Factory.CreateRibbonGroup();
             this.versionLabel = this.Factory.CreateRibbonLabel();
             this.tab1 = this.Factory.CreateRibbonTab();
+            this.beamDesign2 = this.Factory.CreateRibbonButton();
             this.FidoRibbon.SuspendLayout();
             this.AutomationToolsGroup.SuspendLayout();
             this.group2.SuspendLayout();
@@ -190,6 +191,7 @@
             // 
             this.group1.Items.Add(this.wallDesign);
             this.group1.Items.Add(this.wallCheck);
+            this.group1.Items.Add(this.beamDesign2);
             this.group1.Label = "Wall Design";
             this.group1.Name = "group1";
             // 
@@ -227,6 +229,15 @@
             this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.tab1.Label = "TabAddIns";
             this.tab1.Name = "tab1";
+            // 
+            // beamDesign2
+            // 
+            this.beamDesign2.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.beamDesign2.Image = global::ExcelAddIn2.Properties.Resources.excel;
+            this.beamDesign2.Label = "Beam Design";
+            this.beamDesign2.Name = "beamDesign2";
+            this.beamDesign2.ShowImage = true;
+            this.beamDesign2.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.beamDesign2_Click);
             // 
             // LauncherRib
             // 
@@ -275,6 +286,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton wallCheck;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup Misc;
         internal Microsoft.Office.Tools.Ribbon.RibbonLabel versionLabel;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton beamDesign2;
     }
 
     partial class ThisRibbonCollection

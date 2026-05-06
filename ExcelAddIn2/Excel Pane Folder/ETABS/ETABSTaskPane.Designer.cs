@@ -51,6 +51,7 @@
             this.dispStoryRange = new System.Windows.Forms.TextBox();
             this.baseShearPage = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.printHeaderCheck = new System.Windows.Forms.CheckBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.printMomentsCheck = new System.Windows.Forms.CheckBox();
             this.dispTableFormat = new System.Windows.Forms.ComboBox();
@@ -71,6 +72,15 @@
             this.setGroupRange = new System.Windows.Forms.Button();
             this.dispGroupRange = new System.Windows.Forms.TextBox();
             this.utilitiesPage = new System.Windows.Forms.TabPage();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.gpFirstStyOnlyCheck = new System.Windows.Forms.CheckBox();
+            this.setPierLabelGroup = new System.Windows.Forms.Button();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.setAreaGroup = new System.Windows.Forms.Button();
+            this.setFrameGroup = new System.Windows.Forms.Button();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.frameSelByUNButt = new System.Windows.Forms.Button();
+            this.frameSelByIDButt = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.areaSelByUNButt = new System.Windows.Forms.Button();
             this.areaSelByIDButt = new System.Windows.Forms.Button();
@@ -118,6 +128,8 @@
             this.groupBox7.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.utilitiesPage.SuspendLayout();
+            this.groupBox11.SuspendLayout();
+            this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.selectGroupBox.SuspendLayout();
@@ -385,16 +397,28 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.printHeaderCheck);
             this.groupBox6.Controls.Add(this.textBox4);
             this.groupBox6.Controls.Add(this.printMomentsCheck);
             this.groupBox6.Controls.Add(this.dispTableFormat);
             this.groupBox6.Controls.Add(this.label4);
             this.groupBox6.Location = new System.Drawing.Point(6, 457);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(411, 175);
+            this.groupBox6.Size = new System.Drawing.Size(411, 219);
             this.groupBox6.TabIndex = 43;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Settings";
+            // 
+            // printHeaderCheck
+            // 
+            this.printHeaderCheck.AutoSize = true;
+            this.printHeaderCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printHeaderCheck.Location = new System.Drawing.Point(12, 172);
+            this.printHeaderCheck.Name = "printHeaderCheck";
+            this.printHeaderCheck.Size = new System.Drawing.Size(124, 24);
+            this.printHeaderCheck.TabIndex = 45;
+            this.printHeaderCheck.Text = "Print Header";
+            this.printHeaderCheck.UseVisualStyleBackColor = true;
             // 
             // textBox4
             // 
@@ -626,6 +650,8 @@
             // utilitiesPage
             // 
             this.utilitiesPage.BackColor = System.Drawing.SystemColors.Control;
+            this.utilitiesPage.Controls.Add(this.groupBox11);
+            this.utilitiesPage.Controls.Add(this.groupBox10);
             this.utilitiesPage.Controls.Add(this.groupBox9);
             this.utilitiesPage.Controls.Add(this.groupBox8);
             this.utilitiesPage.Controls.Add(this.selectGroupBox);
@@ -638,16 +664,125 @@
             this.utilitiesPage.TabIndex = 2;
             this.utilitiesPage.Text = "Utilities";
             // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.gpFirstStyOnlyCheck);
+            this.groupBox11.Controls.Add(this.setPierLabelGroup);
+            this.groupBox11.Controls.Add(this.textBox7);
+            this.groupBox11.Controls.Add(this.setAreaGroup);
+            this.groupBox11.Controls.Add(this.setFrameGroup);
+            this.groupBox11.Location = new System.Drawing.Point(7, 1049);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(402, 184);
+            this.groupBox11.TabIndex = 62;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Set Group";
+            // 
+            // gpFirstStyOnlyCheck
+            // 
+            this.gpFirstStyOnlyCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.gpFirstStyOnlyCheck.Location = new System.Drawing.Point(212, 38);
+            this.gpFirstStyOnlyCheck.Name = "gpFirstStyOnlyCheck";
+            this.gpFirstStyOnlyCheck.Size = new System.Drawing.Size(188, 26);
+            this.gpFirstStyOnlyCheck.TabIndex = 63;
+            this.gpFirstStyOnlyCheck.Text = "1st Sty Only";
+            this.gpFirstStyOnlyCheck.UseVisualStyleBackColor = true;
+            // 
+            // setPierLabelGroup
+            // 
+            this.setPierLabelGroup.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setPierLabelGroup.Location = new System.Drawing.Point(206, 75);
+            this.setPierLabelGroup.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.setPierLabelGroup.Name = "setPierLabelGroup";
+            this.setPierLabelGroup.Size = new System.Drawing.Size(188, 38);
+            this.setPierLabelGroup.TabIndex = 50;
+            this.setPierLabelGroup.Text = "Gp Area by Pier Label";
+            this.setPierLabelGroup.UseVisualStyleBackColor = true;
+            this.setPierLabelGroup.Click += new System.EventHandler(this.setPierLabelGroup_Click);
+            // 
+            // textBox7
+            // 
+            this.textBox7.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox7.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox7.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.textBox7.Location = new System.Drawing.Point(8, 126);
+            this.textBox7.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textBox7.Multiline = true;
+            this.textBox7.Name = "textBox7";
+            this.textBox7.ReadOnly = true;
+            this.textBox7.Size = new System.Drawing.Size(393, 46);
+            this.textBox7.TabIndex = 49;
+            this.textBox7.Text = "Note: \r\nUses offset columns from Frame Tools";
+            // 
+            // setAreaGroup
+            // 
+            this.setAreaGroup.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setAreaGroup.Location = new System.Drawing.Point(9, 78);
+            this.setAreaGroup.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.setAreaGroup.Name = "setAreaGroup";
+            this.setAreaGroup.Size = new System.Drawing.Size(188, 38);
+            this.setAreaGroup.TabIndex = 48;
+            this.setAreaGroup.Text = "Group Area by UN";
+            this.setAreaGroup.UseVisualStyleBackColor = true;
+            this.setAreaGroup.Click += new System.EventHandler(this.setAreaGroup_Click);
+            // 
+            // setFrameGroup
+            // 
+            this.setFrameGroup.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.setFrameGroup.Location = new System.Drawing.Point(9, 31);
+            this.setFrameGroup.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.setFrameGroup.Name = "setFrameGroup";
+            this.setFrameGroup.Size = new System.Drawing.Size(188, 38);
+            this.setFrameGroup.TabIndex = 47;
+            this.setFrameGroup.Text = "Group Frame by UN";
+            this.setFrameGroup.UseVisualStyleBackColor = true;
+            this.setFrameGroup.Click += new System.EventHandler(this.setFrameGroup_Click);
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.frameSelByUNButt);
+            this.groupBox10.Controls.Add(this.frameSelByIDButt);
+            this.groupBox10.Location = new System.Drawing.Point(7, 873);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(402, 82);
+            this.groupBox10.TabIndex = 61;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Frame Select";
+            // 
+            // frameSelByUNButt
+            // 
+            this.frameSelByUNButt.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.frameSelByUNButt.Location = new System.Drawing.Point(206, 31);
+            this.frameSelByUNButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.frameSelByUNButt.Name = "frameSelByUNButt";
+            this.frameSelByUNButt.Size = new System.Drawing.Size(188, 38);
+            this.frameSelByUNButt.TabIndex = 48;
+            this.frameSelByUNButt.Text = "Sel. by UN";
+            this.frameSelByUNButt.UseVisualStyleBackColor = true;
+            this.frameSelByUNButt.Click += new System.EventHandler(this.frameSelByUNButt_Click);
+            // 
+            // frameSelByIDButt
+            // 
+            this.frameSelByIDButt.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.frameSelByIDButt.Location = new System.Drawing.Point(9, 31);
+            this.frameSelByIDButt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.frameSelByIDButt.Name = "frameSelByIDButt";
+            this.frameSelByIDButt.Size = new System.Drawing.Size(188, 38);
+            this.frameSelByIDButt.TabIndex = 47;
+            this.frameSelByIDButt.Text = "Sel. by ID";
+            this.frameSelByIDButt.UseVisualStyleBackColor = true;
+            this.frameSelByIDButt.Click += new System.EventHandler(this.frameSelByIDButt_Click);
+            // 
             // groupBox9
             // 
             this.groupBox9.Controls.Add(this.areaSelByUNButt);
             this.groupBox9.Controls.Add(this.areaSelByIDButt);
-            this.groupBox9.Location = new System.Drawing.Point(14, 967);
+            this.groupBox9.Location = new System.Drawing.Point(6, 961);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(402, 81);
+            this.groupBox9.Size = new System.Drawing.Size(402, 82);
             this.groupBox9.TabIndex = 60;
             this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Shell";
+            this.groupBox9.Text = "Shell Select";
             // 
             // areaSelByUNButt
             // 
@@ -690,11 +825,11 @@
             this.groupBox8.Controls.Add(this.printFrameSectionCheck);
             this.groupBox8.Controls.Add(this.printFrameCoordCheck);
             this.groupBox8.Controls.Add(this.setFrameUn);
-            this.groupBox8.Location = new System.Drawing.Point(6, 603);
+            this.groupBox8.Location = new System.Drawing.Point(7, 510);
             this.groupBox8.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox8.Size = new System.Drawing.Size(410, 356);
+            this.groupBox8.Size = new System.Drawing.Size(410, 355);
             this.groupBox8.TabIndex = 48;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Frame Tools";
@@ -871,11 +1006,11 @@
             this.selectGroupBox.Controls.Add(this.getWallUNBut);
             this.selectGroupBox.Controls.Add(this.getWallPierBut);
             this.selectGroupBox.Controls.Add(this.setWallPierBut);
-            this.selectGroupBox.Location = new System.Drawing.Point(6, 415);
+            this.selectGroupBox.Location = new System.Drawing.Point(6, 371);
             this.selectGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.selectGroupBox.Name = "selectGroupBox";
             this.selectGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.selectGroupBox.Size = new System.Drawing.Size(410, 178);
+            this.selectGroupBox.Size = new System.Drawing.Size(410, 129);
             this.selectGroupBox.TabIndex = 47;
             this.selectGroupBox.TabStop = false;
             this.selectGroupBox.Text = "Get, Select, Sets";
@@ -907,7 +1042,7 @@
             // getWallPierBut
             // 
             this.getWallPierBut.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.getWallPierBut.Location = new System.Drawing.Point(9, 78);
+            this.getWallPierBut.Location = new System.Drawing.Point(9, 77);
             this.getWallPierBut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getWallPierBut.Name = "getWallPierBut";
             this.getWallPierBut.Size = new System.Drawing.Size(188, 38);
@@ -919,7 +1054,7 @@
             // setWallPierBut
             // 
             this.setWallPierBut.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.setWallPierBut.Location = new System.Drawing.Point(9, 126);
+            this.setWallPierBut.Location = new System.Drawing.Point(208, 77);
             this.setWallPierBut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.setWallPierBut.Name = "setWallPierBut";
             this.setWallPierBut.Size = new System.Drawing.Size(188, 38);
@@ -938,7 +1073,7 @@
             this.errorGroupBox.Controls.Add(this.openLog);
             this.errorGroupBox.Controls.Add(this.textBox1);
             this.errorGroupBox.Controls.Add(this.textBox3);
-            this.errorGroupBox.Location = new System.Drawing.Point(6, 142);
+            this.errorGroupBox.Location = new System.Drawing.Point(6, 98);
             this.errorGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.errorGroupBox.Name = "errorGroupBox";
             this.errorGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -998,6 +1133,7 @@
             // 
             // groupAndImportWrn
             // 
+            this.groupAndImportWrn.Enabled = false;
             this.groupAndImportWrn.ForeColor = System.Drawing.SystemColors.WindowText;
             this.groupAndImportWrn.Location = new System.Drawing.Point(9, 58);
             this.groupAndImportWrn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -1052,7 +1188,7 @@
             this.groupBox4.Controls.Add(this.replicateByDispBut);
             this.groupBox4.Location = new System.Drawing.Point(6, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(411, 128);
+            this.groupBox4.Size = new System.Drawing.Size(411, 84);
             this.groupBox4.TabIndex = 35;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Replicate";
@@ -1060,7 +1196,7 @@
             // replicateBySpacingDisp
             // 
             this.replicateBySpacingDisp.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.replicateBySpacingDisp.Location = new System.Drawing.Point(8, 74);
+            this.replicateBySpacingDisp.Location = new System.Drawing.Point(204, 27);
             this.replicateBySpacingDisp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.replicateBySpacingDisp.Name = "replicateBySpacingDisp";
             this.replicateBySpacingDisp.Size = new System.Drawing.Size(188, 38);
@@ -1089,7 +1225,7 @@
             this.Controls.Add(this.EtabsTabGroup);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "ETABSTaskPane";
-            this.Size = new System.Drawing.Size(450, 1459);
+            this.Size = new System.Drawing.Size(450, 1458);
             this.EtabsTabGroup.ResumeLayout(false);
             this.windLoadPage.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -1104,6 +1240,9 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.utilitiesPage.ResumeLayout(false);
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
+            this.groupBox10.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
@@ -1195,5 +1334,15 @@
         private System.Windows.Forms.Button areaSelByUNButt;
         private System.Windows.Forms.Button areaSelByIDButt;
         private System.Windows.Forms.Button setFrameSection;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.Button frameSelByUNButt;
+        private System.Windows.Forms.Button frameSelByIDButt;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.Button setAreaGroup;
+        private System.Windows.Forms.Button setFrameGroup;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.Button setPierLabelGroup;
+        private System.Windows.Forms.CheckBox gpFirstStyOnlyCheck;
+        private System.Windows.Forms.CheckBox printHeaderCheck;
     }
 }
