@@ -497,7 +497,6 @@ namespace ExcelAddIn2
                 #region Select in ETABS
                 InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
                 string[] allStoryNames = GetStoreyNames(sapModel);
-                int ret = -1;
 
                 List<string> areaNotFound = new List<string>();
 
@@ -904,7 +903,7 @@ namespace ExcelAddIn2
                 InitializeETABS(out cOAPI etabsObject, out cSapModel sapModel, true);
 
                 Dictionary<string, List<string>> labelToUnMap;
-                int ret;
+
                 if (gpFirstStyOnlyCheck.Checked)
                 {
                     string firstStorey = GetFirstStoreyName(sapModel);

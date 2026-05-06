@@ -396,7 +396,7 @@ namespace ExcelAddIn2
                     loadCaseArray[i, 0] = groupName;
                     i += 1;
                 }
-                TwoDArrayFunctions.WriteArrayIntoArray(ref finalWriteArray, loadCaseArray, 2, 0);6
+                TwoDArrayFunctions.WriteArrayIntoArray(ref finalWriteArray, loadCaseArray, 2, 0);
             }
             #endregion
 
