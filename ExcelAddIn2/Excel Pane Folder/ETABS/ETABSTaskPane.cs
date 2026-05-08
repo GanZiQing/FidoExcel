@@ -16,6 +16,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -24,6 +25,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
 using static ExcelAddIn2.EtabsFunctions;
+//using StaadPro;
 
 namespace ExcelAddIn2
 {
@@ -63,8 +65,15 @@ namespace ExcelAddIn2
             thisAtt = new CheckBoxAttribute("refreshView_AWL", refreshViewCheck, true);
             attributeDic.Add(thisAtt.attName, thisAtt);
 
+            #region Staad
+            thisTBAtt = new RangeTextBox("staadPaths_Staad", dispStaadPaths, setStaadPaths);
+            attributeDic.Add(thisTBAtt.attName, thisTBAtt);
+            #endregion
+
             CreateAttributesForBaseShear();
             CreateAttributesForUtilities();
+
+
         }
 
         private void AddHeaders()
@@ -1274,8 +1283,180 @@ namespace ExcelAddIn2
 
 
 
+
         #endregion
 
+        #region Staadpro
+        private (string dir, double displacement, string node) SplitDisplacementLine(string line)
+        {
+            int equalPos = line.IndexOf('=');
+            string dir = line.Substring(0,equalPos).Trim();
+            //type = type.Trim();
+            string data = line.Substring(equalPos + 1);
+            string[] parts = data.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            double displacement = double.Parse(parts[0]);
+            string node = parts[1];
+            return (dir, displacement, node);
+        }
 
+        private (List<string> headers, List<double[]> displacements, List<string[]> nodes, List<string[]> dir ) GetDisplacementFromStaadOutput(string filePath)
+        {
+            try
+            {
+                //string filePath = @"C:\Users\epona\Documents\Work\01_TPY\03_Commercial Design\26-04-01 PG Report\01_Native Files\06_Pile Design\02_Pile Structural Capacity Check\02_Staad Pro\01_No Debond\Test\Base File.ANL";
+                List<double[]> displacements = new List<double[]>();
+                List<string[]> nodes = new List<string[]>();
+                List<string> headers = new List<string>();
+                List<string[]> dirs = new List<string[]>();
+
+                #region Read File
+
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    // Use a StreamReader to read from the stream with specified encoding
+                    using (StreamReader streamReader = new StreamReader(fileStream))
+                    {
+                        string line;
+
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            if (line.StartsWith("   MAXIMUM DISPLACEMENTS "))
+                            {
+                                headers.Add(line.Trim());
+                                line = streamReader.ReadLine(); // Skip line
+
+                                double[] localDisp = new double[6];
+                                string[] localNode = new string[6];
+                                string[] localDir = new string[6];
+                                while ((line = streamReader.ReadLine()) != null)
+                                {
+                                    if (line == "") { break; }
+                                    (string dir, double displacement, string node) = SplitDisplacementLine(line);
+                                    int i = -1;
+
+                                    switch (dir)
+                                    {
+                                        case "X":
+                                            {
+                                                i = 0;
+                                                break;
+                                            }
+                                        case "Y":
+                                            {
+                                                i = 1;
+                                                break;
+                                            }
+                                        case "Z":
+                                            {
+                                                i = 2;
+                                                break;
+                                            }
+                                        case "RX":
+                                            {
+                                                i = 3;
+                                                break;
+                                            }
+                                        case "RY":
+                                            {
+                                                i = 4;
+                                                break;
+                                            }
+                                        case "RZ":
+                                            {
+                                                i = 5;
+                                                break;
+                                            }
+                                        default:
+                                            throw new Exception("Unexpected Type");
+                                    }
+
+                                    localDir[i] = dir;
+                                    localDisp[i] = displacement;
+                                    localNode[i] = node;
+                                }
+                                dirs.Add(localDir);
+                                displacements.Add(localDisp);
+                                nodes.Add(localNode);
+                            }
+                        }
+                    }
+                }
+                #endregion
+                if (headers.Count == 0) { throw new Exception("No displacement data found in file"); }
+                return (headers, displacements, nodes, dirs);
+            }
+            catch (Exception ex) { throw new Exception($"Error getting results for , ${ex.Message}"); }
+        }
+        private void staadGetDisp_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                #region Get Excel Info
+                Range selectedRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                RangeTextBox source = attributeDic["staadPaths_Staad"] as RangeTextBox;
+                string[] filepaths = source.GetContentsAsStringArray(true);
+                #endregion
+
+                #region Read Files
+                List<string> sourceFilePath = new List<string>();
+                List<string> sourceFileName = new List<string>();
+                List<string> headers = new List<string>();
+                List<double> displacements = new List<double>();
+                List<string> dir = new List<string>();
+                List<string> nodes = new List<string>();
+                List<string> status = new List<string>();
+
+
+                foreach (string filepath in filepaths)
+                {
+                    try
+                    {
+                        (List<string> locHeaders, List<double[]> locDisplacements, List<string[]> locNodes, List<string[]> locDir) = GetDisplacementFromStaadOutput(filepath);
+                        for (int headIndex = 0; headIndex < locHeaders.Count; headIndex++)
+                        {
+                            for (int dispIndex = 0; dispIndex < 6; dispIndex++)
+                            {
+                                dir.Add(locDir[headIndex][dispIndex]);
+                                displacements.Add(locDisplacements[headIndex][dispIndex]);
+                                nodes.Add(locNodes[headIndex][dispIndex]);
+                                sourceFilePath.Add(filepath);
+                                sourceFileName.Add(Path.GetFileName(filepath));
+                                headers.Add(locHeaders[headIndex]);
+                                status.Add("");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dir.Add("");
+                        displacements.Add(double.NaN);
+                        nodes.Add("");
+                        sourceFilePath.Add(filepath);
+                        sourceFileName.Add(Path.GetFileName(filepath));
+                        headers.Add("");
+                        status.Add($"Failed: {ex.Message}");
+                    }
+                }
+                #endregion
+
+                #region Print Results
+                Range writeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
+                WriteToExcelRangeAsCol(writeRange,0, 0, true,
+                    sourceFilePath.ToArray(),
+                    sourceFileName.ToArray(),
+                    headers.ToArray(),
+                    dir.ToArray(),
+                    displacements.ToArray(),
+                    nodes.ToArray(),
+                    status.ToArray()
+                    );
+                MessageBox.Show("Completed");
+                #endregion
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error"); }
+        }
+        #endregion
     }
 }
+
+
