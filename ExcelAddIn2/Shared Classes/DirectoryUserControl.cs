@@ -539,7 +539,7 @@ namespace ExcelAddIn2
                 {
                     status[i] = "Error: " + ex.Message;
                 }
-                if (status[i] != "Completed: File renamed")
+                if (!status[i].StartsWith("Completed", StringComparison.OrdinalIgnoreCase))
                 {
                     failures++;
                 }
@@ -568,6 +568,16 @@ namespace ExcelAddIn2
             {
                 try
                 {
+                    //if (Directory.Exists(newPath) && mergeFoldersCheck.Checked)
+                    //{
+                    //    throw new Exception("Merge Folders not implemented yet, buggy");
+                    //    MergeFolders(sourcePath, newPath);
+                    //    return "Completed: Folders merged";
+                    //}
+                    //else
+                    //{
+                    //    Directory.Move(sourcePath, newPath);
+                    //}
                     Directory.Move(sourcePath, newPath);
                     return "Completed: File renamed";
                 }
@@ -614,6 +624,65 @@ namespace ExcelAddIn2
             }
         }
 
+        private void MergeFolders(string source, string dest)
+        {
+            throw new Exception("Merge Folders not implemented yet, buggy");
+            //Written by Gemini
+            // Create destination directory if it doesn't exist (safety check)
+            Directory.CreateDirectory(dest);
+
+            // 1. Move all files
+            foreach (string filePath in Directory.GetFiles(source))
+            {
+                string fileName = Path.GetFileName(filePath);
+                string destPath = Path.Combine(dest, fileName);
+
+                // Handle file name collisions within the merge
+                if (File.Exists(destPath))
+                {
+                    destPath = GetUniqueFilePath(destPath);
+                }
+
+                File.Move(filePath, destPath);
+            }
+
+            // 2. Recursively move subdirectories
+            foreach (string dirPath in Directory.GetDirectories(source))
+            {
+                string dirName = Path.GetFileName(dirPath);
+                string destSubDir = Path.Combine(dest, dirName);
+
+                // Recursion handles nested folders
+                MergeFolders(dirPath, destSubDir);
+            }
+
+            // 3. Delete the now-empty source folder
+            if (Directory.Exists(source) && !Directory.EnumerateFileSystemEntries(source).Any())
+            {
+                Directory.Delete(source, recursive: false);
+            }
+        }
+
+        private string GetUniqueFilePath(string filePath)
+        {
+            throw new Exception("Merge Folders not implemented yet, buggy");
+            //Written by Gemini
+            if (!File.Exists(filePath)) return filePath;
+
+            string directory = Path.GetDirectoryName(filePath);
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+            int counter = 1;
+
+            string newPath = filePath;
+            while (File.Exists(newPath))
+            {
+                counter++;
+                newPath = Path.Combine(directory, $"{fileName} ({counter}){extension}");
+            }
+
+            return newPath;
+        }
         #endregion
 
         #region Create Folder

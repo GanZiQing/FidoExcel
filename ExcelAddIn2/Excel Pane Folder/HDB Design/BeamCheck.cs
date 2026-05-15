@@ -99,6 +99,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                         if (rebarProv[rowNum, colNum] != null)
                         {
                             string rebarStr = rebarProv[rowNum, colNum].ToString();
+                            if (string.IsNullOrWhiteSpace(rebarStr)) { continue; }
+                            rebarStr = rebarStr.Trim('*');
                             asProv[rowNum, colNum] = ConvertRebarStringToAs(rebarStr);
                         }
                     }
@@ -161,6 +163,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                         if (rebarProv[rowNum, colNum] != null)
                         {
                             string rebarStr = rebarProv[rowNum, colNum].ToString();
+                            if (string.IsNullOrWhiteSpace(rebarStr)) { continue; }
                             rebarStr = rebarStr.Trim('*');
                             asProv[rowNum, colNum] = ConvertRebarStringToAsv(rebarStr);
                         }
