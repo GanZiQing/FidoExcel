@@ -1,6 +1,9 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Tools;
 using MigraDoc.Rendering;
+using PdfSharp.Drawing;
+using PdfSharp.Fonts;
+using PdfSharp.Pdf;
 using PdfSharp.Pdf.Content.Objects;
 using System;
 using System.Collections.Generic;
@@ -1770,7 +1773,83 @@ namespace ExcelAddIn2
         }
         #endregion
 
+        #region PDF Helpers
+        public static XSize AddTextBox(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord,
+            string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null, bool underline = false)
+        {
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont fontType = new XFont(fontName, fontSize);
+            if (fontColor == null) { fontColor = XBrushes.Black; }
+            if (rectColor == null) { rectColor = XBrushes.White; }
 
+            #region Rotation
+            int rotation = page.Rotate;
+            switch (rotation)
+            {
+                case 90:
+                    gfx.RotateTransform(-90);
+                    gfx.TranslateTransform(-page.Height.Value, 0);
+                    break;
+                case 180:
+                    gfx.RotateTransform(-180);
+                    gfx.TranslateTransform(-page.Width.Value, -page.Height.Value);
+                    break;
+                case 270:
+                    gfx.RotateTransform(-270);
+                    gfx.TranslateTransform(-(page.Width.Value - page.Height.Value), -page.Height.Value);
+                    break;
+                default:
+                    break;
+            }
+            #endregion
+
+            XPoint bottomLeftPoint = new XPoint(xCoord, yCoord);
+            XSize textSize = gfx.MeasureString(textContents, fontType);
+            XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+            XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+            gfx.DrawRectangle(rectColor, rect);
+            gfx.DrawString(textContents, fontType, fontColor, rect, XStringFormats.BottomRight);
+            XSize stringSize = gfx.MeasureString(textContents, fontType);
+
+            if (underline)
+            {
+                //// Right-aligned: so the text starts at rect.Right - textSize.Width
+                //double startX = rect.Right - textSize.Width;
+                //double endX = rect.Right;
+
+                ////// place underline slightly below baseline (tweak +2 depending on font size)
+                ////double underlineY = rect.Bottom - 1;
+                XColor underlineColor = fontColor.Color;
+                gfx.DrawLine(new XPen(underlineColor, 1), xCoord, yCoord, xCoord + textSize.Width, yCoord);
+            }
+            gfx.Dispose();
+            return stringSize;
+        }
+        #endregion
+
+        #region Write Status
+        public static void CopyArrayToClipboard(string[] stringArray)
+        {
+            string clipboardText = string.Join(Environment.NewLine, stringArray);
+            System.Windows.Forms.Clipboard.SetText(clipboardText);
+        }
+        public static void WriteStatus(Range statusRange, string[] status)
+        {
+            DialogResult res = MessageBox.Show($"Write status to range at {statusRange.AddressLocal}?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (res == DialogResult.Yes)
+            {
+                WriteToExcelRangeAsCol(statusRange, 0, 0, false, status);
+            }
+            else
+            {
+                DialogResult res2 = MessageBox.Show("Copy status to clipboard?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (res2 == DialogResult.Yes)
+                {
+                    CopyArrayToClipboard(status);
+                }
+            }
+        }
+        #endregion
     }
 
     static class TwoDArrayFunctions
@@ -2225,5 +2304,41 @@ namespace ExcelAddIn2
         }
         #endregion
     }
+
+    #region PDF Sharp Font Resolver
+    public class CustomFontResolver : IFontResolver
+    {
+        string fontPath;
+        System.Windows.Forms.TextBox dispValidCustomFont;
+        public CustomFontResolver(ref string fontPath, ref System.Windows.Forms.TextBox dispValidCustomFont)
+        {
+            this.fontPath = fontPath;
+            this.dispValidCustomFont = dispValidCustomFont;
+        }
+
+        public byte[] GetFont(string fontName)
+        {
+            if (fontName == "Custom")
+            {
+                if (!File.Exists(fontPath)) { throw new FileNotFoundException($"Font path '{fontPath}' is invalid."); }
+                dispValidCustomFont.Text = $"Custom Font Path: {fontPath}";
+                return File.ReadAllBytes(fontPath);
+            }
+            else { throw new Exception($"Font name {fontName} undefined."); } // This should not trigger
+
+        }
+
+        public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
+        {
+            if (familyName == "Custom")
+            {
+                return new FontResolverInfo("Custom");
+            }
+
+            var builtInFont = PlatformFontResolver.ResolveTypeface(familyName, isBold, isItalic);
+            return builtInFont;
+        }
+    }
+    #endregion
 }
 

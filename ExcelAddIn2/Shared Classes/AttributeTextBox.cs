@@ -1196,6 +1196,25 @@ namespace ExcelAddIn2
             }
             return textBox.Text;
         }
+
+        public string CreateAndGetPath(bool showMsg = false)
+        {
+            string path = textBox.Text;
+            if (textBox.Text == "")
+            {
+                string msg = $"No folderpath for {attName} provided";
+                if (showMsg)
+                {
+                    MessageBox.Show(msg, "Error");
+                }
+                throw new Exception(msg);
+            }
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            return path;
+        }
         #endregion
     }
 

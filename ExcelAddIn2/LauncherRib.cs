@@ -18,7 +18,7 @@ namespace ExcelAddIn2
         private void Launcher_Load(object sender, RibbonUIEventArgs e)
         {
             string versionNum = "Debug Mode";
-            string lastUpdated = "2025-11-03";
+            string lastUpdated = "2026-05-15";
             try
             {
                 System.Deployment.Application.ApplicationDeployment applicationDeployment = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;

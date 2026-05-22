@@ -629,59 +629,59 @@ namespace ExcelAddIn2
             throw new Exception("Merge Folders not implemented yet, buggy");
             //Written by Gemini
             // Create destination directory if it doesn't exist (safety check)
-            Directory.CreateDirectory(dest);
+            //Directory.CreateDirectory(dest);
 
-            // 1. Move all files
-            foreach (string filePath in Directory.GetFiles(source))
-            {
-                string fileName = Path.GetFileName(filePath);
-                string destPath = Path.Combine(dest, fileName);
+            //// 1. Move all files
+            //foreach (string filePath in Directory.GetFiles(source))
+            //{
+            //    string fileName = Path.GetFileName(filePath);
+            //    string destPath = Path.Combine(dest, fileName);
 
-                // Handle file name collisions within the merge
-                if (File.Exists(destPath))
-                {
-                    destPath = GetUniqueFilePath(destPath);
-                }
+            //    // Handle file name collisions within the merge
+            //    if (File.Exists(destPath))
+            //    {
+            //        destPath = GetUniqueFilePath(destPath);
+            //    }
 
-                File.Move(filePath, destPath);
-            }
+            //    File.Move(filePath, destPath);
+            //}
 
-            // 2. Recursively move subdirectories
-            foreach (string dirPath in Directory.GetDirectories(source))
-            {
-                string dirName = Path.GetFileName(dirPath);
-                string destSubDir = Path.Combine(dest, dirName);
+            //// 2. Recursively move subdirectories
+            //foreach (string dirPath in Directory.GetDirectories(source))
+            //{
+            //    string dirName = Path.GetFileName(dirPath);
+            //    string destSubDir = Path.Combine(dest, dirName);
 
-                // Recursion handles nested folders
-                MergeFolders(dirPath, destSubDir);
-            }
+            //    // Recursion handles nested folders
+            //    MergeFolders(dirPath, destSubDir);
+            //}
 
-            // 3. Delete the now-empty source folder
-            if (Directory.Exists(source) && !Directory.EnumerateFileSystemEntries(source).Any())
-            {
-                Directory.Delete(source, recursive: false);
-            }
+            //// 3. Delete the now-empty source folder
+            //if (Directory.Exists(source) && !Directory.EnumerateFileSystemEntries(source).Any())
+            //{
+            //    Directory.Delete(source, recursive: false);
+            //}
         }
 
         private string GetUniqueFilePath(string filePath)
         {
             throw new Exception("Merge Folders not implemented yet, buggy");
-            //Written by Gemini
-            if (!File.Exists(filePath)) return filePath;
+            ////Written by Gemini
+            //if (!File.Exists(filePath)) return filePath;
 
-            string directory = Path.GetDirectoryName(filePath);
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
-            string extension = Path.GetExtension(filePath);
-            int counter = 1;
+            //string directory = Path.GetDirectoryName(filePath);
+            //string fileName = Path.GetFileNameWithoutExtension(filePath);
+            //string extension = Path.GetExtension(filePath);
+            //int counter = 1;
 
-            string newPath = filePath;
-            while (File.Exists(newPath))
-            {
-                counter++;
-                newPath = Path.Combine(directory, $"{fileName} ({counter}){extension}");
-            }
+            //string newPath = filePath;
+            //while (File.Exists(newPath))
+            //{
+            //    counter++;
+            //    newPath = Path.Combine(directory, $"{fileName} ({counter}){extension}");
+            //}
 
-            return newPath;
+            //return newPath;
         }
         #endregion
 
@@ -859,8 +859,7 @@ namespace ExcelAddIn2
                 copyFolder(dirPath, destSubDir);
             }
         }
+
         #endregion
-
-
     }
 }

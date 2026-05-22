@@ -34,6 +34,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             CreateAttributes();
             AddToolTips();
             AddHeaders();
+            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
         }
 
         private void AddHeaders()
@@ -574,41 +575,5 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
 
         #endregion
-
-
-    }
-
-    public class CustomFontResolver : IFontResolver
-    {
-        string fontPath;
-        System.Windows.Forms.TextBox dispValidCustomFont;
-        public CustomFontResolver(ref string fontPath, ref System.Windows.Forms.TextBox dispValidCustomFont) 
-        { 
-            this.fontPath = fontPath;
-            this.dispValidCustomFont = dispValidCustomFont;
-        }
-
-        public byte[] GetFont(string fontName)
-        {
-            if (fontName == "Custom")
-            {
-                if (!File.Exists(fontPath)) { throw new FileNotFoundException($"Font path '{fontPath}' is invalid."); }
-                dispValidCustomFont.Text = $"Custom Font Path: {fontPath}";
-                return File.ReadAllBytes(fontPath);
-            }
-            else { throw new Exception($"Font name {fontName} undefined."); } // This should not trigger
-            
-        }
-
-        public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
-        {
-            if (familyName == "Custom") 
-            {
-                return new FontResolverInfo("Custom");
-            }
-
-            var builtInFont = PlatformFontResolver.ResolveTypeface(familyName, isBold, isItalic);
-            return builtInFont;
-        }
     }
 }

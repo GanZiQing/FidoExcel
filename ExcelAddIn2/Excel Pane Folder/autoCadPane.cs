@@ -34,7 +34,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
         private void AddHeaders()
         {
-            List<string> headers = null;
+            //List<string> headers = null;
             #region Line Functions
             AddDynamicActionToButton(getLineCoords, () => InsertDynamicHeader(lineCoordinateHeaderGenerator));
             #endregion
@@ -87,7 +87,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         private void CreateAttributes()
         {
             CustomAttribute att;
-            AttributeTextBox tbAtt;
+            //AttributeTextBox tbAtt;
 
             #region Line Functions
             #region Coordinates

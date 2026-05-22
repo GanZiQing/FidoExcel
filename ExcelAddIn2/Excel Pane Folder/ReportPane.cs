@@ -1,14 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Excel;
-using Microsoft.Office.Core;
+using PdfSharp.Drawing;
+using PdfSharp;
+using PdfSharp.Fonts;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using static ExcelAddIn2.CommonUtilities;
 using Ppt = Microsoft.Office.Interop.PowerPoint;
-using System.Runtime.InteropServices;
-using System.Drawing.Imaging;
 
 namespace ExcelAddIn2.Excel_Pane_Folder
 {
@@ -23,6 +30,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             CreateAttributes();
             AddToolTips();
             AddHeaders();
+            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
         }
 
         private void CreateAttributes()
@@ -119,10 +127,35 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             customAtt = new CheckBoxAttribute("delRefCheck", deleteRefCheck, false);
             customAttributeDic.Add(customAtt.attName, customAtt);
+
+
+            #endregion
+
+            #region PDF Add Text
+            tbAtt = new RangeTextBox("pdfImportRange_reportPane", dispPdfImportRange, setPdfImportRange, "range", false);
+            textBoxAttributeDic.Add(tbAtt.attName, tbAtt);
+
+            tbAtt = new RangeTextBox("pdfImportHeaderRow_reportPane", dispPdfHeaderRow, setPdfHeaderRow, "row", false);
+            textBoxAttributeDic.Add(tbAtt.attName, tbAtt);
+
+            scFolderPath_report = new DirectoryTextBox("pdfFolderPath_reportPane", dispFolderPdf, setFolderPdf);
+            scFolderPath_report.AddOpenButton(openFolderPdf);
+            textBoxAttributeDic.Add(scFolderPath_report.attName, scFolderPath_report);
+
+            thisAtt = new AttributeTextBox("fontSize_reportPane", dispFontSizeSheetNum, true);
+            thisAtt.SetDefaultValue("11");
+            thisAtt.type = "int";
+            textBoxAttributeDic.Add(thisAtt.attName, thisAtt);
+
+            customAtt = new ComboBoxAttribute("fontName_reportPane", dispFontName, "Arial");
+            customAttributeDic.Add(customAtt.attName, customAtt);
+
+            customAtt = new CheckBoxAttribute("overwriteCheck_reportPane", overwriteFilesCheck, false);
+            customAttributeDic.Add(customAtt.attName, customAtt);
             #endregion
 
         }
-        
+
         private void AddToolTips()
         {
             ToolTip toolTip1 = new ToolTip();
@@ -168,6 +201,23 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 "  If location > total number of slides, insert slide at the end of the ppt"
             );
             #endregion
+
+            #region PDF Edit
+            toolTip1.SetToolTip(addTextToPdfButt,
+                "Current implementation creates new file with \"_edit\" appended to file name\n"+
+                "Same text for all pages. If different text, split pdf first\n" +
+                "Takes input in the following format:\n" +
+                "  File Path\n" +
+                "  Folder Name (unused)\n" +
+                "  File Name (unused)\n" +
+                "  Page Number to Insert (Int, if = 0, all pages)\n" +
+                "  *X1,Y1\n" +
+                "  *X2,Y2\n" +
+                "  *...\n" +
+                "  Status\n" +
+                "* Text Box/Shape Name in ppt (min 1)"
+            );
+            #endregion
         }
 
         private void AddHeaders()
@@ -177,6 +227,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             ////Add File Details from Dialogue
             //AddContextStripEvent(importFilePath, "Get From Dialogue Box", (sender, e) => importFilePath_Click(sender, e));
+
+            #region PDF Edit
+            headers = new List<string> { "File Path", "Folder Name", "File Name", "Page Number", "X1,Y1", "X2,Y2", "Status" };
+            AddHeaderMenuToButton(setPdfImportRange, headers);
+            #endregion
         }
         #endregion
 
@@ -1089,7 +1144,218 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         }
         #endregion
 
+        #region Add Text to PDF
+        private (double,double) SplitCoordinatePair(string inputString)
+        {
+            try
+            {
+                string coordPair = inputString.Trim();
+                string[] parts = coordPair.Split(',');
+                if (parts.Length > 2) { }
 
+                double x = double.Parse(parts[0].Trim());
+                double y = double.Parse(parts[1].Trim());
+                return (x, y);
+            }
+            catch 
+            {
+                throw new Exception($"Unable to parse string {inputString} into coordinate pair. Expected format: double,double.");
+            }
+        }
+        
+        BackgroundWorker worker;
+        ProgressTracker progressTracker;
+        int fontSize;
+        string fontName;
+        private int[] SplitPageNums(string inputString)
+        {
+            try
+            {
+                string[] parts = inputString.Split(',');
+                int[] pageNums = new int[parts.Length];
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    pageNums[i] = int.Parse(parts[i].Trim());
+                }
+                return pageNums;
+            }
+            catch
+            {
+                throw new Exception($"Unable to parse string {inputString} into page numbers. Expected format: int,int,...");
+            }
+        }
+        private string AddTextToPDF(string importPath, string finalPath, string pageNums, double[,] printCoords, object[] textInputs)
+        {
+            try
+            {
+                File.Copy(importPath, finalPath);
+                PdfDocument inputDocument = PdfReader.Open(finalPath, PdfDocumentOpenMode.Modify);
+
+                int[] pageNumsInt = SplitPageNums(pageNums);
+
+                for (int iPage = 0; iPage < pageNumsInt.Length; iPage++)
+                {
+                    int pageNum = pageNumsInt[iPage] - 1;
+                    if (pageNum < 0 || pageNum >= inputDocument.Pages.Count)
+                    {
+                        throw new Exception($"Page number {pageNum + 1} is out of range for document with {inputDocument.Pages.Count} pages.");
+                    }
+
+                    PdfPage page = inputDocument.Pages[pageNum];
+                    for (int iText = 0; iText < textInputs.Length; iText++)
+                    {
+                        double x = printCoords[iText, 0];
+                        double y = printCoords[iText, 1];
+                        AddTextBox(page, (string)textInputs[iText], fontSize, x, y, fontName);
+                    }
+                }
+
+                inputDocument.Save(finalPath);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error editing PDF: {importPath}, error:" + ex.Message);
+            }
+        }
+        private void addTextToPdfButt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string[] status = new string[0];
+                Range statusRange = null;
+
+                ProgressHelper.RunWithProgress((worker, progressTracker) =>
+                {
+                    #region Read Setting Values
+                    string destDir = ((DirectoryTextBox)textBoxAttributeDic["pdfFolderPath_reportPane"]).CreateAndGetPath();
+                    fontSize = textBoxAttributeDic["fontSize_reportPane"].GetIntFromTextBox();
+                    fontName = (string)customAttributeDic["fontName_reportPane"].attValue;
+                    #endregion
+
+                    #region Get and Check ETABS Values
+
+                    #region Get Ranges
+                    Range importRange = ((RangeTextBox)textBoxAttributeDic["pdfImportRange_reportPane"]).GetDefaultRange();
+                    Range headerRange = ((RangeTextBox)textBoxAttributeDic["pdfImportHeaderRow_reportPane"]).GetDefaultRange();
+                    statusRange = importRange.Cells[1, importRange.Columns.Count + 1];
+                    #endregion
+
+                    #region Check import range vs header range
+                    CheckRangeSize(headerRange, 1, 5, "Header Row", true);
+
+                    if (importRange.Columns.Count != headerRange.Columns.Count)
+                    {
+                        throw new Exception($"Import range column count must match header range column count.\n" +
+                            $"Import Range Column Count: {importRange.Columns.Count}\n" +
+                            $"Header Range Column Count: {headerRange.Columns.Count}");
+                    }
+                    if (importRange.Column != headerRange.Column)
+                    {
+                        throw new Exception($"Import range must start at the same column as header range.\n" +
+                            $"Import Range Start Column: {importRange.Column}\n" +
+                            $"Header Range Start Column: {headerRange.Column}");
+                    }
+                    #endregion
+
+                    #region Read Header Range into Cells
+                    double[,] printCoords;
+                    {
+                        string[] header = GetContentsAsStringArray(headerRange, false);
+                        printCoords = new double[header.Length - 4, 2];
+                        for (int i = 4; i < header.Length; i++)
+                        {
+                            (double x, double y) = SplitCoordinatePair(header[i]);
+                            printCoords[i - 4, 0] = x;
+                            printCoords[i - 4, 1] = y;
+                        }
+                    }
+                    #endregion
+
+                    #region Read Import Range
+                    string[] importPaths = GetContentsAsStringArray(importRange.Columns[1].Cells, false);
+                    string[] pageNums = GetContentsAsStringArray(importRange.Columns[4].Cells, false);
+                    object[,] textInputs;
+                    {
+                        Range startCell = importRange.Cells[1, 5];
+                        Range endCell = importRange.Cells[importRange.Rows.Count, importRange.Columns.Count];
+                        Range inputTextRange = importRange.Worksheet.Range[startCell, endCell];
+                        textInputs = GetContentsAsObject2DArray(inputTextRange);
+                    }
+                    #endregion
+                    #endregion
+
+                    #region Write to PDF
+                    status = new string[importPaths.Length];
+                    for (int rowNum = 0; rowNum < importPaths.Length; rowNum++)
+                    {
+                        try
+                        {
+                            #region Check Import Path
+                            string importPath = importPaths[rowNum];
+                            if (Path.GetExtension(importPath).ToLower() != ".pdf")
+                            {
+                                throw new Exception($"File is not a pdf: {importPath}");
+                            }
+                            string importFileName = Path.GetFileNameWithoutExtension(importPath);
+                            progressTracker.UpdateStatus($"Processing row {rowNum + 1}: {importFileName}");
+                            #endregion
+
+                            #region Check Final Path
+                            string finalFileName = importFileName + "_edit.pdf";
+                            string finalPath = Path.Combine(destDir, finalFileName);
+                            if (File.Exists(finalPath))
+                            {
+                                if (overwriteFilesCheck.Checked)
+                                {
+                                    File.Delete(finalPath);
+                                }
+                                else { throw new Exception($"File with name {finalFileName} already exist at {destDir}"); }   
+                            }
+                            #endregion
+
+                            #region Edit PDF
+                            object[] rowTextInputs = Enumerable.Range(0, textInputs.GetLength(1))
+                                 .Select(col => textInputs[rowNum, col])
+                                 .ToArray();
+                            status[rowNum] = AddTextToPDF(importPath, finalPath, pageNums[rowNum], printCoords, rowTextInputs);
+                            #endregion
+
+                            #region Update Progress
+                            if (worker != null)
+                            {
+                                worker.ReportProgress(ConvertToProgress(rowNum, importPaths.Length));
+                                if (worker.CancellationPending)
+                                {
+                                    return;
+                                }
+                            }
+                            #endregion
+                        }
+                        catch (Exception ex)
+                        {
+                            status[rowNum] = $"Error: {ex.Message}";
+                        }
+                    }
+                    #endregion
+                });
+
+                WriteStatus(statusRange, status);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+            finally
+            {
+                worker = null;
+                progressTracker = null;
+                fontSize = 0;
+                fontName = null;
+            }
+        }
+        #endregion
     }
 }
+
 

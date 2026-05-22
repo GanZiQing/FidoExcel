@@ -126,7 +126,13 @@ namespace ExcelAddIn2.Excel_Pane_Folder.HDB_Design
                 double asvProvTotal = 0;
                 foreach (string rebarLayer in rebarLayers)
                 {
-                    string[] parts = rebarLayer.Trim().Split('H');
+                    string rebarLayer2 = rebarLayer;
+                    if (rebarLayer.Substring(0, 1) == "H")
+                    {
+                        rebarLayer2 = "1" + rebarLayer;
+                    }
+
+                    string[] parts = rebarLayer2.Trim().Split('H');
                     if (parts.Length != 2) { throw new Exception($"Unable to split rebar layer ${rebarString}, format expected:XXHXX-XXX"); }
                     double num = double.Parse(parts[0]);
 

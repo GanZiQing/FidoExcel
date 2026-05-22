@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.getDirectoryInfoGroup = new System.Windows.Forms.GroupBox();
+            this.mergeFoldersCheck = new System.Windows.Forms.CheckBox();
+            this.appendFileNameCheck = new System.Windows.Forms.CheckBox();
+            this.createFolders = new System.Windows.Forms.Button();
+            this.moveFiles = new System.Windows.Forms.Button();
             this.copyFiles = new System.Windows.Forms.Button();
             this.importSpecificFileNames = new System.Windows.Forms.Button();
             this.importFolderName = new System.Windows.Forms.Button();
@@ -48,10 +52,6 @@
             this.dispDirectory = new System.Windows.Forms.TextBox();
             this.importFilePath = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.moveFiles = new System.Windows.Forms.Button();
-            this.createFolders = new System.Windows.Forms.Button();
-            this.mergeFoldersCheck = new System.Windows.Forms.CheckBox();
-            this.appendFileNameCheck = new System.Windows.Forms.CheckBox();
             this.getDirectoryInfoGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -86,6 +86,58 @@
             this.getDirectoryInfoGroup.TabIndex = 5;
             this.getDirectoryInfoGroup.TabStop = false;
             this.getDirectoryInfoGroup.Text = "Get Directory Info";
+            // 
+            // mergeFoldersCheck
+            // 
+            this.mergeFoldersCheck.Checked = true;
+            this.mergeFoldersCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mergeFoldersCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.mergeFoldersCheck.Location = new System.Drawing.Point(16, 618);
+            this.mergeFoldersCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.mergeFoldersCheck.Name = "mergeFoldersCheck";
+            this.mergeFoldersCheck.Size = new System.Drawing.Size(473, 30);
+            this.mergeFoldersCheck.TabIndex = 107;
+            this.mergeFoldersCheck.Text = "Merge folder if exist";
+            this.mergeFoldersCheck.UseVisualStyleBackColor = true;
+            // 
+            // appendFileNameCheck
+            // 
+            this.appendFileNameCheck.Checked = true;
+            this.appendFileNameCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.appendFileNameCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.appendFileNameCheck.Location = new System.Drawing.Point(16, 576);
+            this.appendFileNameCheck.Margin = new System.Windows.Forms.Padding(6);
+            this.appendFileNameCheck.Name = "appendFileNameCheck";
+            this.appendFileNameCheck.Size = new System.Drawing.Size(470, 30);
+            this.appendFileNameCheck.TabIndex = 106;
+            this.appendFileNameCheck.Text = "Append (n) to file name if exist";
+            this.appendFileNameCheck.UseVisualStyleBackColor = true;
+            // 
+            // createFolders
+            // 
+            this.createFolders.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.createFolders.Location = new System.Drawing.Point(261, 460);
+            this.createFolders.Margin = new System.Windows.Forms.Padding(6);
+            this.createFolders.Name = "createFolders";
+            this.createFolders.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.createFolders.Size = new System.Drawing.Size(229, 46);
+            this.createFolders.TabIndex = 105;
+            this.createFolders.Text = "Create Folders";
+            this.createFolders.UseVisualStyleBackColor = true;
+            this.createFolders.Click += new System.EventHandler(this.createFolders_Click);
+            // 
+            // moveFiles
+            // 
+            this.moveFiles.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.moveFiles.Location = new System.Drawing.Point(261, 518);
+            this.moveFiles.Margin = new System.Windows.Forms.Padding(6);
+            this.moveFiles.Name = "moveFiles";
+            this.moveFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.moveFiles.Size = new System.Drawing.Size(229, 46);
+            this.moveFiles.TabIndex = 104;
+            this.moveFiles.Text = "Move Files/Folders";
+            this.moveFiles.UseVisualStyleBackColor = true;
+            this.moveFiles.Click += new System.EventHandler(this.moveFiles_Click);
             // 
             // copyFiles
             // 
@@ -299,58 +351,6 @@
             this.importFilePath.Text = "Get File Details";
             this.importFilePath.UseVisualStyleBackColor = true;
             this.importFilePath.Click += new System.EventHandler(this.importFilePath_Click);
-            // 
-            // moveFiles
-            // 
-            this.moveFiles.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.moveFiles.Location = new System.Drawing.Point(261, 518);
-            this.moveFiles.Margin = new System.Windows.Forms.Padding(6);
-            this.moveFiles.Name = "moveFiles";
-            this.moveFiles.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.moveFiles.Size = new System.Drawing.Size(229, 46);
-            this.moveFiles.TabIndex = 104;
-            this.moveFiles.Text = "Move Files/Folders";
-            this.moveFiles.UseVisualStyleBackColor = true;
-            this.moveFiles.Click += new System.EventHandler(this.moveFiles_Click);
-            // 
-            // createFolders
-            // 
-            this.createFolders.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.createFolders.Location = new System.Drawing.Point(261, 460);
-            this.createFolders.Margin = new System.Windows.Forms.Padding(6);
-            this.createFolders.Name = "createFolders";
-            this.createFolders.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.createFolders.Size = new System.Drawing.Size(229, 46);
-            this.createFolders.TabIndex = 105;
-            this.createFolders.Text = "Create Folders";
-            this.createFolders.UseVisualStyleBackColor = true;
-            this.createFolders.Click += new System.EventHandler(this.createFolders_Click);
-            // 
-            // mergeFoldersCheck
-            // 
-            this.mergeFoldersCheck.Checked = true;
-            this.mergeFoldersCheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mergeFoldersCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.mergeFoldersCheck.Location = new System.Drawing.Point(16, 618);
-            this.mergeFoldersCheck.Margin = new System.Windows.Forms.Padding(6);
-            this.mergeFoldersCheck.Name = "mergeFoldersCheck";
-            this.mergeFoldersCheck.Size = new System.Drawing.Size(473, 30);
-            this.mergeFoldersCheck.TabIndex = 107;
-            this.mergeFoldersCheck.Text = "Merge folder if exist";
-            this.mergeFoldersCheck.UseVisualStyleBackColor = true;
-            // 
-            // appendFileNameCheck
-            // 
-            this.appendFileNameCheck.Checked = true;
-            this.appendFileNameCheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.appendFileNameCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.appendFileNameCheck.Location = new System.Drawing.Point(16, 576);
-            this.appendFileNameCheck.Margin = new System.Windows.Forms.Padding(6);
-            this.appendFileNameCheck.Name = "appendFileNameCheck";
-            this.appendFileNameCheck.Size = new System.Drawing.Size(470, 30);
-            this.appendFileNameCheck.TabIndex = 106;
-            this.appendFileNameCheck.Text = "Append (n) to file name if exist";
-            this.appendFileNameCheck.UseVisualStyleBackColor = true;
             // 
             // DirectoryUserControl
             // 
