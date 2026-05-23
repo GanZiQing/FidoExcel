@@ -4,6 +4,7 @@ using MigraDoc.Rendering;
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
+using PdfSharp.Pdf.Annotations;
 using PdfSharp.Pdf.Content.Objects;
 using System;
 using System.Collections.Generic;
@@ -1824,6 +1825,38 @@ namespace ExcelAddIn2
             }
             gfx.Dispose();
             return stringSize;
+        }
+
+        public static void AddCommentBox(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord,
+            string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null, bool underline = false)
+        {
+            // Untested
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont fontType = new XFont(fontName, fontSize);
+            if (fontColor == null) { fontColor = XBrushes.Black; }
+            if (rectColor == null) { rectColor = XBrushes.White; }
+
+            // Create a PDF text annotation
+            XPoint bottomLeftPoint = new XPoint(xCoord, yCoord);
+            XSize textSize = gfx.MeasureString(textContents, fontType);
+            XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
+            XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+
+            PdfTextAnnotation textAnnot = new PdfTextAnnotation();
+            textAnnot.Title = "This is the title";
+            textAnnot.Subject = "This is the subject";
+            textAnnot.Contents = "This is the contents of the annotation.\rThis is the 2nd line.";
+            textAnnot.Icon = PdfTextAnnotationIcon.Note;
+
+            gfx.DrawString("The first text annotation", fontType, fontColor, rect, XStringFormats.Default);
+
+            // Convert rectangle from world space to page space. This is necessary because the annotation is
+            // placed relative to the bottom left corner of the page with units measured in point.
+            XRect rect2 = gfx.Transformer.WorldToDefaultPage(new XRect(new XPoint(30, 60), new XSize(30, 30)));
+            textAnnot.Rectangle = new PdfRectangle(rect2);
+
+            // Add the annotation to the page
+            page.Annotations.Add(textAnnot);
         }
         #endregion
 
