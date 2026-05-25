@@ -18,16 +18,26 @@ namespace ExcelAddIn2
         private void Launcher_Load(object sender, RibbonUIEventArgs e)
         {
             string versionNum = "Debug Mode";
-            string lastUpdated = "2026-05-15";
+            string lastUpdated = "NA";
             try
             {
+                // Get Version Number
                 System.Deployment.Application.ApplicationDeployment applicationDeployment = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
                 Version version = applicationDeployment.CurrentVersion;
                 versionNum = version.ToString();
+
+                // Get the path of the actual executing assembly (your DLL)
+                string dllPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+                if (System.IO.File.Exists(dllPath))
+                {
+                    // The DLL's write time corresponds to when ClickOnce installed/updated this version
+                    DateTime writeTime = System.IO.File.GetLastWriteTime(dllPath);
+                    lastUpdated = writeTime.ToString("yyyy-MM-dd");
+                }
             }
             catch { }
             versionLabel.Label = $"Version:\n  {versionNum}\nLast Updated:\n  {lastUpdated}";
-
         }
 
         #region Helper Functions
