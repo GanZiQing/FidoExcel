@@ -207,7 +207,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             #region PDF Edit
             toolTip1.SetToolTip(addTextToPdfButt,
-                "Current implementation creates new file with \"_edit\" appended to file name\n"+
+                "Current implementation creates new file with \"_edit\" appended to file name\n" +
                 "Same text for all pages. If different text, split pdf first\n" +
                 "Takes input in the following format:\n" +
                 "  File Path\n" +
@@ -232,7 +232,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
             toolTip1.SetToolTip(saveInOgFolderCheck,
                 "If checked, folder defined above will not be used\n" +
-                "File will instead be saved in original folder of the parent file\n" + 
+                "File will instead be saved in original folder of the parent file\n" +
                 "If not Modify Existing File is not checked, file name will be appended with \"_edited\""
             );
             #endregion
@@ -794,13 +794,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     try
                     {
                         folderPath = ((DirectoryTextBox)textBoxAttributeDic["scFolderPath_report"]).CheckAndGetPath();
-                        if (addToFolderCheck.Checked) { 
+                        if (addToFolderCheck.Checked)
+                        {
                             Range folderNameCell = ((RangeTextBox)textBoxAttributeDic["folderNameCell_report"]).GetRangeForCurrentSheet();
                             string folderName = GetContentsAsString(folderNameCell);
                             folderPath = Path.Combine(folderPath, folderName);
                             if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
                         }
-                        
+
                         dimensions = GetScreenshotBoundsFromTextBox();
 
                     }
@@ -814,7 +815,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                     #region Check
                     progressTracker.UpdateStatus($"Warning Message");
-                    
+
                     DialogResult result = progressTracker.ShowMessageBox(
                     "WARNING: This will trigger a series of keyboard inputs, even in other softwares.\n" +
                     $"Do you want to proceed?\nYou have {startDelay / 1000}s to go to the right software.",
@@ -1024,14 +1025,14 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
         private void printGraphics(string fileName, int loadDelay)
         {
-            SendKeys.SendWait("^p"); 
+            SendKeys.SendWait("^p");
             System.Threading.Thread.Sleep(loadDelay); // Wait to load
             SendKeys.SendWait(" ");
             System.Threading.Thread.Sleep(loadDelay); // Wait to load
             SendKeys.SendWait(fileName);
-            System.Threading.Thread.Sleep(loadDelay/2); // Wait to load
+            System.Threading.Thread.Sleep(loadDelay / 2); // Wait to load
             SendKeys.SendWait("{ENTER}");
-            System.Threading.Thread.Sleep(loadDelay/2); // Wait to load
+            System.Threading.Thread.Sleep(loadDelay / 2); // Wait to load
             SendKeys.SendWait("{ESC}");
         }
         #endregion
@@ -1163,11 +1164,12 @@ namespace ExcelAddIn2.Excel_Pane_Folder
         #endregion
 
         #region Add Text to PDF
-        BackgroundWorker worker;
+        BackgroundWorker worker; // Seems to not work if defined outside due to threading
         ProgressTracker progressTracker;
+
         int fontSize;
         string fontName;
-        private (double,double) SplitCoordinatePair(string inputString)
+        private (double, double) SplitCoordinatePair(string inputString)
         {
             try
             {
@@ -1179,12 +1181,12 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 double y = double.Parse(parts[1].Trim());
                 return (x, y);
             }
-            catch 
+            catch
             {
                 throw new Exception($"Unable to parse string {inputString} into coordinate pair. Expected format: double,double.");
             }
         }
-        
+
         private (string[] importPaths, object[,] textInputs, double[,] printCoords, string[] pageNums) ReadPdfInputInfoOG(ref Range statusRange)
         {
             #region Get Ranges
@@ -1293,7 +1295,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             #region Check and consolidate importPaths
             Dictionary<string, List<int>> importPathsDic = new Dictionary<string, List<int>>();
             HashSet<string> destinationFileName = new HashSet<string>();
-            status = new string[pageNums.Length];
+            status = Enumerable.Repeat("File not processed", pageNums.Length).ToArray();
+
             int errorsEncountered = 0;
             for (int i = 0; i < importPaths.Length; i++)
             {
@@ -1319,24 +1322,23 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             }
             #endregion
 
-
             #region Check Error and Continue?
             if (errorsEncountered > 0)
             {
                 DialogResult result = MessageBox.Show(
                     $"Encountered {errorsEncountered} errors in the import paths. Do you want to continue processing the valid paths?",
                     "Error in Import Paths", MessageBoxButtons.YesNo);
-                if (result == DialogResult.No) 
+                if (result == DialogResult.No)
                 {
                     WriteStatus(statusRange, status);
-                    throw new Exception($"Terminated by user"); 
+                    throw new Exception($"Terminated by user");
                 }
             }
             #endregion
             return (importPathsDic, textInputs, printCoords, pageNums);
         }
 
-        
+
         private int[] SplitPageNums(string inputString)
         {
             try
@@ -1359,7 +1361,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             bool fileCopied = false;
             try
             {
-                File.Copy(importPath, finalPath); 
+                File.Copy(importPath, finalPath);
                 fileCopied = true;
                 PdfDocument inputDocument = PdfReader.Open(importPath, PdfDocumentOpenMode.Modify);
 
@@ -1378,7 +1380,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     {
                         double x = printCoords[iText, 0];
                         double y = printCoords[iText, 1];
-                        AddTextBox(page, (string)textInputs[iText], fontSize, x, y, fontName);
+                        //AddTextBox(page, (string)textInputs[iText], fontSize, x, y, fontName);
+                        AddTextBoxWithNewLine(page, (string)textInputs[iText], fontSize, x, y, fontName);
                     }
                 }
 
@@ -1414,8 +1417,8 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     {
                         double x = printCoords[iText, 0];
                         double y = printCoords[iText, 1];
-                        AddTextBox(page, (string)textInputs[iText], fontSize, x, y, fontName);
-                        //AddCommentBox(page, (string)textInputs[iText], fontSize, x, y, fontName);
+                        //AddTextBox(page, (string)textInputs[iText], fontSize, x, y, fontName);
+                         AddTextBoxWithNewLine(page, (string)textInputs[iText], fontSize, x, y, fontName);
                     }
                 }
 
@@ -1428,7 +1431,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             }
         }
 
-        private void OpenAndEditPDF(string importPath, Dictionary<string, List<int>> importPathsDic, object[,] textInputs, double[,] printCoords, string[] pageNums, 
+        private void OpenAndEditPDF(string importPath, Dictionary<string, List<int>> importPathsDic, object[,] textInputs, double[,] printCoords, string[] pageNums,
             string destDir, ref int processedFiles, ref string[] status)
         {
             List<int> associatedRows = importPathsDic[importPath];
@@ -1450,11 +1453,11 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 #region Check Final Path
                 string finalFileName = importFileName; // Default is to copy filename
-                if (saveInOgFolderCheck.Checked) 
-                { 
+                if (saveInOgFolderCheck.Checked)
+                {
                     destDir = Path.GetDirectoryName(importPath);
                     if (!modifyDocumentCheck.Checked)
-                    {   
+                    {
                         finalFileName = Path.GetFileNameWithoutExtension(importPath) + "_edited.pdf";
                     }
                 }
@@ -1501,8 +1504,9 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                 #region Update Progress
                 if (worker != null)
                 {
+                    processedFiles += 1;
                     worker.ReportProgress(ConvertToProgress(processedFiles, importPathsDic.Keys.Count));
-                    if (worker.CancellationPending) { return; }
+                    if (worker.CancellationPending) { throw new Exception("Cancelled by user"); }
                 }
                 #endregion
             }
@@ -1527,7 +1531,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
             }
             finally
             {
-                if (processedRows.Count == associatedRows.Count) 
+                if (processedRows.Count == associatedRows.Count)
                 {
                     // Successfully processed all rows associated with this file, now save the file
                     editDocument.Save(finalPath);
@@ -1555,7 +1559,9 @@ namespace ExcelAddIn2.Excel_Pane_Folder
 
                 ProgressHelper.RunWithProgress((workerLocal, progressTrackerLocal) =>
                 {
-                    worker = workerLocal; progressTracker = progressTrackerLocal;
+                    worker = workerLocal;
+                    progressTracker = progressTrackerLocal;
+
                     #region Read Setting Values
                     fontSize = textBoxAttributeDic["fontSize_reportPane"].GetIntFromTextBox();
                     fontName = (string)customAttributeDic["fontName_reportPane"].attValue;
@@ -1581,6 +1587,7 @@ namespace ExcelAddIn2.Excel_Pane_Folder
                     foreach (string importPath in importPathsDic.Keys)
                     {
                         OpenAndEditPDF(importPath, importPathsDic, textInputs, printCoords, pageNums, destDir, ref processedFiles, ref status);
+                        if (worker.CancellationPending) { throw new Exception("Cancelled by user"); }
                     }
                     #endregion
                 });

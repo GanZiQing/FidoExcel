@@ -2,10 +2,12 @@
 using Microsoft.Office.Tools;
 using MigraDoc.Rendering;
 using PdfSharp.Drawing;
+using PdfSharp.Drawing.Layout;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.Annotations;
 using PdfSharp.Pdf.Content.Objects;
+using PdfSharp.Quality;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1827,36 +1829,78 @@ namespace ExcelAddIn2
             return stringSize;
         }
 
-        public static void AddCommentBox(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord,
-            string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null, bool underline = false)
+        public static XSize AddTextBoxWithNewLine(PdfPage page, string textContents, int fontSize, double xCoord, double yCoord,
+    string fontName = "Arial", XSolidBrush fontColor = null, XSolidBrush rectColor = null, bool underline = false)
         {
-            // Untested
             XGraphics gfx = XGraphics.FromPdfPage(page);
             XFont fontType = new XFont(fontName, fontSize);
             if (fontColor == null) { fontColor = XBrushes.Black; }
             if (rectColor == null) { rectColor = XBrushes.White; }
 
-            // Create a PDF text annotation
-            XPoint bottomLeftPoint = new XPoint(xCoord, yCoord);
-            XSize textSize = gfx.MeasureString(textContents, fontType);
-            XPoint topRightPoint = new XPoint(bottomLeftPoint.X + textSize.Width, bottomLeftPoint.Y - (textSize.Height));
-            XRect rect = new XRect(topRightPoint, bottomLeftPoint);
+            #region Rotation
+            int rotation = page.Rotate;
+            switch (rotation)
+            {
+                case 90:
+                    gfx.RotateTransform(-90);
+                    gfx.TranslateTransform(-page.Height.Value, 0);
+                    break;
+                case 180:
+                    gfx.RotateTransform(-180);
+                    gfx.TranslateTransform(-page.Width.Value, -page.Height.Value);
+                    break;
+                case 270:
+                    gfx.RotateTransform(-270);
+                    gfx.TranslateTransform(-(page.Width.Value - page.Height.Value), -page.Height.Value);
+                    break;
+                default:
+                    break;
+            }
+            #endregion
 
-            PdfTextAnnotation textAnnot = new PdfTextAnnotation();
-            textAnnot.Title = "This is the title";
-            textAnnot.Subject = "This is the subject";
-            textAnnot.Contents = "This is the contents of the annotation.\rThis is the 2nd line.";
-            textAnnot.Icon = PdfTextAnnotationIcon.Note;
+            #region Split string by new line and find dimensions
+            string[] lines = textContents.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            double maxWidth = 0;
+            double totalHeight = 0;
+            double lineSpacing = fontType.GetHeight(); // Gets standard line height for the font
 
-            gfx.DrawString("The first text annotation", fontType, fontColor, rect, XStringFormats.Default);
+            foreach (var line in lines)
+            {
+                XSize lineSize = gfx.MeasureString(line, fontType);
+                if (lineSize.Width > maxWidth) maxWidth = lineSize.Width;
+                totalHeight += lineSpacing;
+            }
+            #endregion
 
-            // Convert rectangle from world space to page space. This is necessary because the annotation is
-            // placed relative to the bottom left corner of the page with units measured in point.
-            XRect rect2 = gfx.Transformer.WorldToDefaultPage(new XRect(new XPoint(30, 60), new XSize(30, 30)));
-            textAnnot.Rectangle = new PdfRectangle(rect2);
+            #region Find Coordinates
+            rectColor = XBrushes.AliceBlue;
+            XPoint topLeftPoint = new XPoint(xCoord, yCoord);
+            XRect rect = new XRect(topLeftPoint.X, topLeftPoint.Y, maxWidth, totalHeight);
 
-            // Add the annotation to the page
-            page.Annotations.Add(textAnnot);
+            
+            //XPoint bottomRightPoint = new XPoint(topLeftPoint.X + maxWidth, topLeftPoint.Y - (totalHeight));
+            //XRect rect = new XRect(topLeftPoint, bottomRightPoint);
+            //gfx.DrawRectangle(rectColor, rect);
+
+            XTextFormatter tf = new XTextFormatter(gfx);
+            tf.DrawString(textContents, fontType, fontColor, rect, XStringFormats.TopLeft);            
+            #endregion
+
+            if (underline)
+            {
+                throw new NotImplementedException("Underline not implemented for mutliline text");
+                //// Right-aligned: so the text starts at rect.Right - textSize.Width
+                //double startX = rect.Right - textSize.Width;
+                //double endX = rect.Right;
+
+                ////// place underline slightly below baseline (tweak +2 depending on font size)
+                ////double underlineY = rect.Bottom - 1;
+
+                //XColor underlineColor = fontColor.Color;
+                //gfx.DrawLine(new XPen(underlineColor, 1), xCoord, yCoord, xCoord + textSize.Width, yCoord);
+            }
+            gfx.Dispose();
+            return new XSize(maxWidth, totalHeight);
         }
         #endregion
 
@@ -1881,7 +1925,7 @@ namespace ExcelAddIn2
                     CopyArrayToClipboard(status);
                 }
             }
-        }
+        } 
         #endregion
     }
 

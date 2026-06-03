@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.dispImageLoc = new System.Windows.Forms.TextBox();
             this.deleteRefCheck = new System.Windows.Forms.CheckBox();
@@ -85,6 +84,12 @@
             this.textBox18 = new System.Windows.Forms.TextBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.dispFontSizeSheetNum = new System.Windows.Forms.TextBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.dispFontName = new System.Windows.Forms.ComboBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.setPdfHeaderRow = new System.Windows.Forms.Button();
             this.dispPdfHeaderRow = new System.Windows.Forms.TextBox();
@@ -92,18 +97,13 @@
             this.setPdfImportRange = new System.Windows.Forms.Button();
             this.dispPdfImportRange = new System.Windows.Forms.TextBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.saveInOgFolderCheck = new System.Windows.Forms.CheckBox();
             this.modifyDocumentCheck = new System.Windows.Forms.CheckBox();
             this.deleteExistingFilesCheck = new System.Windows.Forms.CheckBox();
             this.openFolderPdf = new System.Windows.Forms.Button();
             this.setFolderPdf = new System.Windows.Forms.Button();
             this.dispFolderPdf = new System.Windows.Forms.TextBox();
-            this.dispFontName = new System.Windows.Forms.ComboBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.dispFontSizeSheetNum = new System.Windows.Forms.TextBox();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.saveInOgFolderCheck = new System.Windows.Forms.CheckBox();
+            this.directoryUserControl1 = new ExcelAddIn2.DirectoryUserControl();
             this.tabPage1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -114,9 +114,9 @@
             this.groupBox3.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.groupBox9.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage1
@@ -133,13 +133,6 @@
             this.tabPage1.Size = new System.Drawing.Size(433, 1235);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Ppt Import";
-            // 
-            // directoryUserControl1
-            // 
-            this.directoryUserControl1.Location = new System.Drawing.Point(12, 8);
-            this.directoryUserControl1.Name = "directoryUserControl1";
-            this.directoryUserControl1.Size = new System.Drawing.Size(411, 358);
-            this.directoryUserControl1.TabIndex = 9;
             // 
             // groupBox4
             // 
@@ -837,6 +830,103 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "PDF Edit";
             // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.textBox1);
+            this.groupBox9.Controls.Add(this.dispFontSizeSheetNum);
+            this.groupBox9.Controls.Add(this.textBox7);
+            this.groupBox9.Controls.Add(this.textBox5);
+            this.groupBox9.Controls.Add(this.dispFontName);
+            this.groupBox9.Location = new System.Drawing.Point(7, 437);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(411, 100);
+            this.groupBox9.TabIndex = 126;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Font Settings";
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Location = new System.Drawing.Point(286, 26);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(5);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.ShortcutsEnabled = false;
+            this.textBox1.Size = new System.Drawing.Size(83, 19);
+            this.textBox1.TabIndex = 119;
+            this.textBox1.TabStop = false;
+            this.textBox1.Text = "Name";
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispFontSizeSheetNum
+            // 
+            this.dispFontSizeSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.dispFontSizeSheetNum.Location = new System.Drawing.Point(150, 55);
+            this.dispFontSizeSheetNum.Margin = new System.Windows.Forms.Padding(5);
+            this.dispFontSizeSheetNum.MaxLength = 100;
+            this.dispFontSizeSheetNum.Name = "dispFontSizeSheetNum";
+            this.dispFontSizeSheetNum.Size = new System.Drawing.Size(109, 26);
+            this.dispFontSizeSheetNum.TabIndex = 117;
+            this.dispFontSizeSheetNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox7
+            // 
+            this.textBox7.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox7.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox7.Location = new System.Drawing.Point(2, 55);
+            this.textBox7.Margin = new System.Windows.Forms.Padding(5);
+            this.textBox7.Multiline = true;
+            this.textBox7.Name = "textBox7";
+            this.textBox7.ReadOnly = true;
+            this.textBox7.ShortcutsEnabled = false;
+            this.textBox7.Size = new System.Drawing.Size(146, 26);
+            this.textBox7.TabIndex = 118;
+            this.textBox7.TabStop = false;
+            this.textBox7.Text = "Font";
+            // 
+            // textBox5
+            // 
+            this.textBox5.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox5.Location = new System.Drawing.Point(163, 26);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(5);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
+            this.textBox5.ShortcutsEnabled = false;
+            this.textBox5.Size = new System.Drawing.Size(83, 19);
+            this.textBox5.TabIndex = 120;
+            this.textBox5.TabStop = false;
+            this.textBox5.Text = "Size";
+            this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // dispFontName
+            // 
+            this.dispFontName.AutoCompleteCustomSource.AddRange(new string[] {
+            "Arial",
+            "Times New Roman",
+            "Courier New",
+            "Verdana",
+            "Lucida Console",
+            "Symbol",
+            "Custom"});
+            this.dispFontName.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.dispFontName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.dispFontName.FormattingEnabled = true;
+            this.dispFontName.Items.AddRange(new object[] {
+            "Arial",
+            "Times New Roman",
+            "Courier New",
+            "Verdana",
+            "Lucida Console",
+            "Symbol",
+            "Custom"});
+            this.dispFontName.Location = new System.Drawing.Point(270, 55);
+            this.dispFontName.Margin = new System.Windows.Forms.Padding(5);
+            this.dispFontName.Name = "dispFontName";
+            this.dispFontName.Size = new System.Drawing.Size(112, 28);
+            this.dispFontName.TabIndex = 49;
+            // 
             // groupBox8
             // 
             this.groupBox8.Controls.Add(this.setPdfHeaderRow);
@@ -924,6 +1014,17 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Settings";
             // 
+            // saveInOgFolderCheck
+            // 
+            this.saveInOgFolderCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.saveInOgFolderCheck.Location = new System.Drawing.Point(12, 183);
+            this.saveInOgFolderCheck.Margin = new System.Windows.Forms.Padding(5);
+            this.saveInOgFolderCheck.Name = "saveInOgFolderCheck";
+            this.saveInOgFolderCheck.Size = new System.Drawing.Size(382, 26);
+            this.saveInOgFolderCheck.TabIndex = 126;
+            this.saveInOgFolderCheck.Text = "Save In Original Folder";
+            this.saveInOgFolderCheck.UseVisualStyleBackColor = true;
+            // 
             // modifyDocumentCheck
             // 
             this.modifyDocumentCheck.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -980,113 +1081,12 @@
             this.dispFolderPdf.TabIndex = 123;
             this.dispFolderPdf.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // dispFontName
+            // directoryUserControl1
             // 
-            this.dispFontName.AutoCompleteCustomSource.AddRange(new string[] {
-            "Arial",
-            "Times New Roman",
-            "Courier New",
-            "Verdana",
-            "Lucida Console",
-            "Symbol",
-            "Custom"});
-            this.dispFontName.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.dispFontName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.dispFontName.FormattingEnabled = true;
-            this.dispFontName.Items.AddRange(new object[] {
-            "Arial",
-            "Times New Roman",
-            "Courier New",
-            "Verdana",
-            "Lucida Console",
-            "Symbol",
-            "Custom"});
-            this.dispFontName.Location = new System.Drawing.Point(270, 55);
-            this.dispFontName.Margin = new System.Windows.Forms.Padding(5);
-            this.dispFontName.Name = "dispFontName";
-            this.dispFontName.Size = new System.Drawing.Size(112, 28);
-            this.dispFontName.TabIndex = 49;
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Location = new System.Drawing.Point(286, 26);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(5);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.ShortcutsEnabled = false;
-            this.textBox1.Size = new System.Drawing.Size(83, 19);
-            this.textBox1.TabIndex = 119;
-            this.textBox1.TabStop = false;
-            this.textBox1.Text = "Name";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox5
-            // 
-            this.textBox5.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox5.Location = new System.Drawing.Point(163, 26);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(5);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.ReadOnly = true;
-            this.textBox5.ShortcutsEnabled = false;
-            this.textBox5.Size = new System.Drawing.Size(83, 19);
-            this.textBox5.TabIndex = 120;
-            this.textBox5.TabStop = false;
-            this.textBox5.Text = "Size";
-            this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox7
-            // 
-            this.textBox7.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox7.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox7.Location = new System.Drawing.Point(2, 55);
-            this.textBox7.Margin = new System.Windows.Forms.Padding(5);
-            this.textBox7.Multiline = true;
-            this.textBox7.Name = "textBox7";
-            this.textBox7.ReadOnly = true;
-            this.textBox7.ShortcutsEnabled = false;
-            this.textBox7.Size = new System.Drawing.Size(146, 26);
-            this.textBox7.TabIndex = 118;
-            this.textBox7.TabStop = false;
-            this.textBox7.Text = "Font";
-            // 
-            // dispFontSizeSheetNum
-            // 
-            this.dispFontSizeSheetNum.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.dispFontSizeSheetNum.Location = new System.Drawing.Point(150, 55);
-            this.dispFontSizeSheetNum.Margin = new System.Windows.Forms.Padding(5);
-            this.dispFontSizeSheetNum.MaxLength = 100;
-            this.dispFontSizeSheetNum.Name = "dispFontSizeSheetNum";
-            this.dispFontSizeSheetNum.Size = new System.Drawing.Size(109, 26);
-            this.dispFontSizeSheetNum.TabIndex = 117;
-            this.dispFontSizeSheetNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // groupBox9
-            // 
-            this.groupBox9.Controls.Add(this.textBox1);
-            this.groupBox9.Controls.Add(this.dispFontSizeSheetNum);
-            this.groupBox9.Controls.Add(this.textBox7);
-            this.groupBox9.Controls.Add(this.textBox5);
-            this.groupBox9.Controls.Add(this.dispFontName);
-            this.groupBox9.Location = new System.Drawing.Point(7, 437);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(411, 100);
-            this.groupBox9.TabIndex = 126;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Font Settings";
-            // 
-            // saveInOgFolderCheck
-            // 
-            this.saveInOgFolderCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.saveInOgFolderCheck.Location = new System.Drawing.Point(12, 183);
-            this.saveInOgFolderCheck.Margin = new System.Windows.Forms.Padding(5);
-            this.saveInOgFolderCheck.Name = "saveInOgFolderCheck";
-            this.saveInOgFolderCheck.Size = new System.Drawing.Size(382, 26);
-            this.saveInOgFolderCheck.TabIndex = 126;
-            this.saveInOgFolderCheck.Text = "Save In Original Folder";
-            this.saveInOgFolderCheck.UseVisualStyleBackColor = true;
+            this.directoryUserControl1.Location = new System.Drawing.Point(12, 8);
+            this.directoryUserControl1.Name = "directoryUserControl1";
+            this.directoryUserControl1.Size = new System.Drawing.Size(411, 358);
+            this.directoryUserControl1.TabIndex = 9;
             // 
             // ReportPane
             // 
@@ -1113,12 +1113,12 @@
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.tabPage3.ResumeLayout(false);
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
             this.ResumeLayout(false);
 
         }
