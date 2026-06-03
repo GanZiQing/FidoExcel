@@ -44,6 +44,9 @@ namespace ExcelAddIn2
             thisAtt = new CheckBoxAttribute("printFrameSection_EtabsUtil", printFrameSectionCheck, false);
             attributeDic.Add(thisAtt.attName, thisAtt);
 
+            thisAtt = new CheckBoxAttribute("printFrameReleases_EtabsUtil", printFrameEndReleasesCheck, false);
+            attributeDic.Add(thisAtt.attName, thisAtt);
+
             thisAtt = new CheckBoxAttribute("getColCheck_EtabsUtil", getColCheck, true);
             attributeDic.Add(thisAtt.attName, thisAtt);
             thisAtt = new CheckBoxAttribute("getBeamCheck_EtabsUtil", getBeamCheck, true);
@@ -126,7 +129,8 @@ namespace ExcelAddIn2
                     EtabsObjectTypeHelper.GetFrameDetails(sapModel, ref frame,
                         printFrameLabelCheck.Checked,
                         printFrameCoordCheck.Checked,
-                        printFrameSectionCheck.Checked
+                        printFrameSectionCheck.Checked,
+                        printFrameEndReleasesCheck.Checked
                         );
                 }
                 #endregion
@@ -137,6 +141,7 @@ namespace ExcelAddIn2
                 if (printFrameLabelCheck.Checked) { colCount++; }
                 if (printFrameSectionCheck.Checked) { colCount++; }
                 if (printFrameCoordCheck.Checked) { colCount += 6; }
+                if (printFrameEndReleasesCheck.Checked) { colCount += 2; }
 
                 object[,] finalWriteArray = new object[frames.Length, colCount];
                 #endregion
@@ -156,6 +161,14 @@ namespace ExcelAddIn2
                             finalWriteArray[rowNum, colNum] = frame.coordinates[coordNum];
                             colNum++;
                         }
+                    }
+
+                    if (printFrameEndReleasesCheck.Checked)
+                    {
+                        finalWriteArray[rowNum, colNum] = frame.releaseStringStart;
+                        colNum++;
+                        finalWriteArray[rowNum, colNum] = frame.releaseStringEnd;
+                        colNum++;
                     }
                 }
                 #endregion

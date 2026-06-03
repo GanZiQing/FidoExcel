@@ -1,5 +1,6 @@
 ﻿using ETABSv1;
 using ExcelAddIn2.Excel_Pane_Folder.HDB_Design;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1188,6 +1189,72 @@ namespace ExcelAddIn2
             return sectionName;
         }
 
+        public bool[] releaseII;
+        public bool[] releaseJJ;
+        public double[] releaseStartValue;
+        public double[] releaseEndValue;
+        public string releaseStringStart;
+        public string releaseStringEnd;
+        public (string releaseStringStart, string releaseStringEnd) GetEndReleases(cSapModel sapModel)
+        {
+
+            // Get releases from ETABS
+            sapModel.FrameObj.GetReleases(uniqueName, ref releaseII, ref releaseJJ, ref releaseStartValue, ref releaseEndValue);
+
+
+            // Construct return string
+            releaseStringStart = "";
+            releaseStringEnd = "";
+
+            string[] dofName = new string[6] { "P", "V1", "V2", "T", "M22", "M33" };
+            for (int dofNum = 0; dofNum < releaseII.Length; dofNum++)
+            {
+                if (releaseII[dofNum])
+                {
+                    string dofString = dofName[dofNum];
+                    if (releaseStartValue[dofNum] != 0)
+                    {
+                        dofString += $"({releaseStartValue[dofNum]})";
+                    }
+                    dofString += ", ";
+
+                    releaseStringStart += dofString;
+                }
+
+                if (releaseJJ[dofNum])
+                {
+                    string dofString = dofName[dofNum];
+                    if (releaseEndValue[dofNum] != 0)
+                    {
+                        dofString += $"({releaseEndValue[dofNum]})";
+                    }
+                    dofString += ", ";
+
+                    releaseStringEnd += dofString;
+                }
+            }
+
+            if (releaseStringStart.Length == 0)
+            {
+                releaseStringStart = "-";
+            }
+            else
+            {
+                releaseStringStart = releaseStringStart.Substring(0, releaseStringStart.Length - 2);
+            }
+
+            if (releaseStringEnd.Length == 0)
+            {
+                releaseStringEnd = "-";
+            }
+            else
+            {
+                releaseStringEnd = releaseStringEnd.Substring(0, releaseStringEnd.Length - 2); 
+            }
+
+            return (releaseStringStart, releaseStringEnd);
+        }
+
         #endregion
 
         #region Sets
@@ -1425,7 +1492,7 @@ namespace ExcelAddIn2
             return targetFrameObjects.ToArray();
         }
 
-        static public void GetFrameDetails(cSapModel sapModel, ref EtabsFrame frameObj, bool getLabel, bool getCoord, bool getSection)
+        static public void GetFrameDetails(cSapModel sapModel, ref EtabsFrame frameObj, bool getLabel, bool getCoord, bool getSection, bool getEndReleases)
         {
             if (getLabel)
             {
@@ -1441,6 +1508,11 @@ namespace ExcelAddIn2
             {
                 frameObj.GetSection(sapModel);
             } 
+            
+            if (getEndReleases)
+            {
+                frameObj.GetEndReleases(sapModel);
+            }
         }
 
     }
