@@ -1,4 +1,9 @@
 ﻿using ETABSv1;
+using FlaUI.Core;
+using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Conditions;
+using FlaUI.Core.Definitions;
+using FlaUI.UIA3;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.PowerPoint;
@@ -1235,7 +1240,7 @@ namespace ExcelAddIn2
                     ref tableName,
                     ref importType
                 );
-                if ( ret != 0 ) { throw new Exception("Error retrieving table list"); }
+                if (ret != 0) { throw new Exception("Error retrieving table list"); }
                 #endregion
 
                 #region Get Column Data Table
@@ -1290,7 +1295,7 @@ namespace ExcelAddIn2
         private (string dir, double displacement, string node) SplitDisplacementLine(string line)
         {
             int equalPos = line.IndexOf('=');
-            string dir = line.Substring(0,equalPos).Trim();
+            string dir = line.Substring(0, equalPos).Trim();
             //type = type.Trim();
             string data = line.Substring(equalPos + 1);
             string[] parts = data.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1299,7 +1304,7 @@ namespace ExcelAddIn2
             return (dir, displacement, node);
         }
 
-        private (List<string> headers, List<double[]> displacements, List<string[]> nodes, List<string[]> dir ) GetDisplacementFromStaadOutput(string filePath)
+        private (List<string> headers, List<double[]> displacements, List<string[]> nodes, List<string[]> dir) GetDisplacementFromStaadOutput(string filePath)
         {
             try
             {
@@ -1441,7 +1446,7 @@ namespace ExcelAddIn2
 
                 #region Print Results
                 Range writeRange = Globals.ThisAddIn.Application.ActiveWindow.RangeSelection;
-                WriteToExcelRangeAsCol(writeRange,0, 0, true,
+                WriteToExcelRangeAsCol(writeRange, 0, 0, true,
                     sourceFilePath.ToArray(),
                     sourceFileName.ToArray(),
                     headers.ToArray(),
@@ -1457,15 +1462,105 @@ namespace ExcelAddIn2
         }
         #endregion
 
-        private void testProkonButt_Click(object sender, EventArgs e)
+        private async void testProkonButt_Click(object sender, EventArgs e)
         {
             try
             {
+                string filepath = @"C:\Users\epona\Documents\VSTO\01_Excel\Sample Excel\26-09-23 Prokon Test\550x1950 - Revised Bar.C13";
+                filepath = @"C:\Users\epona\Documents\VSTO\01_Excel\Sample Excel\26-09-23 Prokon Test\2-26-06-06 RHS Post QP Comments.EDB";
 
+                await RunProkonDesignAsync(filepath);
+
+                MessageBox.Show("Prokon design completed successfully!", "Success");
             }
-            catch (Exception ex) { throw new Exception($"Error running Test Prokon\n${ex.Message}"); }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error running Test Prokon\n{ex.Message}");
+            }
+        }
+
+        private async Task RunProkonDesignAsync(string filepath)
+        {
+            if (!File.Exists(filepath)) { throw new Exception($"File not found at {filepath}"); }
+            //FlaUI.Core.Application app = FlaUI.Core.Application.Launch(@"C:\PROKON\bin\GenCol.exe", $"\"{filepath}\"");
+            FlaUI.Core.Application app = FlaUI.Core.Application.Launch(@"C:\Program Files\Computers and Structures\ETABS 22\ETABS.exe", $"\"{filepath}\"");
+
+            FlaUI.Core.AutomationElements.Window window = app.GetMainWindow(new UIA3Automation());
+            if (window == null)
+            {
+                throw new Exception("Prokon window did not open");
+            }
+            await Task.Delay(3000);
+
+
+            UIA3Automation automation = new UIA3Automation();
+            //var designTab = window.FindFirstDescendant(
+            //    automation.ConditionFactory.ByName("Design")
+            //    .And(automation.ConditionFactory.ByControlType(ControlType.TabItem))
+            //);
+
+            // Find ANY TabItem control
+
+
+            MessageBox.Show($"Main Window: {window.Title}\nControlType: {window.ControlType}");
+
+            await Task.Delay(2000);
+
+            // Dump complete hierarchy
+            MessageBox.Show("\n========== COMPLETE WINDOW HIERARCHY ==========");
+            DumpElementTree(window, 0, maxDepth: 10);
+
+            // Also search for ANY element named "Design" anywhere in the tree
+            MessageBox.Show("\n========== SEARCHING FOR 'DESIGN' ANYWHERE ==========");
+            var allElements = window.FindAllDescendants();
+            var designElements = allElements.Where(e =>
+                e.Name != null && e.Name.Contains("Design")
+            ).ToList();
+
+            MessageBox.Show($"Elements containing 'Design': {designElements.Count}");
+            foreach (var elem in designElements)
+            {
+                Console.WriteLine($"  - {elem.ControlType}: '{elem.Name}' (ID: {elem.AutomationId})");
+            }
+
+            throw new Exception("Check Debug Output for complete element tree");
+        }
+
+        private void DumpElementTree(FlaUI.Core.AutomationElements.AutomationElement element, int depth, int maxDepth = 5)
+        {
+            if (depth > maxDepth)
+                return;
+
+            string indent = new string(' ', depth * 2);
+            string path = @"C:\Users\epona\Documents\VSTO\01_Excel\Sample Excel\26-09-23 Prokon Test\prokon_debug.txt";
+
+            try
+            {
+                string name = element.Name ?? "(no name)";
+                string controlType = element.ControlType.ToString();
+                
+                // SafelyGet AutomationId (may not be supported)
+                string id = "(no ID)";
+                try
+                {
+                    id = element.AutomationId ?? "(no ID)";
+                }
+                catch { }
+
+                string line = $"{indent}[{depth}] {controlType} | Name: '{name}' | ID: '{id}'";
+                File.AppendAllText(path, line + Environment.NewLine);
+
+                // Get children
+                var children = element.FindAllChildren();
+                foreach (var child in children)
+                {
+                    DumpElementTree(child, depth + 1, maxDepth);
+                }
+            }
+            catch (Exception ex)
+            {
+                File.AppendAllText(path, $"{indent}[ERROR] {ex.Message}" + Environment.NewLine);
+            }
         }
     }
 }
-
-
