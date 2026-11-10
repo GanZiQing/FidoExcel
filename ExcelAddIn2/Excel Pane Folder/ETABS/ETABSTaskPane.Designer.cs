@@ -124,6 +124,7 @@
             this.replicateBySpacingDisp = new System.Windows.Forms.Button();
             this.replicateByDispBut = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.printFrameStoreyCheck = new System.Windows.Forms.CheckBox();
             this.EtabsTabGroup.SuspendLayout();
             this.windLoadPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -190,7 +191,7 @@
             this.replaceLoadCheck.Location = new System.Drawing.Point(133, 59);
             this.replaceLoadCheck.Margin = new System.Windows.Forms.Padding(2);
             this.replaceLoadCheck.Name = "replaceLoadCheck";
-            this.replaceLoadCheck.Size = new System.Drawing.Size(100, 21);
+            this.replaceLoadCheck.Size = new System.Drawing.Size(93, 17);
             this.replaceLoadCheck.TabIndex = 40;
             this.replaceLoadCheck.Text = "Replace Load";
             this.replaceLoadCheck.UseVisualStyleBackColor = true;
@@ -202,7 +203,7 @@
             this.refreshViewCheck.Location = new System.Drawing.Point(133, 80);
             this.refreshViewCheck.Margin = new System.Windows.Forms.Padding(2);
             this.refreshViewCheck.Name = "refreshViewCheck";
-            this.refreshViewCheck.Size = new System.Drawing.Size(96, 21);
+            this.refreshViewCheck.Size = new System.Drawing.Size(89, 17);
             this.refreshViewCheck.TabIndex = 40;
             this.refreshViewCheck.Text = "Refresh View";
             this.refreshViewCheck.UseVisualStyleBackColor = true;
@@ -423,7 +424,7 @@
             this.printHeaderCheck.Location = new System.Drawing.Point(8, 112);
             this.printHeaderCheck.Margin = new System.Windows.Forms.Padding(2);
             this.printHeaderCheck.Name = "printHeaderCheck";
-            this.printHeaderCheck.Size = new System.Drawing.Size(92, 21);
+            this.printHeaderCheck.Size = new System.Drawing.Size(85, 17);
             this.printHeaderCheck.TabIndex = 45;
             this.printHeaderCheck.Text = "Print Header";
             this.printHeaderCheck.UseVisualStyleBackColor = true;
@@ -449,7 +450,7 @@
             this.printMomentsCheck.Location = new System.Drawing.Point(8, 41);
             this.printMomentsCheck.Margin = new System.Windows.Forms.Padding(2);
             this.printMomentsCheck.Name = "printMomentsCheck";
-            this.printMomentsCheck.Size = new System.Drawing.Size(111, 21);
+            this.printMomentsCheck.Size = new System.Drawing.Size(104, 17);
             this.printMomentsCheck.TabIndex = 41;
             this.printMomentsCheck.Text = "Output Moments";
             this.printMomentsCheck.UseVisualStyleBackColor = true;
@@ -868,6 +869,7 @@
             // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.printFrameStoreyCheck);
             this.groupBox8.Controls.Add(this.printFrameEndReleasesCheck);
             this.groupBox8.Controls.Add(this.setFrameSection);
             this.groupBox8.Controls.Add(this.dispFrameUnOffsetColNum);
@@ -895,10 +897,10 @@
             // 
             this.printFrameEndReleasesCheck.AutoSize = true;
             this.printFrameEndReleasesCheck.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.printFrameEndReleasesCheck.Location = new System.Drawing.Point(9, 129);
+            this.printFrameEndReleasesCheck.Location = new System.Drawing.Point(9, 131);
             this.printFrameEndReleasesCheck.Margin = new System.Windows.Forms.Padding(2);
             this.printFrameEndReleasesCheck.Name = "printFrameEndReleasesCheck";
-            this.printFrameEndReleasesCheck.Size = new System.Drawing.Size(99, 21);
+            this.printFrameEndReleasesCheck.Size = new System.Drawing.Size(92, 17);
             this.printFrameEndReleasesCheck.TabIndex = 61;
             this.printFrameEndReleasesCheck.Text = "End Releases";
             this.printFrameEndReleasesCheck.UseVisualStyleBackColor = true;
@@ -1007,7 +1009,7 @@
             this.printFrameLabelCheck.Location = new System.Drawing.Point(8, 68);
             this.printFrameLabelCheck.Margin = new System.Windows.Forms.Padding(2);
             this.printFrameLabelCheck.Name = "printFrameLabelCheck";
-            this.printFrameLabelCheck.Size = new System.Drawing.Size(64, 21);
+            this.printFrameLabelCheck.Size = new System.Drawing.Size(57, 17);
             this.printFrameLabelCheck.TabIndex = 53;
             this.printFrameLabelCheck.Text = "Labels";
             this.printFrameLabelCheck.UseVisualStyleBackColor = true;
@@ -1042,7 +1044,7 @@
             this.printFrameSectionCheck.Location = new System.Drawing.Point(8, 110);
             this.printFrameSectionCheck.Margin = new System.Windows.Forms.Padding(2);
             this.printFrameSectionCheck.Name = "printFrameSectionCheck";
-            this.printFrameSectionCheck.Size = new System.Drawing.Size(105, 21);
+            this.printFrameSectionCheck.Size = new System.Drawing.Size(98, 17);
             this.printFrameSectionCheck.TabIndex = 50;
             this.printFrameSectionCheck.Text = "Section Names";
             this.printFrameSectionCheck.UseVisualStyleBackColor = true;
@@ -1054,7 +1056,7 @@
             this.printFrameCoordCheck.Location = new System.Drawing.Point(8, 89);
             this.printFrameCoordCheck.Margin = new System.Windows.Forms.Padding(2);
             this.printFrameCoordCheck.Name = "printFrameCoordCheck";
-            this.printFrameCoordCheck.Size = new System.Drawing.Size(89, 21);
+            this.printFrameCoordCheck.Size = new System.Drawing.Size(82, 17);
             this.printFrameCoordCheck.TabIndex = 48;
             this.printFrameCoordCheck.Text = "Coordinates";
             this.printFrameCoordCheck.UseVisualStyleBackColor = true;
@@ -1271,6 +1273,18 @@
             this.replicateByDispBut.UseVisualStyleBackColor = true;
             this.replicateByDispBut.Click += new System.EventHandler(this.replicateByDispBut_Click);
             // 
+            // printFrameStoreyCheck
+            // 
+            this.printFrameStoreyCheck.AutoSize = true;
+            this.printFrameStoreyCheck.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.printFrameStoreyCheck.Location = new System.Drawing.Point(9, 152);
+            this.printFrameStoreyCheck.Margin = new System.Windows.Forms.Padding(2);
+            this.printFrameStoreyCheck.Name = "printFrameStoreyCheck";
+            this.printFrameStoreyCheck.Size = new System.Drawing.Size(56, 17);
+            this.printFrameStoreyCheck.TabIndex = 62;
+            this.printFrameStoreyCheck.Text = "Storey";
+            this.printFrameStoreyCheck.UseVisualStyleBackColor = true;
+            // 
             // ETABSTaskPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1405,5 +1419,6 @@
         private System.Windows.Forms.TextBox dispStaadPaths;
         private System.Windows.Forms.CheckBox printFrameEndReleasesCheck;
         private System.Windows.Forms.Button testProkonButt;
+        private System.Windows.Forms.CheckBox printFrameStoreyCheck;
     }
 }

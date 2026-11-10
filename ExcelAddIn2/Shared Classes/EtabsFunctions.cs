@@ -1492,9 +1492,9 @@ namespace ExcelAddIn2
             return targetFrameObjects.ToArray();
         }
 
-        static public void GetFrameDetails(cSapModel sapModel, ref EtabsFrame frameObj, bool getLabel, bool getCoord, bool getSection, bool getEndReleases)
+        static public void GetFrameDetails(cSapModel sapModel, ref EtabsFrame frameObj, bool getLabel, bool getCoord, bool getSection, bool getEndReleases, bool getStorey)
         {
-            if (getLabel)
+            if (getLabel || getStorey)
             {
                 frameObj.GetLabel(sapModel);
             }

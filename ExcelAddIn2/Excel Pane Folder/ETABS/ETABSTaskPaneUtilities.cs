@@ -47,6 +47,9 @@ namespace ExcelAddIn2
             thisAtt = new CheckBoxAttribute("printFrameReleases_EtabsUtil", printFrameEndReleasesCheck, false);
             attributeDic.Add(thisAtt.attName, thisAtt);
 
+            thisAtt = new CheckBoxAttribute("printFrameStorey_EtabsUtil", printFrameStoreyCheck, false);
+            attributeDic.Add(thisAtt.attName, thisAtt);
+
             thisAtt = new CheckBoxAttribute("getColCheck_EtabsUtil", getColCheck, true);
             attributeDic.Add(thisAtt.attName, thisAtt);
             thisAtt = new CheckBoxAttribute("getBeamCheck_EtabsUtil", getBeamCheck, true);
@@ -130,7 +133,8 @@ namespace ExcelAddIn2
                         printFrameLabelCheck.Checked,
                         printFrameCoordCheck.Checked,
                         printFrameSectionCheck.Checked,
-                        printFrameEndReleasesCheck.Checked
+                        printFrameEndReleasesCheck.Checked,
+                        printFrameStoreyCheck.Checked
                         );
                 }
                 #endregion
@@ -142,6 +146,7 @@ namespace ExcelAddIn2
                 if (printFrameSectionCheck.Checked) { colCount++; }
                 if (printFrameCoordCheck.Checked) { colCount += 6; }
                 if (printFrameEndReleasesCheck.Checked) { colCount += 2; }
+                if (printFrameStoreyCheck.Checked) { colCount += 1; }
 
                 object[,] finalWriteArray = new object[frames.Length, colCount];
                 #endregion
@@ -168,6 +173,12 @@ namespace ExcelAddIn2
                         finalWriteArray[rowNum, colNum] = frame.releaseStringStart;
                         colNum++;
                         finalWriteArray[rowNum, colNum] = frame.releaseStringEnd;
+                        colNum++;
+                    }
+
+                    if (printFrameStoreyCheck.Checked)
+                    {
+                        finalWriteArray[rowNum, colNum] = frame.storeyName;
                         colNum++;
                     }
                 }
